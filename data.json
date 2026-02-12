@@ -1,0 +1,55 @@
+{
+  "lavori": [
+    {
+      "data": "2026-02-12",
+      "cliente": "Solandata",
+      "lavoro": "Sito + SEO",
+      "incassato": "1750",
+      "costi": "",
+      "soggetto": "Dos Amigos",
+      "distribuito": "NO"
+    },
+    {
+      "data": "2026-02-12",
+      "cliente": "Medisinus",
+      "lavoro": "Sito + SEO",
+      "incassato": "1770",
+      "costi": "",
+      "soggetto": "Frank",
+      "distribuito": "NO"
+    },
+    {
+      "data": "2026-02-12",
+      "cliente": "Ligo",
+      "lavoro": "Sito + Video",
+      "incassato": "680",
+      "costi": "",
+      "soggetto": "Frank",
+      "distribuito": "NO"
+    },
+    {
+      "data": "2026-02-12",
+      "cliente": "",
+      "lavoro": "Elementor Pro",
+      "incassato": 0,
+      "costi": "120",
+      "soggetto": "Dos Amigos",
+      "distribuito": "NO"
+    },
+    {
+      "data": "2026-02-12",
+      "cliente": "",
+      "lavoro": "Spese varie Frank",
+      "incassato": 0,
+      "costi": "607",
+      "soggetto": "Frank",
+      "distribuito": "NO"
+    }
+  ],
+  "movimentiBancari": [],
+  "contoBancario": {
+    "saldoAttuale": 0,
+    "storico": []
+  },
+  "speseFuture": []
+}

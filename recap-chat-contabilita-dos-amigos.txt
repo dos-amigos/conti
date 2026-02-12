@@ -1,0 +1,155 @@
+📋 RECAP COMPLETO PROGETTO DOS AMIGOS - CONTABILITÀ
+🎯 OBIETTIVO
+Sistema di contabilità per dividere incassi e spese tra due soci: Frank e Fox (società "Dos Amigos")
+
+📊 STRUTTURA DATI
+Colonne Excel/Tabella:
+
+Data - Data operazione
+Cliente - Nome cliente
+Lavoro / Spesa - Descrizione
+Incassato - Importo incassato
+Imponibile Fisc. (67% del fatt.) - Formula: Incassato * 0.67
+Tasse (Imp. Sost. 5%) - Formula: Imponibile * 0.05
+Costi - Spese/Rimborsi
+Netto incassato - Formula: Incassato - Tasse - Costi
+Netto per socio - Formula: SE Soggetto="Dos Amigos" ALLORA Netto/2 ALTRIMENTI Netto
+Soggetto - Dropdown: "Dos Amigos", "Frank", "Fox"
+Distribuito SI o NO - Dropdown: "SI", "NO"
+
+
+🔢 LOGICA CALCOLI CRITICI
+RIMBORSI (IMPORTANTE):
+
+Se Soggetto = "Frank" e Costi > 0 → Frank riceve RIMBORSO (+607€ esempio) e nello stesso tempo questa somma, se non appartiene a nessun lavoro specifico, è sottratta dal totale prima di essere distribuito fra i soci
+Se Soggetto = "Fox" e Costi > 0 → Fox riceve RIMBORSO
+Se Soggetto = "Dos Amigos" e Costi > 0 → Spesa divisa per 2 e SOTTRATTA da entrambi
+
+INCASSI:
+
+Se Soggetto = "Frank" → Tutto il netto va a Frank (non diviso)
+Se Soggetto = "Fox" → Tutto il netto va a Fox (non diviso)
+Se Soggetto = "Dos Amigos" → Netto diviso per 2 tra Frank e Fox
+
+RIEPILOGO TOTALI (solo righe con Distribuito = "NO"):
+FRANK:
+
+Incassi propri Frank
+
+
+Rimborsi Frank
+
+
+
+
+Quota Dos Amigos Frank
+
+
+= TOTALE FRANK DA RICEVERE
+
+FOX:
+
+Incassi propri Fox
+
+
+Rimborsi Fox
+
+
+
+
+Quota Dos Amigos Fox
+
+
+= TOTALE FOX DA RICEVERE
+
+
+🎨 DESIGN REQUIREMENTS
+Colori:
+
+Sfondo principale: #000000 (nero)
+Highlight/Accenti: #D8FF36 (giallo-verde)
+Testo: Bianco su nero
+Righe "Distribuito=SI": Verde trasparente rgba(0, 100, 0, 0.3)
+
+Logo:
+
+Posizione: Alto a sinistra
+Sfondo: Nero
+Logo: 2 teschi messicani con scritta "DOS AMIGOS" bianca
+
+
+📁 DATI INIZIALI
+javascript[
+  { data: "2024-01-15", cliente: "Mesisinus", lavoro: "Mesisinus", incassato: 1700, costi: 0, soggetto: "Frank", distribuito: "NO" },
+  { data: "2024-02-01", cliente: "Solandata", lavoro: "Solandata", incassato: 7980, costi: 0, soggetto: "Dos Amigos", distribuito: "NO" },
+  { data: "2024-02-01", cliente: "Frank", lavoro: "Spese Frank da Solandata", incassato: 0, costi: 607, soggetto: "Frank", distribuito: "NO" },
+  { data: "2024-02-10", cliente: "Ligo", lavoro: "Ligo", incassato: 1350, costi: 0, soggetto: "Frank", distribuito: "NO" },
+  { data: "2024-02-05", cliente: "", lavoro: "Elementor Pro", incassato: 0, costi: 45.77, soggetto: "Dos Amigos", distribuito: "NO" }
+]
+
+⚙️ FUNZIONALITÀ RICHIESTE
+Must Have:
+
+✅ Filtri per: Data (da/a), Cliente (testo), Importo (min/max)
+✅ Ordinamento cliccando header colonne (Data, Cliente, Incassato, Costi)
+✅ Formattazione condizionale verde per "Distribuito=SI"
+✅ Calcoli automatici in tempo reale
+✅ Esportazione Excel (.xlsx)
+✅ Salvataggio/Caricamento JSON
+✅ Aggiungi/Elimina righe
+
+Formule Excel:
+
+Imponibile: =D2*0.67
+Tasse: =E2*0.05
+Netto: =D2-F2-G2
+Netto per socio: =IF(J2="Dos Amigos",H2/2,H2)
+
+Formule SUMIFS per totali:
+excel// Frank Incassi
+=SUMIFS(I$2:I$11,J$2:J$11,"Frank",K$2:K$11,"NO",I$2:I$11,">0")
+
+// Frank Rimborsi
+=SUMIFS(G$2:G$11,J$2:J$11,"Frank",K$2:K$11,"NO",G$2:G$11,">0")
+
+// Frank Quota Dos Amigos
+=SUMIFS(I$2:I$11,J$2:J$11,"Dos Amigos",K$2:K$11,"NO",I$2:I$11,">0")-SUMIFS(G$2:G$11,J$2:J$11,"Dos Amigos",K$2:K$11,"NO",G$2:G$11,">0")/2
+
+📦 DELIVERABLES CREATI
+1. DosAmigos_Contabilita.html
+
+File HTML standalone completo
+Funziona offline
+Include logo SVG integrato
+Salva dati in JSON locale
+Esporta Excel via SheetJS
+
+2. React Component
+
+Componente React completo
+Usa Tailwind CSS
+Lucide icons
+State management con useState
+
+3. Excel Generator
+
+File HTML che genera Excel .xlsx
+Formule native Excel già impostate
+Pronto all'uso
+
+
+🔑 PUNTI CRITICI DA RICORDARE
+
+I rimborsi vanno SOMMATI, non sottratti per il socio che ha sostenuto la spesa
+Solo le spese "Dos Amigos" vanno divise per 2 e sottratte
+Colonna "Soggetto" determina come vengono calcolati incassi E rimborsi
+Formattazione condizionale verde solo se "Distribuito=SI"
+Totali calcolano SOLO righe con "Distribuito=NO"
+
+
+🚀 PROSSIMI PASSI SUGGERITI
+
+ Aggiungere grafici per visualizzare distribuzione
+ Implementare storico modifiche
+ Backup automatico periodico
+ Dashboard con KPI

@@ -1,0 +1,17 @@
+# Proteggi il file JSON
+<Files "data.json">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Proteggi i backup
+<FilesMatch "data_backup_.*\.json">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Solo api.php può accedere ai JSON
+<Files "api.php">
+    Order allow,deny
+    Allow from all
+</Files>
