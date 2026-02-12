@@ -431,6 +431,25 @@
                     <span>Nascondi distribuite</span>
                 </label>
             </div>
+
+            <!-- Paginazione Lavori -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #1a1a1a; border-bottom: 2px solid #D8FF36;">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span style="color: #D8FF36;">Mostra:</span>
+                    <select id="lavoriPerPagina" onchange="changeLavoriPerPagina()" style="padding: 8px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px;">
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span style="color: #999;">record per pagina</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button onclick="prevPageLavori()" class="btn" style="padding: 8px 16px;">◀ Prec</button>
+                    <span style="color: #D8FF36;" id="lavoriPaginaInfo">Pagina 1 di 1</span>
+                    <button onclick="nextPageLavori()" class="btn" style="padding: 8px 16px;">Succ ▶</button>
+                </div>
+            </div>
         </div>
 
         <div class="table-container">
@@ -452,15 +471,18 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
+                <tfoot>
+                    <tr style="background: #1a1a1a; border-top: 3px solid #D8FF36;">
+                        <td colspan="3" style="color: #D8FF36; font-weight: bold; font-size: 1.1em; padding: 15px;">TOTALI</td>
+                        <td style="color: #D8FF36; font-weight: bold; font-size: 1.1em;" id="totalIncassato">€ 0.00</td>
+                        <td></td>
+                        <td style="color: #ff4444; font-weight: bold; font-size: 1.1em;" id="totalTasse">€ 0.00</td>
+                        <td style="color: #ff4444; font-weight: bold; font-size: 1.1em;" id="totalCosti">€ 0.00</td>
+                        <td style="color: #D8FF36; font-weight: bold; font-size: 1.1em;" id="totalNetto">€ 0.00</td>
+                        <td colspan="4"></td>
+                    </tr>
+                </tfoot>
             </table>
-        </div>
-
-        <!-- Totale Tasse -->
-        <div class="totals" style="margin: 20px; padding: 20px;">
-            <h2 style="color: #D8FF36; margin-bottom: 15px;">💰 Totale Tasse da Pagare</h2>
-            <div style="font-size: 1.5em; color: #ff4444; font-weight: bold;" id="totaleTasse">
-                € 0.00
-            </div>
         </div>
 
         <div class="totals">
@@ -482,6 +504,25 @@
             <h2>🏦 Movimenti Bancari</h2>
             <button class="btn" onclick="addMovimento()" style="margin-bottom: 15px;">➕ Aggiungi Movimento</button>
 
+            <!-- Paginazione Movimenti Bancari -->
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #1a1a1a; border: 2px solid #D8FF36; border-radius: 8px; margin-bottom: 15px;">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span style="color: #D8FF36;">Mostra:</span>
+                    <select id="movimentiPerPagina" onchange="changeMovimentiPerPagina()" style="padding: 8px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px;">
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span style="color: #999;">movimenti per pagina</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button onclick="prevPageMovimenti()" class="btn" style="padding: 8px 16px;">◀ Prec</button>
+                    <span style="color: #D8FF36;" id="movimentiPaginaInfo">Pagina 1 di 1</span>
+                    <button onclick="nextPageMovimenti()" class="btn" style="padding: 8px 16px;">Succ ▶</button>
+                </div>
+            </div>
+
             <div class="table-container" style="padding: 0;">
                 <table>
                     <thead>
@@ -490,6 +531,7 @@
                             <th>Tipo</th>
                             <th>Importo €</th>
                             <th>Destinatario/Socio</th>
+                            <th>Cliente</th>
                             <th>Causale</th>
                             <th>Note</th>
                             <th>Azioni</th>
@@ -616,6 +658,14 @@
         let sortField = null;
         let sortDirection = 'asc';
         let saveTimeout = null;
+
+        // Paginazione Lavori
+        let lavoriPaginaCorrente = 1;
+        let lavoriPerPagina = 20;
+
+        // Paginazione Movimenti Bancari
+        let movimentiPaginaCorrente = 1;
+        let movimentiPerPagina = 20;
 
         // Carica dati all'avvio
         async function loadData() {
@@ -772,7 +822,30 @@
         }
 
         function updateData(index, field, value) {
+            const oldValue = data.lavori[index][field];
             data.lavori[index][field] = value;
+
+            // Auto-crea movimento bancario quando aggiungi/modifichi un incasso
+            if (field === 'incassato') {
+                const nuovoIncasso = parseFloat(value) || 0;
+                const vecchioIncasso = parseFloat(oldValue) || 0;
+
+                // Se passa da 0 a un valore > 0, crea movimento bancario
+                if (vecchioIncasso === 0 && nuovoIncasso > 0) {
+                    const lavoro = data.lavori[index];
+                    data.movimentiBancari.push({
+                        data: lavoro.data,
+                        tipo: "Bonifico in entrata",
+                        importo: nuovoIncasso,
+                        destinatario: lavoro.soggetto,
+                        cliente: lavoro.cliente,
+                        causale: `Pagamento - ${lavoro.lavoro}`,
+                        note: "Auto-generato da lavoro"
+                    });
+                    updateContoBancario();
+                }
+            }
+
             autoSave();
             renderTable();
         }
@@ -806,6 +879,9 @@
             let dosAmigosIncassi = 0;
             let dosAmigosSpese = 0;
             let totaleTasse = 0;
+            let totaleIncassato = 0;
+            let totaleCosti = 0;
+            let totaleNetto = 0;
 
             data.lavori.forEach(row => {
                 if (row.distribuito === "NO") {
@@ -813,9 +889,13 @@
                     const costi = parseFloat(row.costi) || 0;
                     const imponibile = incassato * 0.67;
                     const tasse = imponibile * 0.05;
+                    const netto = incassato - tasse - costi;
 
-                    // Somma totale tasse
+                    // Somma totali per la riga di riepilogo
+                    totaleIncassato += incassato;
                     totaleTasse += tasse;
+                    totaleCosti += costi;
+                    totaleNetto += netto;
 
                     if (row.soggetto === "Dos Amigos") {
                         // Per Dos Amigos: somma incassi al netto tasse, somma spese
@@ -870,8 +950,11 @@
                 <div class="total-line"><span>TOTALE FOX:</span><span class="${foxTotale >= 0 ? 'positive' : 'negative'}">€ ${foxTotale.toFixed(2)}</span></div>
             `;
 
-            // Aggiorna totale tasse
-            document.getElementById('totaleTasse').textContent = `€ ${totaleTasse.toFixed(2)}`;
+            // Aggiorna riga totali in fondo alla tabella
+            document.getElementById('totalIncassato').textContent = `€ ${totaleIncassato.toFixed(2)}`;
+            document.getElementById('totalTasse').textContent = `€ ${totaleTasse.toFixed(2)}`;
+            document.getElementById('totalCosti').textContent = `€ ${totaleCosti.toFixed(2)}`;
+            document.getElementById('totalNetto').textContent = `€ ${totaleNetto.toFixed(2)}`;
         }
 
         function getFilteredData() {
@@ -882,7 +965,7 @@
             const maxImporto = parseFloat(document.getElementById('filterMaxImporto').value) || Infinity;
             const hideDistributed = document.getElementById('hideDistributed').checked;
 
-            return data.lavori.filter(row => {
+            const filtered = data.lavori.filter(row => {
                 if (dateFrom && row.data < dateFrom) return false;
                 if (dateTo && row.data > dateTo) return false;
                 if (cliente && !row.cliente.toLowerCase().includes(cliente)) return false;
@@ -891,10 +974,59 @@
                 if (hideDistributed && row.distribuito === "SI") return false;
                 return true;
             });
+
+            // Paginazione
+            const totalPages = Math.ceil(filtered.length / lavoriPerPagina);
+            const start = (lavoriPaginaCorrente - 1) * lavoriPerPagina;
+            const end = start + lavoriPerPagina;
+
+            // Aggiorna info paginazione
+            document.getElementById('lavoriPaginaInfo').textContent = `Pagina ${lavoriPaginaCorrente} di ${totalPages || 1} (${filtered.length} record)`;
+
+            return filtered.slice(start, end);
         }
 
         function applyFilters() {
+            lavoriPaginaCorrente = 1; // Reset alla prima pagina quando si applicano filtri
             renderTable();
+        }
+
+        function changeLavoriPerPagina() {
+            lavoriPerPagina = parseInt(document.getElementById('lavoriPerPagina').value);
+            lavoriPaginaCorrente = 1;
+            renderTable();
+        }
+
+        function prevPageLavori() {
+            if (lavoriPaginaCorrente > 1) {
+                lavoriPaginaCorrente--;
+                renderTable();
+            }
+        }
+
+        function nextPageLavori() {
+            const filtered = data.lavori.filter(row => {
+                const dateFrom = document.getElementById('filterDateFrom').value;
+                const dateTo = document.getElementById('filterDateTo').value;
+                const cliente = document.getElementById('filterCliente').value.toLowerCase();
+                const minImporto = parseFloat(document.getElementById('filterMinImporto').value) || -Infinity;
+                const maxImporto = parseFloat(document.getElementById('filterMaxImporto').value) || Infinity;
+                const hideDistributed = document.getElementById('hideDistributed').checked;
+
+                if (dateFrom && row.data < dateFrom) return false;
+                if (dateTo && row.data > dateTo) return false;
+                if (cliente && !row.cliente.toLowerCase().includes(cliente)) return false;
+                const inc = parseFloat(row.incassato) || 0;
+                if (inc < minImporto || inc > maxImporto) return false;
+                if (hideDistributed && row.distribuito === "SI") return false;
+                return true;
+            });
+
+            const totalPages = Math.ceil(filtered.length / lavoriPerPagina);
+            if (lavoriPaginaCorrente < totalPages) {
+                lavoriPaginaCorrente++;
+                renderTable();
+            }
         }
 
         function sortTable(field) {
@@ -962,7 +1094,18 @@
             const tbody = document.getElementById('movimentiBody');
             tbody.innerHTML = '';
 
-            data.movimentiBancari.forEach((mov, index) => {
+            // Paginazione
+            const totalMovimenti = data.movimentiBancari.length;
+            const totalPages = Math.ceil(totalMovimenti / movimentiPerPagina);
+            const start = (movimentiPaginaCorrente - 1) * movimentiPerPagina;
+            const end = start + movimentiPerPagina;
+            const movimentiPaginati = data.movimentiBancari.slice(start, end);
+
+            // Aggiorna info paginazione
+            document.getElementById('movimentiPaginaInfo').textContent = `Pagina ${movimentiPaginaCorrente} di ${totalPages || 1} (${totalMovimenti} record)`;
+
+            movimentiPaginati.forEach((mov, paginaIndex) => {
+                const index = start + paginaIndex; // Indice reale nell'array completo
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><input type="date" value="${mov.data}" onchange="updateMovimento(${index}, 'data', this.value)"></td>
@@ -972,6 +1115,7 @@
                             <option value="Bonifico in uscita" ${mov.tipo === "Bonifico in uscita" ? "selected" : ""}>Bonifico in uscita</option>
                             <option value="Prelievo" ${mov.tipo === "Prelievo" ? "selected" : ""}>Prelievo</option>
                             <option value="Deposito" ${mov.tipo === "Deposito" ? "selected" : ""}>Deposito</option>
+                            <option value="Tasse" ${mov.tipo === "Tasse" ? "selected" : ""}>Tasse</option>
                         </select>
                     </td>
                     <td><input type="number" step="0.01" value="${mov.importo}" onchange="updateMovimento(${index}, 'importo', this.value)"></td>
@@ -983,6 +1127,7 @@
                             <option value="Altro" ${mov.destinatario === "Altro" ? "selected" : ""}>Altro</option>
                         </select>
                     </td>
+                    <td><input type="text" value="${mov.cliente || ''}" onchange="updateMovimento(${index}, 'cliente', this.value)"></td>
                     <td><input type="text" value="${mov.causale}" onchange="updateMovimento(${index}, 'causale', this.value)"></td>
                     <td><input type="text" value="${mov.note}" onchange="updateMovimento(${index}, 'note', this.value)"></td>
                     <td><button class="delete-btn" onclick="deleteMovimento(${index})">🗑️</button></td>
@@ -998,6 +1143,7 @@
                 tipo: "Bonifico in uscita",
                 importo: 0,
                 destinatario: "Frank",
+                cliente: "",
                 causale: "",
                 note: ""
             });
@@ -1028,6 +1174,27 @@
             }
         }
 
+        function changeMovimentiPerPagina() {
+            movimentiPerPagina = parseInt(document.getElementById('movimentiPerPagina').value);
+            movimentiPaginaCorrente = 1;
+            renderMovimenti();
+        }
+
+        function prevPageMovimenti() {
+            if (movimentiPaginaCorrente > 1) {
+                movimentiPaginaCorrente--;
+                renderMovimenti();
+            }
+        }
+
+        function nextPageMovimenti() {
+            const totalPages = Math.ceil(data.movimentiBancari.length / movimentiPerPagina);
+            if (movimentiPaginaCorrente < totalPages) {
+                movimentiPaginaCorrente++;
+                renderMovimenti();
+            }
+        }
+
         // ========== CONTO BANCARIO ==========
         function updateContoBancario() {
             // Calcola saldo dai movimenti
@@ -1038,7 +1205,7 @@
                 if (mov.tipo === "Bonifico in entrata" || mov.tipo === "Deposito") {
                     saldo += Math.abs(importo);
                 } else {
-                    // Bonifici in uscita e prelievi sono negativi
+                    // Bonifici in uscita, prelievi e tasse sono negativi
                     saldo -= Math.abs(importo);
                 }
             });
