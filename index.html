@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,65 +14,72 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Arial', sans-serif;
             background: #000000;
             color: #ffffff;
             min-height: 100vh;
         }
-        
+
         .header {
             background: #000000;
-            border-bottom: 4px solid #D8FF36;
+            border-bottom: 1px solid #333;
             padding: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        
+
         .sync-status {
             background: rgba(216, 255, 54, 0.2);
             padding: 8px 16px;
             border-radius: 6px;
-            border: 1px solid #D8FF36;
+            border: 1px solid #333;
             color: #D8FF36;
             font-size: 14px;
         }
-        
+
         .sync-status.saving {
             animation: pulse 1s infinite;
         }
-        
+
         .sync-status.error {
             background: rgba(255, 68, 68, 0.2);
             border-color: #ff4444;
             color: #ff4444;
         }
-        
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
-        
+
         .container {
             max-width: 1800px;
             margin: 0 auto;
         }
-        
+
         .controls {
             padding: 20px;
             background: #1a1a1a;
-            border-bottom: 2px solid #D8FF36;
+            border-bottom: 1px solid #333;
         }
-        
+
         .btn-group {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 15px;
         }
-        
+
         .btn {
             background: #D8FF36;
             color: #000000;
@@ -84,24 +91,25 @@
             font-weight: bold;
             transition: all 0.3s;
         }
-        
+
         .btn:hover {
             background: #c4e830;
             transform: translateY(-2px);
         }
-        
+
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
+
         .filters {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 10px;
         }
-        
-        input, select {
+
+        input,
+        select {
             padding: 10px;
             background: #2a2a2a;
             color: #ffffff;
@@ -109,52 +117,54 @@
             border-radius: 6px;
             font-size: 14px;
         }
-        
-        input:focus, select:focus {
+
+        input:focus,
+        select:focus {
             outline: none;
             border-color: #D8FF36;
         }
-        
+
         .table-container {
             overflow-x: auto;
             padding: 20px;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
             background: #000000;
         }
-        
+
         th {
             background: #1a1a1a;
             color: #D8FF36;
             padding: 15px 10px;
             text-align: left;
             font-weight: bold;
-            border-bottom: 2px solid #D8FF36;
+            border-bottom: 1px solid #444;
             cursor: pointer;
             user-select: none;
         }
-        
+
         th:hover {
             background: #2a2a2a;
         }
-        
+
         td {
             padding: 10px;
             border-bottom: 1px solid #333;
         }
-        
+
         tr:hover {
             background: #1a1a1a;
         }
-        
+
         tr.distributed {
             background: rgba(0, 100, 0, 0.3) !important;
         }
-        
-        td input, td select {
+
+        td input,
+        td select {
             width: 100%;
             padding: 6px;
             background: #2a2a2a;
@@ -162,45 +172,45 @@
             border: 1px solid #444;
             border-radius: 4px;
         }
-        
+
         td input:read-only {
             background: #1a1a1a;
-            color: #D8FF36;
+            border-bottom: 1px solid #333;
         }
-        
+
         .totals {
             background: #1a1a1a;
             padding: 30px;
             margin: 20px;
             border-radius: 12px;
-            border: 2px solid #D8FF36;
+            border: 1px solid #333;
         }
-        
+
         .totals h2 {
             color: #D8FF36;
             margin-bottom: 20px;
             font-size: 1.8em;
         }
-        
+
         .total-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 20px;
         }
-        
+
         .total-card {
             background: #000000;
             padding: 25px;
             border-radius: 12px;
-            border: 2px solid #D8FF36;
+            border: 1px solid #333;
         }
-        
+
         .total-card h3 {
             color: #D8FF36;
             margin-bottom: 15px;
             font-size: 1.5em;
         }
-        
+
         .total-line {
             display: flex;
             justify-content: space-between;
@@ -208,24 +218,24 @@
             border-bottom: 1px solid #333;
             color: #ffffff;
         }
-        
+
         .total-line:last-child {
             border-bottom: none;
             font-weight: bold;
             font-size: 1.3em;
             margin-top: 10px;
             padding-top: 15px;
-            border-top: 2px solid #D8FF36;
+            border-top: 1px solid #333;
         }
-        
+
         .positive {
             color: #D8FF36;
         }
-        
+
         .negative {
             color: #ff4444;
         }
-        
+
         .delete-btn {
             background: #ff4444;
             color: white;
@@ -234,24 +244,24 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        
+
         .delete-btn:hover {
             background: #cc0000;
         }
-        
+
         .note {
             background: #000000;
             padding: 15px;
             margin: 20px;
             border-radius: 8px;
-            border: 2px solid #D8FF36;
+            border: 1px solid #333;
             color: #ffffff;
         }
-        
+
         .note strong {
             color: #D8FF36;
         }
-        
+
         .loading {
             position: fixed;
             top: 50%;
@@ -260,15 +270,15 @@
             background: rgba(0, 0, 0, 0.9);
             padding: 30px;
             border-radius: 10px;
-            border: 2px solid #D8FF36;
+            border: 1px solid #333;
             display: none;
             z-index: 1000;
         }
-        
+
         .loading.active {
             display: block;
         }
-        
+
         .login-screen {
             position: fixed;
             top: 0;
@@ -281,28 +291,28 @@
             justify-content: center;
             z-index: 9999;
         }
-        
+
         .login-screen.hidden {
             display: none;
         }
-        
+
         .login-box {
             background: #1a1a1a;
             padding: 40px;
             border-radius: 20px;
-            border: 3px solid #D8FF36;
-            box-shadow: 0 0 40px rgba(216, 255, 54, 0.3);
+            border: 1px solid #333;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             text-align: center;
             max-width: 400px;
             width: 90%;
         }
-        
+
         .login-box h2 {
             color: #D8FF36;
             margin-bottom: 30px;
             font-size: 2em;
         }
-        
+
         .login-box input {
             width: 100%;
             padding: 15px;
@@ -313,12 +323,12 @@
             color: white;
             font-size: 16px;
         }
-        
+
         .login-box input:focus {
             border-color: #D8FF36;
             outline: none;
         }
-        
+
         .login-box button {
             width: 100%;
             padding: 15px;
@@ -331,51 +341,55 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+
         .login-box button:hover {
             background: #c4e830;
             transform: translateY(-2px);
         }
-        
+
         .login-error {
             color: #ff4444;
             margin-top: 15px;
             display: none;
         }
-        
+
         .login-error.show {
             display: block;
         }
     </style>
 </head>
+
 <body>
     <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
         <div class="login-box">
             <svg width="150" height="60" viewBox="0 0 800 200">
-                <rect width="800" height="200" fill="#1a1a1a"/>
-                <circle cx="80" cy="60" r="35" fill="none" stroke="#D8FF36" stroke-width="6"/>
-                <circle cx="95" cy="45" r="28" fill="none" stroke="#D8FF36" stroke-width="5"/>
-                <path d="M 50 100 L 50 150 L 110 150 L 110 100" fill="white"/>
-                <circle cx="65" cy="120" r="6" fill="black"/>
-                <circle cx="95" cy="120" r="6" fill="black"/>
-                <rect x="55" y="130" width="50" height="3" fill="black"/>
-                
-                <path d="M 260 30 Q 260 15 275 15 L 325 15 Q 340 15 340 30 L 340 50 Q 340 35 325 35 L 300 35 L 300 80 Q 315 80 330 95 L 330 100 Q 315 85 300 85 L 270 85 Q 255 85 255 100 L 255 95 Q 270 80 285 80 L 285 35 L 275 35 Q 260 35 260 50 Z" fill="white" stroke="#D8FF36" stroke-width="3"/>
-                <ellipse cx="300" cy="20" rx="15" ry="8" fill="#D8FF36"/>
-                
+                <rect width="800" height="200" fill="#1a1a1a" />
+                <circle cx="80" cy="60" r="35" fill="none" stroke="#D8FF36" stroke-width="6" />
+                <circle cx="95" cy="45" r="28" fill="none" stroke="#D8FF36" stroke-width="5" />
+                <path d="M 50 100 L 50 150 L 110 150 L 110 100" fill="white" />
+                <circle cx="65" cy="120" r="6" fill="black" />
+                <circle cx="95" cy="120" r="6" fill="black" />
+                <rect x="55" y="130" width="50" height="3" fill="black" />
+
+                <path
+                    d="M 260 30 Q 260 15 275 15 L 325 15 Q 340 15 340 30 L 340 50 Q 340 35 325 35 L 300 35 L 300 80 Q 315 80 330 95 L 330 100 Q 315 85 300 85 L 270 85 Q 255 85 255 100 L 255 95 Q 270 80 285 80 L 285 35 L 275 35 Q 260 35 260 50 Z"
+                    fill="white" stroke="#D8FF36" stroke-width="3" />
+                <ellipse cx="300" cy="20" rx="15" ry="8" fill="#D8FF36" />
+
                 <text x="420" y="80" font-family="Arial Black" font-size="60" fill="white" font-weight="bold">DOS</text>
-                <text x="420" y="140" font-family="Arial Black" font-size="60" fill="white" font-weight="bold">AMIGOS</text>
+                <text x="420" y="140" font-family="Arial Black" font-size="60" fill="white"
+                    font-weight="bold">AMIGOS</text>
             </svg>
-            
+
             <h2>🔐 Accesso Riservato</h2>
-            
+
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <input type="text" id="username" placeholder="Username" autocomplete="off" required>
                 <input type="password" id="password" placeholder="Password" autocomplete="off" required>
                 <button type="submit">Accedi</button>
             </form>
-            
+
             <div class="login-error" id="loginError">
                 ❌ Credenziali errate! Riprova.
             </div>
@@ -388,23 +402,25 @@
 
     <div class="header">
         <svg width="200" height="70" viewBox="0 0 800 200">
-            <rect width="800" height="200" fill="black"/>
-            <circle cx="80" cy="60" r="35" fill="none" stroke="#D8FF36" stroke-width="6"/>
-            <circle cx="95" cy="45" r="28" fill="none" stroke="#D8FF36" stroke-width="5"/>
-            <path d="M 50 100 L 50 150 L 110 150 L 110 100" fill="white"/>
-            <circle cx="65" cy="120" r="6" fill="black"/>
-            <circle cx="95" cy="120" r="6" fill="black"/>
-            <rect x="55" y="130" width="50" height="3" fill="black"/>
-            <rect x="55" y="136" width="50" height="3" fill="black"/>
-            <rect x="55" y="142" width="50" height="3" fill="black"/>
-            
-            <path d="M 260 30 Q 260 15 275 15 L 325 15 Q 340 15 340 30 L 340 50 Q 340 35 325 35 L 300 35 L 300 80 Q 315 80 330 95 L 330 100 Q 315 85 300 85 L 270 85 Q 255 85 255 100 L 255 95 Q 270 80 285 80 L 285 35 L 275 35 Q 260 35 260 50 Z" fill="white" stroke="#D8FF36" stroke-width="3"/>
-            <ellipse cx="300" cy="20" rx="15" ry="8" fill="#D8FF36"/>
-            
+            <rect width="800" height="200" fill="black" />
+            <circle cx="80" cy="60" r="35" fill="none" stroke="#D8FF36" stroke-width="6" />
+            <circle cx="95" cy="45" r="28" fill="none" stroke="#D8FF36" stroke-width="5" />
+            <path d="M 50 100 L 50 150 L 110 150 L 110 100" fill="white" />
+            <circle cx="65" cy="120" r="6" fill="black" />
+            <circle cx="95" cy="120" r="6" fill="black" />
+            <rect x="55" y="130" width="50" height="3" fill="black" />
+            <rect x="55" y="136" width="50" height="3" fill="black" />
+            <rect x="55" y="142" width="50" height="3" fill="black" />
+
+            <path
+                d="M 260 30 Q 260 15 275 15 L 325 15 Q 340 15 340 30 L 340 50 Q 340 35 325 35 L 300 35 L 300 80 Q 315 80 330 95 L 330 100 Q 315 85 300 85 L 270 85 Q 255 85 255 100 L 255 95 Q 270 80 285 80 L 285 35 L 275 35 Q 260 35 260 50 Z"
+                fill="white" stroke="#D8FF36" stroke-width="3" />
+            <ellipse cx="300" cy="20" rx="15" ry="8" fill="#D8FF36" />
+
             <text x="420" y="80" font-family="Arial Black" font-size="60" fill="white" font-weight="bold">DOS</text>
             <text x="420" y="140" font-family="Arial Black" font-size="60" fill="white" font-weight="bold">AMIGOS</text>
         </svg>
-        
+
         <div class="sync-status" id="syncStatus">
             ☁️ Sincronizzato con server
         </div>
@@ -426,17 +442,21 @@
                 <input type="text" id="filterCliente" placeholder="🔍 Cerca cliente" onchange="applyFilters()">
                 <input type="number" id="filterMinImporto" placeholder="Min €" onchange="applyFilters()">
                 <input type="number" id="filterMaxImporto" placeholder="Max €" onchange="applyFilters()">
-                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 6px;">
-                    <input type="checkbox" id="hideDistributed" onchange="applyFilters()" checked style="width: auto; cursor: pointer;">
+                <label
+                    style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 6px;">
+                    <input type="checkbox" id="hideDistributed" onchange="applyFilters()" checked
+                        style="width: auto; cursor: pointer;">
                     <span>Nascondi distribuite</span>
                 </label>
             </div>
 
             <!-- Paginazione Lavori -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #1a1a1a; border-bottom: 2px solid #D8FF36;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #1a1a1a; border-bottom: 1px solid #333;">
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <span style="color: #D8FF36;">Mostra:</span>
-                    <select id="lavoriPerPagina" onchange="changeLavoriPerPagina()" style="padding: 8px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px;">
+                    <select id="lavoriPerPagina" onchange="changeLavoriPerPagina()"
+                        style="padding: 8px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px;">
                         <option value="10">10</option>
                         <option value="20" selected>20</option>
                         <option value="50">50</option>
@@ -472,8 +492,9 @@
                 </thead>
                 <tbody id="tableBody"></tbody>
                 <tfoot>
-                    <tr style="background: #1a1a1a; border-top: 3px solid #D8FF36;">
-                        <td colspan="3" style="color: #D8FF36; font-weight: bold; font-size: 1.1em; padding: 15px;">TOTALI</td>
+                    <tr style="background: #1a1a1a; border-top: 1px solid #333;">
+                        <td colspan="3" style="color: #D8FF36; font-weight: bold; font-size: 1.1em; padding: 15px;">
+                            TOTALI</td>
                         <td style="color: #D8FF36; font-weight: bold; font-size: 1.1em;" id="totalIncassato">€ 0.00</td>
                         <td></td>
                         <td style="color: #ff4444; font-weight: bold; font-size: 1.1em;" id="totalTasse">€ 0.00</td>
@@ -485,117 +506,122 @@
             </table>
         </div>
 
-        <div class="totals">
-            <h2>📊 Riepilogo da distribuire (solo NON distribuiti)</h2>
-            <div class="total-grid">
-                <div class="total-card">
-                    <h3>🦊 FRANK</h3>
-                    <div id="frankTotals"></div>
-                </div>
-                <div class="total-card">
-                    <h3>🦊 FOX</h3>
-                    <div id="foxTotals"></div>
-                </div>
+    </div>
+
+    <!-- Sezione Movimenti Bancari -->
+    <div class="totals">
+        <h2>🏦 Movimenti Bancari</h2>
+        <button class="btn" onclick="addMovimento()" style="margin-bottom: 15px;">➕ Aggiungi Movimento</button>
+
+        <!-- Paginazione Movimenti Bancari -->
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; margin-bottom: 15px;">
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <span style="color: #D8FF36;">Mostra:</span>
+                <select id="movimentiPerPagina" onchange="changeMovimentiPerPagina()"
+                    style="padding: 8px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px;">
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                <span style="color: #999;">movimenti per pagina</span>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button onclick="prevPageMovimenti()" class="btn" style="padding: 8px 16px;">◀ Prec</button>
+                <span style="color: #D8FF36;" id="movimentiPaginaInfo">Pagina 1 di 1</span>
+                <button onclick="nextPageMovimenti()" class="btn" style="padding: 8px 16px;">Succ ▶</button>
             </div>
         </div>
 
-        <!-- Sezione Movimenti Bancari -->
-        <div class="totals">
-            <h2>🏦 Movimenti Bancari</h2>
-            <button class="btn" onclick="addMovimento()" style="margin-bottom: 15px;">➕ Aggiungi Movimento</button>
+        <div class="table-container" style="padding: 0;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Tipo</th>
+                        <th>Importo €</th>
+                        <th>Destinatario/Socio</th>
+                        <th>Cliente</th>
+                        <th>Causale</th>
+                        <th>Note</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody id="movimentiBody"></tbody>
+            </table>
+        </div>
+    </div>
 
-            <!-- Paginazione Movimenti Bancari -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #1a1a1a; border: 2px solid #D8FF36; border-radius: 8px; margin-bottom: 15px;">
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <span style="color: #D8FF36;">Mostra:</span>
-                    <select id="movimentiPerPagina" onchange="changeMovimentiPerPagina()" style="padding: 8px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px;">
-                        <option value="10">10</option>
-                        <option value="20" selected>20</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                    <span style="color: #999;">movimenti per pagina</span>
-                </div>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <button onclick="prevPageMovimenti()" class="btn" style="padding: 8px 16px;">◀ Prec</button>
-                    <span style="color: #D8FF36;" id="movimentiPaginaInfo">Pagina 1 di 1</span>
-                    <button onclick="nextPageMovimenti()" class="btn" style="padding: 8px 16px;">Succ ▶</button>
-                </div>
+    <!-- Sezione Conto Bancario -->
+    <div class="totals">
+        <h2>💳 Conto Bancario Dos Amigos</h2>
+        <div style="font-size: 2em; font-weight: bold; margin: 20px 0;">
+            Saldo attuale: <span id="saldoAttuale" class="positive">€ 0.00</span>
+        </div>
+        <p style="color: #999; font-size: 0.9em;">Il saldo si aggiorna automaticamente con i movimenti bancari</p>
+    </div>
+
+    <div class="totals">
+        <h2>📊 Portafoglio Soci (Avanzo/Debito)</h2>
+        <div class="total-grid">
+            <div class="total-card">
+                <h3>🦊 FRANK</h3>
+                <div id="frankTotals"></div>
             </div>
-
-            <div class="table-container" style="padding: 0;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Tipo</th>
-                            <th>Importo €</th>
-                            <th>Destinatario/Socio</th>
-                            <th>Cliente</th>
-                            <th>Causale</th>
-                            <th>Note</th>
-                            <th>Azioni</th>
-                        </tr>
-                    </thead>
-                    <tbody id="movimentiBody"></tbody>
-                </table>
+            <div class="total-card">
+                <h3>🦊 FOX</h3>
+                <div id="foxTotals"></div>
             </div>
         </div>
+    </div>
 
-        <!-- Sezione Conto Bancario -->
-        <div class="totals">
-            <h2>💳 Conto Bancario Dos Amigos</h2>
-            <div style="font-size: 2em; font-weight: bold; margin: 20px 0;">
-                Saldo attuale: <span id="saldoAttuale" class="positive">€ 0.00</span>
-            </div>
-            <p style="color: #999; font-size: 0.9em;">Il saldo si aggiorna automaticamente con i movimenti bancari</p>
+    <!-- Sezione Spese Future -->
+    <div class="totals">
+        <h2>📅 Spese Future Pianificate</h2>
+        <button class="btn" onclick="addSpesaFutura()" style="margin-bottom: 15px;">➕ Aggiungi Spesa</button>
+
+        <div class="table-container" style="padding: 0;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Descrizione</th>
+                        <th>Importo €</th>
+                        <th>Data Prevista</th>
+                        <th>Ricorrente</th>
+                        <th>Frequenza</th>
+                        <th>Note</th>
+                        <th>Azioni</th>
+                    </tr>
+                </thead>
+                <tbody id="speseFutureBody"></tbody>
+            </table>
         </div>
 
-        <!-- Sezione Spese Future -->
-        <div class="totals">
-            <h2>📅 Spese Future Pianificate</h2>
-            <button class="btn" onclick="addSpesaFutura()" style="margin-bottom: 15px;">➕ Aggiungi Spesa</button>
-
-            <div class="table-container" style="padding: 0;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Descrizione</th>
-                            <th>Importo €</th>
-                            <th>Data Prevista</th>
-                            <th>Ricorrente</th>
-                            <th>Frequenza</th>
-                            <th>Note</th>
-                            <th>Azioni</th>
-                        </tr>
-                    </thead>
-                    <tbody id="speseFutureBody"></tbody>
-                </table>
-            </div>
-
-            <div style="margin-top: 20px; padding: 15px; background: rgba(255, 68, 68, 0.1); border: 2px solid #ff4444; border-radius: 8px;">
-                <strong style="color: #ff4444;">Totale Spese Future:</strong>
-                <span id="totaleSpeseFuture" style="font-size: 1.5em; color: #ff4444; margin-left: 10px;">€ 0.00</span>
-            </div>
+        <div
+            style="margin-top: 20px; padding: 15px; background: rgba(255, 68, 68, 0.1); border: 2px solid #ff4444; border-radius: 8px;">
+            <strong style="color: #ff4444;">Totale Spese Future:</strong>
+            <span id="totaleSpeseFuture" style="font-size: 1.5em; color: #ff4444; margin-left: 10px;">€ 0.00</span>
         </div>
+    </div>
 
-        <div class="note">
-            <strong>☁️ Info:</strong> I dati vengono salvati automaticamente sul server ogni volta che modifichi qualcosa. 
-            Accessibile da qualsiasi dispositivo. I rimborsi (spese Frank/Fox) vengono SOMMATI. 
-            Le spese "Dos Amigos" vengono divise per 2 e sottratte.
-        </div>
+    <div class="note">
+        <strong>☁️ Info:</strong> I dati vengono salvati automaticamente sul server ogni volta che modifichi qualcosa.
+        Accessibile da qualsiasi dispositivo. I conteggi "Avanzo/Debito" per ogni socio riflettono quanto spetta loro
+        dai lavori meno i bonifici già ricevuti.
+    </div>
     </div>
 
     <script>
         // ========== SISTEMA LOGIN SICURO (PHP) ==========
         const API_URL = 'api.php';
-        
+
         async function handleLogin(event) {
             event.preventDefault();
-            
+
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            
+
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
@@ -606,9 +632,9 @@
                         password: password
                     })
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
                     // Login riuscito
                     document.getElementById('loginScreen').classList.add('hidden');
@@ -622,7 +648,7 @@
                 showLoginError();
             }
         }
-        
+
         function showLoginError() {
             document.getElementById('loginError').classList.add('show');
             document.getElementById('password').value = '';
@@ -630,7 +656,7 @@
                 document.getElementById('loginError').classList.remove('show');
             }, 3000);
         }
-        
+
         async function checkAuth() {
             try {
                 const response = await fetch(API_URL + '?action=check_auth');
@@ -640,14 +666,14 @@
                 return false;
             }
         }
-        
+
         async function logout() {
             if (confirm('Vuoi disconnetterti?')) {
                 await fetch(API_URL + '?action=logout');
                 location.reload();
             }
         }
-        
+
         // ========== SISTEMA CONTABILITÀ ==========
         let data = {
             lavori: [],
@@ -673,13 +699,13 @@
             try {
                 const response = await fetch(API_URL + '?action=load');
                 const result = await response.json();
-                
+
                 if (result.success) {
                     data = result.data || getDefaultData();
                 } else {
                     data = getDefaultData();
                 }
-                
+
                 renderTable();
                 updateSyncStatus('success', '☁️ Dati caricati');
             } catch (error) {
@@ -702,7 +728,7 @@
 
         async function saveData() {
             updateSyncStatus('saving', '💾 Salvataggio...');
-            
+
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
@@ -714,9 +740,9 @@
                         data: data
                     })
                 });
-                
+
                 const result = await response.json();
-                
+
                 if (result.success) {
                     updateSyncStatus('success', '✅ Salvato sul server');
                 } else {
@@ -744,7 +770,7 @@
             const status = document.getElementById('syncStatus');
             status.textContent = message;
             status.className = 'sync-status ' + type;
-            
+
             if (type === 'success') {
                 setTimeout(() => {
                     status.textContent = '☁️ Sincronizzato';
@@ -764,7 +790,7 @@
             const tasse = imponibile * 0.05;
             const netto = incassato - tasse - costi;
             const nettoPerSocio = row.soggetto === "Dos Amigos" ? netto / 2 : netto;
-            
+
             return {
                 imponibile: imponibile.toFixed(2),
                 tasse: tasse.toFixed(2),
@@ -776,16 +802,16 @@
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
-            
+
             const filtered = getFilteredData();
-            
+
             filtered.forEach((row) => {
                 const calc = calculateRow(row);
                 const tr = document.createElement('tr');
                 if (row.distribuito === 'SI') tr.classList.add('distributed');
-                
+
                 const originalIndex = data.lavori.indexOf(row);
-                
+
                 tr.innerHTML = `
                     <td><input type="date" value="${row.data}" onchange="updateData(${originalIndex}, 'data', this.value)"></td>
                     <td><input type="text" value="${row.cliente}" onchange="updateData(${originalIndex}, 'cliente', this.value)"></td>
@@ -811,7 +837,7 @@
                     </td>
                     <td><button class="delete-btn" onclick="deleteRow(${originalIndex})">🗑️</button></td>
                 `;
-                
+
                 tbody.appendChild(tr);
             });
 
@@ -926,28 +952,46 @@
                     }
                 }
             });
-            
+
+            // Calcola quanto i soci hanno già PRESO dalla banca
+            let frankGiaRicevuto = 0;
+            let foxGiaRicevuto = 0;
+
+            data.movimentiBancari.forEach(mov => {
+                const importo = Math.abs(parseFloat(mov.importo) || 0);
+                if (mov.tipo === "Bonifico in uscita" || mov.tipo === "Prelievo") {
+                    if (mov.destinatario === "Frank") frankGiaRicevuto += importo;
+                    if (mov.destinatario === "Fox") foxGiaRicevuto += importo;
+                }
+            });
+
             // Calcola netto Dos Amigos: sottrai spese comuni E rimborsi prima di dividere
-            // I rimborsi vengono sottratti perché entrambi i soci "pagano" metà
             const dosAmigosNetto = dosAmigosIncassi - dosAmigosSpese - frankRimborsi - foxRimborsi;
             const frankQuota = dosAmigosNetto / 2;
             const foxQuota = dosAmigosNetto / 2;
-            
-            const frankTotale = frankIncassi + frankRimborsi + frankQuota;
-            const foxTotale = foxIncassi + foxRimborsi + foxQuota;
-            
+
+            const frankSpettante = frankIncassi + frankRimborsi + frankQuota;
+            const foxSpettante = foxIncassi + foxRimborsi + foxQuota;
+
+            const frankBilancio = frankSpettante - frankGiaRicevuto;
+            const foxBilancio = foxSpettante - foxGiaRicevuto;
+
             document.getElementById('frankTotals').innerHTML = `
-                <div class="total-line"><span>Incassi propri:</span><span class="positive">€ ${frankIncassi.toFixed(2)}</span></div>
-                <div class="total-line"><span>Rimborsi:</span><span class="positive">€ ${frankRimborsi.toFixed(2)}</span></div>
+                <div class="total-line"><span>Netto dai Lavori:</span><span class="positive">€ ${frankIncassi.toFixed(2)}</span></div>
+                <div class="total-line"><span>Rimborsi Spese:</span><span class="positive">€ ${frankRimborsi.toFixed(2)}</span></div>
                 <div class="total-line"><span>Quota Dos Amigos:</span><span class="${frankQuota >= 0 ? 'positive' : 'negative'}">€ ${frankQuota.toFixed(2)}</span></div>
-                <div class="total-line"><span>TOTALE FRANK:</span><span class="${frankTotale >= 0 ? 'positive' : 'negative'}">€ ${frankTotale.toFixed(2)}</span></div>
+                <div class="total-line" style="border-top: 1px dashed #444; margin-top: 5px;"><span>Totale Spettante:</span><span style="color: #fff">€ ${frankSpettante.toFixed(2)}</span></div>
+                <div class="total-line"><span>Già Ricevuto (Banca):</span><span class="negative">€ ${frankGiaRicevuto.toFixed(2)}</span></div>
+                <div class="total-line"><span>AVANZO / DEBITO:</span><span class="${frankBilancio >= 0 ? 'positive' : 'negative'}">€ ${frankBilancio.toFixed(2)}</span></div>
             `;
-            
+
             document.getElementById('foxTotals').innerHTML = `
-                <div class="total-line"><span>Incassi propri:</span><span class="positive">€ ${foxIncassi.toFixed(2)}</span></div>
-                <div class="total-line"><span>Rimborsi:</span><span class="positive">€ ${foxRimborsi.toFixed(2)}</span></div>
+                <div class="total-line"><span>Netto dai Lavori:</span><span class="positive">€ ${foxIncassi.toFixed(2)}</span></div>
+                <div class="total-line"><span>Rimborsi Spese:</span><span class="positive">€ ${foxRimborsi.toFixed(2)}</span></div>
                 <div class="total-line"><span>Quota Dos Amigos:</span><span class="${foxQuota >= 0 ? 'positive' : 'negative'}">€ ${foxQuota.toFixed(2)}</span></div>
-                <div class="total-line"><span>TOTALE FOX:</span><span class="${foxTotale >= 0 ? 'positive' : 'negative'}">€ ${foxTotale.toFixed(2)}</span></div>
+                <div class="total-line" style="border-top: 1px dashed #444; margin-top: 5px;"><span>Totale Spettante:</span><span style="color: #fff">€ ${foxSpettante.toFixed(2)}</span></div>
+                <div class="total-line"><span>Già Ricevuto (Banca):</span><span class="negative">€ ${foxGiaRicevuto.toFixed(2)}</span></div>
+                <div class="total-line"><span>AVANZO / DEBITO:</span><span class="${foxBilancio >= 0 ? 'positive' : 'negative'}">€ ${foxBilancio.toFixed(2)}</span></div>
             `;
 
             // Aggiorna riga totali in fondo alla tabella
@@ -1036,7 +1080,7 @@
                 sortField = field;
                 sortDirection = 'asc';
             }
-            
+
             data.lavori.sort((a, b) => {
                 let aVal = a[field];
                 let bVal = b[field];
@@ -1050,7 +1094,7 @@
                 if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
                 return 0;
             });
-            
+
             autoSave();
             renderTable();
         }
@@ -1298,7 +1342,7 @@
         }
 
         // Inizializzazione
-        window.onload = async function() {
+        window.onload = async function () {
             // Controlla autenticazione
             const isAuth = await checkAuth();
             if (isAuth) {
@@ -1308,4 +1352,5 @@
         };
     </script>
 </body>
+
 </html>
