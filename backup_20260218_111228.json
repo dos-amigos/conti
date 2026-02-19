@@ -1,0 +1,164 @@
+{
+    "lavori": [
+        {
+            "data": "2026-02-12",
+            "cliente": "Solandata",
+            "lavoro": "Sito + SEO",
+            "incassato": "1750",
+            "costi": "",
+            "soggetto": "Dos Amigos",
+            "distribuito": "SI"
+        },
+        {
+            "data": "2026-02-12",
+            "cliente": "Medisinus",
+            "lavoro": "Sito + SEO",
+            "incassato": "1770",
+            "costi": "",
+            "soggetto": "Frank",
+            "distribuito": "SI"
+        },
+        {
+            "data": "2026-02-12",
+            "cliente": "Ligo",
+            "lavoro": "Sito + Video",
+            "incassato": "680",
+            "costi": "",
+            "soggetto": "Frank",
+            "distribuito": "SI"
+        },
+        {
+            "data": "2026-02-12",
+            "cliente": "",
+            "lavoro": "Elementor Pro",
+            "incassato": 0,
+            "costi": "120",
+            "soggetto": "Dos Amigos",
+            "distribuito": "NO"
+        },
+        {
+            "data": "2026-02-12",
+            "cliente": "",
+            "lavoro": "Spese varie Frank",
+            "incassato": 0,
+            "costi": "607",
+            "soggetto": "Frank",
+            "distribuito": "SI"
+        },
+        {
+            "data": "2026-02-14",
+            "cliente": "",
+            "lavoro": "Claude Max 20x",
+            "incassato": 0,
+            "costi": "219.60",
+            "soggetto": "Frank",
+            "distribuito": "NO"
+        },
+        {
+            "data": "2026-02-14",
+            "cliente": "Karica",
+            "lavoro": "Supabase",
+            "incassato": 0,
+            "costi": "21",
+            "soggetto": "Frank",
+            "distribuito": "NO"
+        },
+        {
+            "data": "2026-02-17",
+            "cliente": "Karica",
+            "lavoro": "GitHub Pro",
+            "incassato": 0,
+            "costi": "3",
+            "soggetto": "Dos Amigos",
+            "distribuito": "NO"
+        }
+    ],
+    "movimentiBancari": [
+        {
+            "data": "2026-02-12",
+            "tipo": "Bonifico in entrata",
+            "importo": "1750",
+            "destinatario": "Dos Amigos",
+            "cliente": "Solandata",
+            "causale": "",
+            "note": "Auto-generato da lavoro"
+        },
+        {
+            "data": "2026-02-12",
+            "tipo": "Bonifico in entrata",
+            "importo": "680",
+            "destinatario": "Dos Amigos",
+            "cliente": "Ligo",
+            "causale": "",
+            "note": ""
+        },
+        {
+            "data": "2026-02-12",
+            "tipo": "Bonifico in uscita",
+            "importo": "120",
+            "destinatario": "Dos Amigos",
+            "cliente": "",
+            "causale": "Elementor Pro",
+            "note": ""
+        },
+        {
+            "data": "2026-02-12",
+            "tipo": "Prelievo",
+            "importo": "800",
+            "destinatario": "Fox",
+            "cliente": "",
+            "causale": "",
+            "note": ""
+        },
+        {
+            "data": "2026-02-12",
+            "tipo": "Prelievo",
+            "importo": "1000",
+            "destinatario": "Frank",
+            "cliente": "",
+            "causale": "",
+            "note": ""
+        },
+        {
+            "data": "2026-02-16",
+            "tipo": "Prelievo",
+            "importo": "1500",
+            "destinatario": "Frank",
+            "cliente": "",
+            "causale": "",
+            "note": ""
+        },
+        {
+            "data": "2026-02-16",
+            "tipo": "Bonifico in entrata",
+            "importo": "1770",
+            "destinatario": "Dos Amigos",
+            "cliente": "Medisinus",
+            "causale": "",
+            "note": ""
+        },
+        {
+            "data": "2026-02-17",
+            "tipo": "Bonifico in uscita",
+            "importo": "21",
+            "destinatario": "Dos Amigos",
+            "cliente": "Karica",
+            "causale": "Supabase",
+            "note": ""
+        },
+        {
+            "data": "2026-02-17",
+            "tipo": "Bonifico in uscita",
+            "importo": "3",
+            "destinatario": "Dos Amigos",
+            "cliente": "Karica",
+            "causale": "Github pro",
+            "note": ""
+        }
+    ],
+    "contoBancario": {
+        "saldoAttuale": 756,
+        "storico": []
+    },
+    "speseFuture": []
+}

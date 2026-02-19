@@ -759,6 +759,7 @@
                             <th>Tipo</th>
                             <th>Importo EUR</th>
                             <th>Soggetto</th>
+                            <th>% Frank</th>
                             <th>Destinatario</th>
                             <th>Lavoro Collegato</th>
                             <th>Causale</th>
@@ -771,7 +772,7 @@
                         <tr>
                             <td colspan="2" style="color: var(--accent);">TOTALI</td>
                             <td id="movTotaleEntrate" style="color: var(--positive);">-</td>
-                            <td colspan="6"></td>
+                            <td colspan="7"></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -983,6 +984,7 @@
                     if (!mov.id) mov.id = 'mov_' + d.nextId++;
                     if (!mov.soggetto) mov.soggetto = mov.destinatario || 'Dos Amigos';
                     if (mov.lavoroCollegato === undefined) mov.lavoroCollegato = '';
+                    if (mov.percentualeFrank === undefined) mov.percentualeFrank = 50;
                     // Migrate old tipo names
                     if (mov.tipo === 'Bonifico in entrata' || mov.tipo === 'Deposito') mov.tipo = 'Entrata';
                     if (mov.tipo === 'Bonifico in uscita' || mov.tipo === 'Prelievo') mov.tipo = 'Prelievo Socio';
@@ -1202,6 +1204,7 @@
                 tipo: 'Entrata',
                 importo: 0,
                 soggetto: 'Dos Amigos',
+                percentualeFrank: 50,
                 destinatario: 'Frank',
                 lavoroCollegato: '',
                 causale: '',
@@ -1286,6 +1289,7 @@
                             ${SOGGETTI.map(s => `<option value="${s}" ${mov.soggetto === s ? 'selected' : ''}>${s}</option>`).join('')}
                         </select>
                     </td>
+                    <td><input type="number" min="0" max="100" value="${mov.percentualeFrank ?? 50}" onchange="updateMovimento('${mov.id}', 'percentualeFrank', parseInt(this.value) || 50)" style="width:60px;text-align:center;${mov.soggetto !== 'Dos Amigos' ? 'opacity:0.4' : ''}" ${mov.soggetto !== 'Dos Amigos' ? 'disabled' : ''}></td>
                     <td>
                         <select onchange="updateMovimento('${mov.id}', 'destinatario', this.value)" ${!needsDest ? 'disabled style="opacity:0.4"' : ''}>
                             <option value="Frank" ${mov.destinatario === 'Frank' ? 'selected' : ''}>Frank</option>
@@ -1348,11 +1352,13 @@
                 const importo = Math.abs(parseFloat(mov.importo) || 0);
                 const sogg = mov.soggetto || 'Dos Amigos';
                 const dest = mov.destinatario || '';
+                const pctFrank = (parseInt(mov.percentualeFrank) || 50) / 100;
+                const pctFox = 1 - pctFrank;
 
                 if (mov.tipo === 'Entrata') {
                     if (sogg === 'Frank') frank.entrate += importo;
                     else if (sogg === 'Fox') fox.entrate += importo;
-                    else { frank.entrate += importo / 2; fox.entrate += importo / 2; }
+                    else { frank.entrate += importo * pctFrank; fox.entrate += importo * pctFox; }
                 }
                 else if (mov.tipo === 'Prelievo Socio') {
                     if (dest === 'Frank') frank.prelievi += importo;
@@ -1361,13 +1367,13 @@
                 else if (mov.tipo === 'Spesa' || mov.tipo === 'Tasse') {
                     if (sogg === 'Frank') frank.spese += importo;
                     else if (sogg === 'Fox') fox.spese += importo;
-                    else { frank.spese += importo / 2; fox.spese += importo / 2; }
+                    else { frank.spese += importo * pctFrank; fox.spese += importo * pctFox; }
                 }
                 else if (mov.tipo === 'Anticipo Socio') {
                     // Expense split by soggetto
                     if (sogg === 'Frank') frank.spese += importo;
                     else if (sogg === 'Fox') fox.spese += importo;
-                    else { frank.spese += importo / 2; fox.spese += importo / 2; }
+                    else { frank.spese += importo * pctFrank; fox.spese += importo * pctFox; }
                     // Credit to the advancing partner
                     if (dest === 'Frank') frank.anticipi += importo;
                     else if (dest === 'Fox') fox.anticipi += importo;

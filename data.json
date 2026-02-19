@@ -1,55 +1,215 @@
 {
-  "lavori": [
-    {
-      "data": "2026-02-12",
-      "cliente": "Solandata",
-      "lavoro": "Sito + SEO",
-      "incassato": "1750",
-      "costi": "",
-      "soggetto": "Dos Amigos",
-      "distribuito": "NO"
+    "lavori": [
+        {
+            "id": "lav_1",
+            "data": "2026-02-12",
+            "cliente": "Solandata",
+            "lavoro": "Sito + SEO",
+            "importoPrevisto": "1750",
+            "costi": "",
+            "soggetto": "Dos Amigos"
+        },
+        {
+            "id": "lav_2",
+            "data": "2026-02-12",
+            "cliente": "Medisinus",
+            "lavoro": "Sito + SEO",
+            "importoPrevisto": "1770",
+            "costi": "",
+            "soggetto": "Frank"
+        },
+        {
+            "id": "lav_3",
+            "data": "2026-02-12",
+            "cliente": "Ligo",
+            "lavoro": "Sito + Video",
+            "importoPrevisto": "680",
+            "costi": "",
+            "soggetto": "Frank"
+        },
+        {
+            "id": "lav_4",
+            "data": "2026-02-12",
+            "cliente": "",
+            "lavoro": "Elementor Pro",
+            "importoPrevisto": 0,
+            "costi": "120",
+            "soggetto": "Dos Amigos"
+        },
+        {
+            "id": "lav_5",
+            "data": "2026-02-12",
+            "cliente": "",
+            "lavoro": "Spese varie Frank",
+            "importoPrevisto": 0,
+            "costi": "607",
+            "soggetto": "Frank"
+        },
+        {
+            "id": "lav_6",
+            "data": "2026-02-14",
+            "cliente": "",
+            "lavoro": "Claude Max 20x",
+            "importoPrevisto": 0,
+            "costi": "219.60",
+            "soggetto": "Frank"
+        },
+        {
+            "id": "lav_7",
+            "data": "2026-02-14",
+            "cliente": "Karica",
+            "lavoro": "Supabase",
+            "importoPrevisto": 0,
+            "costi": "21",
+            "soggetto": "Frank"
+        },
+        {
+            "id": "lav_8",
+            "data": "2026-02-17",
+            "cliente": "Karica",
+            "lavoro": "GitHub Pro",
+            "importoPrevisto": 0,
+            "costi": "3",
+            "soggetto": "Dos Amigos"
+        }
+    ],
+    "movimentiBancari": [
+        {
+            "id": "mov_1",
+            "data": "2026-02-12",
+            "tipo": "Entrata",
+            "importo": "1750",
+            "soggetto": "Dos Amigos",
+            "percentualeFrank": 50,
+            "destinatario": "Frank",
+            "lavoroCollegato": "lav_1",
+            "causale": "Pagamento Solandata",
+            "note": ""
+        },
+        {
+            "id": "mov_2",
+            "data": "2026-02-12",
+            "tipo": "Entrata",
+            "importo": "680",
+            "soggetto": "Frank",
+            "percentualeFrank": 50,
+            "destinatario": "Frank",
+            "lavoroCollegato": "lav_3",
+            "causale": "Pagamento Ligo",
+            "note": ""
+        },
+        {
+            "id": "mov_3",
+            "data": "2026-02-12",
+            "tipo": "Spesa",
+            "importo": "120",
+            "soggetto": "Dos Amigos",
+            "percentualeFrank": 50,
+            "destinatario": "Frank",
+            "lavoroCollegato": "lav_4",
+            "causale": "Elementor Pro",
+            "note": ""
+        },
+        {
+            "id": "mov_4",
+            "data": "2026-02-12",
+            "tipo": "Prelievo Socio",
+            "importo": "800",
+            "soggetto": "Dos Amigos",
+            "percentualeFrank": 50,
+            "destinatario": "Fox",
+            "lavoroCollegato": "",
+            "causale": "Prelievo Fox",
+            "note": ""
+        },
+        {
+            "id": "mov_5",
+            "data": "2026-02-12",
+            "tipo": "Prelievo Socio",
+            "importo": "1000",
+            "soggetto": "Dos Amigos",
+            "percentualeFrank": 50,
+            "destinatario": "Frank",
+            "lavoroCollegato": "",
+            "causale": "Prelievo Frank",
+            "note": ""
+        },
+        {
+            "id": "mov_6",
+            "data": "2026-02-16",
+            "tipo": "Prelievo Socio",
+            "importo": "1500",
+            "soggetto": "Dos Amigos",
+            "percentualeFrank": 50,
+            "destinatario": "Frank",
+            "lavoroCollegato": "",
+            "causale": "Prelievo Frank",
+            "note": ""
+        },
+        {
+            "id": "mov_7",
+            "data": "2026-02-16",
+            "tipo": "Entrata",
+            "importo": "1770",
+            "soggetto": "Frank",
+            "percentualeFrank": 50,
+            "destinatario": "Frank",
+            "lavoroCollegato": "lav_2",
+            "causale": "Pagamento Medisinus",
+            "note": ""
+        },
+        {
+            "id": "mov_8",
+            "data": "2026-02-17",
+            "tipo": "Spesa",
+            "importo": "21",
+            "soggetto": "Frank",
+            "percentualeFrank": 50,
+            "destinatario": "Frank",
+            "lavoroCollegato": "lav_7",
+            "causale": "Supabase",
+            "note": ""
+        },
+        {
+            "id": "mov_9",
+            "data": "2026-02-17",
+            "tipo": "Spesa",
+            "importo": "3",
+            "soggetto": "Dos Amigos",
+            "percentualeFrank": 50,
+            "destinatario": "Frank",
+            "lavoroCollegato": "lav_8",
+            "causale": "GitHub Pro",
+            "note": ""
+        },
+        {
+            "id": "mov_10",
+            "data": "2026-02-12",
+            "tipo": "Anticipo Socio",
+            "importo": "607",
+            "soggetto": "Dos Amigos",
+            "percentualeFrank": 50,
+            "destinatario": "Frank",
+            "lavoroCollegato": "lav_5",
+            "causale": "Spese varie Frank (di tasca propria)",
+            "note": "Anticipo: Frank ha pagato di tasca, spesa condivisa"
+        },
+        {
+            "id": "mov_11",
+            "data": "2026-02-14",
+            "tipo": "Anticipo Socio",
+            "importo": "219.60",
+            "soggetto": "Dos Amigos",
+            "percentualeFrank": 50,
+            "destinatario": "Frank",
+            "lavoroCollegato": "lav_6",
+            "causale": "Claude Max 20x (di tasca propria)",
+            "note": "Anticipo: Frank ha pagato di tasca, spesa condivisa"
+        }
+    ],
+    "contoBancario": {
+        "saldoAttuale": 0
     },
-    {
-      "data": "2026-02-12",
-      "cliente": "Medisinus",
-      "lavoro": "Sito + SEO",
-      "incassato": "1770",
-      "costi": "",
-      "soggetto": "Frank",
-      "distribuito": "NO"
-    },
-    {
-      "data": "2026-02-12",
-      "cliente": "Ligo",
-      "lavoro": "Sito + Video",
-      "incassato": "680",
-      "costi": "",
-      "soggetto": "Frank",
-      "distribuito": "NO"
-    },
-    {
-      "data": "2026-02-12",
-      "cliente": "",
-      "lavoro": "Elementor Pro",
-      "incassato": 0,
-      "costi": "120",
-      "soggetto": "Dos Amigos",
-      "distribuito": "NO"
-    },
-    {
-      "data": "2026-02-12",
-      "cliente": "",
-      "lavoro": "Spese varie Frank",
-      "incassato": 0,
-      "costi": "607",
-      "soggetto": "Frank",
-      "distribuito": "NO"
-    }
-  ],
-  "movimentiBancari": [],
-  "contoBancario": {
-    "saldoAttuale": 0,
-    "storico": []
-  },
-  "speseFuture": []
+    "speseFuture": [],
+    "nextId": 12
 }
