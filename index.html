@@ -6,9 +6,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex, nofollow">
-    <title>Contabilità Dos Amigos</title>
+    <title>Contabilita Dos Amigos</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #999999;
+            --accent: #D8FF36;
+            --accent-hover: #c4e830;
+            --accent-text: #000000;
+            --border: #333333;
+            --border-light: #444444;
+            --danger: #ff4444;
+            --danger-hover: #cc0000;
+            --positive: #D8FF36;
+            --negative: #ff4444;
+            --row-hover: rgba(255, 255, 255, 0.05);
+        }
+
+        body.light-mode {
+            --bg-primary: #f0f2f5;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e8eaed;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5f6368;
+            --accent: #4a7a00;
+            --accent-hover: #3d6600;
+            --accent-text: #ffffff;
+            --border: #dadce0;
+            --border-light: #c4c7cc;
+            --danger: #d93025;
+            --danger-hover: #b3261e;
+            --positive: #1e8e3e;
+            --negative: #d93025;
+            --row-hover: rgba(0, 0, 0, 0.03);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -17,27 +53,58 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: #000000;
-            color: #ffffff;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
         }
 
+        /* ===== HEADER (always dark) ===== */
         .header {
             background: #000000;
             border-bottom: 1px solid #333;
-            padding: 20px;
+            padding: 15px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
+        .logo {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .logo-dos {
+            font-family: 'Arial Black', 'Impact', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: #D8FF36;
+            letter-spacing: 3px;
+        }
+
+        .logo-amigos {
+            font-family: 'Arial Black', 'Impact', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 3px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
         .sync-status {
-            background: rgba(216, 255, 54, 0.2);
-            padding: 8px 16px;
+            background: rgba(216, 255, 54, 0.15);
+            padding: 8px 14px;
             border-radius: 6px;
             border: 1px solid #333;
             color: #D8FF36;
-            font-size: 14px;
+            font-size: 13px;
+            white-space: nowrap;
         }
 
         .sync-status.saving {
@@ -51,277 +118,440 @@
         }
 
         @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
-        .container {
-            max-width: 1800px;
-            margin: 0 auto;
-        }
-
-        .controls {
-            padding: 20px;
-            background: #1a1a1a;
-            border-bottom: 1px solid #333;
-        }
-
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
+        /* ===== BUTTONS ===== */
         .btn {
-            background: #D8FF36;
-            color: #000000;
+            background: var(--accent);
+            color: var(--accent-text);
             border: none;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            white-space: nowrap;
         }
 
         .btn:hover {
-            background: #c4e830;
-            transform: translateY(-2px);
+            background: var(--accent-hover);
+            transform: translateY(-1px);
         }
 
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .filters {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-        }
-
-        input,
-        select {
-            padding: 10px;
-            background: #2a2a2a;
-            color: #ffffff;
-            border: 1px solid #444;
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
             border-radius: 6px;
-            font-size: 14px;
         }
 
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #D8FF36;
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
         }
 
-        .table-container {
-            overflow-x: auto;
-            padding: 20px;
+        .btn-danger:hover {
+            background: var(--danger-hover);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #000000;
-        }
-
-        th {
-            background: #1a1a1a;
+        .btn-header {
+            background: rgba(216, 255, 54, 0.15);
             color: #D8FF36;
-            padding: 15px 10px;
-            text-align: left;
+            border: 1px solid #555;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12px;
             font-weight: bold;
-            border-bottom: 1px solid #444;
             cursor: pointer;
-            user-select: none;
+            transition: all 0.2s;
         }
 
-        th:hover {
-            background: #2a2a2a;
-        }
-
-        td {
-            padding: 10px;
-            border-bottom: 1px solid #333;
-        }
-
-        tr:hover {
-            background: #1a1a1a;
-        }
-
-        tr.distributed {
-            background: rgba(0, 100, 0, 0.3) !important;
-        }
-
-        td input,
-        td select {
-            width: 100%;
-            padding: 6px;
-            background: #2a2a2a;
-            color: #ffffff;
-            border: 1px solid #444;
-            border-radius: 4px;
-        }
-
-        td input:read-only {
-            background: #1a1a1a;
-            border-bottom: 1px solid #333;
-        }
-
-        .totals {
-            background: #1a1a1a;
-            padding: 30px;
-            margin: 20px;
-            border-radius: 12px;
-            border: 1px solid #333;
-        }
-
-        .totals h2 {
-            color: #D8FF36;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-        }
-
-        .total-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 20px;
-        }
-
-        .total-card {
-            background: #000000;
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid #333;
-        }
-
-        .total-card h3 {
-            color: #D8FF36;
-            margin-bottom: 15px;
-            font-size: 1.5em;
-        }
-
-        .total-line {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #333;
-            color: #ffffff;
-        }
-
-        .total-line:last-child {
-            border-bottom: none;
-            font-weight: bold;
-            font-size: 1.3em;
-            margin-top: 10px;
-            padding-top: 15px;
-            border-top: 1px solid #333;
-        }
-
-        .positive {
-            color: #D8FF36;
-        }
-
-        .negative {
-            color: #ff4444;
+        .btn-header:hover {
+            background: rgba(216, 255, 54, 0.3);
         }
 
         .delete-btn {
-            background: #ff4444;
+            background: var(--danger);
             color: white;
             border: none;
             padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 12px;
         }
 
         .delete-btn:hover {
-            background: #cc0000;
+            background: var(--danger-hover);
         }
 
-        .note {
-            background: #000000;
-            padding: 15px;
-            margin: 20px;
-            border-radius: 8px;
-            border: 1px solid #333;
-            color: #ffffff;
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        .note strong {
-            color: #D8FF36;
+        /* ===== CONTROLS BAR ===== */
+        .controls-bar {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
         }
 
-        .loading {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 30px;
+        /* ===== SECTIONS ===== */
+        .section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .section-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-header h2 {
+            color: var(--accent);
+            font-size: 1.4em;
+            margin: 0;
+        }
+
+        .section-body {
+            padding: 0;
+        }
+
+        /* ===== FILTERS ===== */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-primary);
+        }
+
+        .filters input,
+        .filters select {
+            padding: 8px 10px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 13px;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        .filters input:focus,
+        .filters select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .filters label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            padding: 8px 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .filters label input[type="checkbox"] {
+            width: auto;
+            padding: 0;
+            background: none;
+            border: none;
+        }
+
+        /* ===== PAGINATION ===== */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-primary);
+        }
+
+        .pagination select {
+            padding: 6px 8px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .pagination span {
+            color: var(--accent);
+            font-size: 13px;
+        }
+
+        .pagination .label {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        /* ===== TABLES ===== */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            color: var(--accent);
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 13px;
+            border-bottom: 2px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        th:hover {
+            background: var(--bg-tertiary);
+        }
+
+        td {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: var(--row-hover);
+        }
+
+        td input,
+        td select {
+            width: 100%;
+            padding: 6px 8px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            font-size: 13px;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        td input:focus,
+        td select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        td input:read-only {
+            background: var(--bg-primary);
+            border-color: transparent;
+            color: var(--text-secondary);
+        }
+
+        tfoot td {
+            padding: 12px 10px;
+            font-weight: bold;
+            font-size: 1em;
+            border-top: 2px solid var(--border);
+        }
+
+        /* ===== BADGES ===== */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .badge-green {
+            background: rgba(0, 180, 0, 0.2);
+            color: #4caf50;
+        }
+
+        .badge-yellow {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .badge-red {
+            background: rgba(255, 68, 68, 0.15);
+            color: #ff6b6b;
+        }
+
+        .badge-gray {
+            background: rgba(150, 150, 150, 0.2);
+            color: #999;
+        }
+
+        /* ===== TOTAL CARDS ===== */
+        .total-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .total-card {
+            background: var(--bg-primary);
+            padding: 20px;
             border-radius: 10px;
-            border: 1px solid #333;
-            display: none;
-            z-index: 1000;
+            border: 1px solid var(--border);
+            transition: background 0.3s, border-color 0.3s;
         }
 
-        .loading.active {
-            display: block;
+        .total-card h3 {
+            color: var(--accent);
+            margin-bottom: 12px;
+            font-size: 1.3em;
         }
 
+        .total-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .total-line:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-top: 8px;
+            padding-top: 12px;
+            border-top: 2px solid var(--border);
+        }
+
+        .positive { color: var(--positive); }
+        .negative { color: var(--negative); }
+
+        /* ===== SALDO BOX ===== */
+        .saldo-box {
+            text-align: center;
+            padding: 25px 20px;
+        }
+
+        .saldo-box .saldo-label {
+            font-size: 1em;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .saldo-box .saldo-value {
+            font-size: 2.2em;
+            font-weight: bold;
+        }
+
+        .saldo-box .saldo-note {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        /* ===== SPESE FUTURE TOTAL ===== */
+        .spese-future-total {
+            margin: 15px 20px 20px;
+            padding: 12px 15px;
+            background: rgba(255, 68, 68, 0.08);
+            border: 2px solid var(--danger);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* ===== NOTE ===== */
+        .note-bar {
+            background: var(--bg-secondary);
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 13px;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .note-bar strong {
+            color: var(--accent);
+        }
+
+        /* ===== LOGIN (always dark) ===== */
         .login-screen {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000000;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
         }
 
-        .login-screen.hidden {
-            display: none;
-        }
+        .login-screen.hidden { display: none; }
 
         .login-box {
             background: #1a1a1a;
             padding: 40px;
             border-radius: 20px;
             border: 1px solid #333;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             text-align: center;
             max-width: 400px;
             width: 90%;
         }
 
+        .login-logo {
+            margin-bottom: 25px;
+        }
+
+        .login-logo .logo-dos,
+        .login-logo .logo-amigos {
+            font-size: 36px;
+        }
+
         .login-box h2 {
             color: #D8FF36;
-            margin-bottom: 30px;
-            font-size: 2em;
+            margin-bottom: 25px;
+            font-size: 1.5em;
         }
 
         .login-box input {
             width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: 14px;
+            margin-bottom: 12px;
             background: #2a2a2a;
             border: 2px solid #444;
             border-radius: 8px;
             color: white;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .login-box input:focus {
@@ -331,30 +561,54 @@
 
         .login-box button {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             background: #D8FF36;
             color: #000;
             border: none;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
         .login-box button:hover {
             background: #c4e830;
-            transform: translateY(-2px);
         }
 
         .login-error {
             color: #ff4444;
-            margin-top: 15px;
+            margin-top: 12px;
             display: none;
         }
 
-        .login-error.show {
-            display: block;
+        .login-error.show { display: block; }
+
+        /* ===== LOADING ===== */
+        .loading {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            display: none;
+            z-index: 1000;
+            color: #D8FF36;
+            font-size: 18px;
+        }
+
+        .loading.active { display: block; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header { flex-direction: column; gap: 10px; text-align: center; }
+            .header-right { justify-content: center; flex-wrap: wrap; }
+            .logo-dos, .logo-amigos { font-size: 24px; }
+            .container { padding: 10px; gap: 12px; }
+            .total-grid { grid-template-columns: 1fr; }
+            .controls-bar { justify-content: center; }
         }
     </style>
 </head>
@@ -363,284 +617,274 @@
     <!-- Login Screen -->
     <div class="login-screen" id="loginScreen">
         <div class="login-box">
-            <svg width="150" height="60" viewBox="0 0 800 200">
-                <rect width="800" height="200" fill="#1a1a1a" />
-                <circle cx="80" cy="60" r="35" fill="none" stroke="#D8FF36" stroke-width="6" />
-                <circle cx="95" cy="45" r="28" fill="none" stroke="#D8FF36" stroke-width="5" />
-                <path d="M 50 100 L 50 150 L 110 150 L 110 100" fill="white" />
-                <circle cx="65" cy="120" r="6" fill="black" />
-                <circle cx="95" cy="120" r="6" fill="black" />
-                <rect x="55" y="130" width="50" height="3" fill="black" />
-
-                <path
-                    d="M 260 30 Q 260 15 275 15 L 325 15 Q 340 15 340 30 L 340 50 Q 340 35 325 35 L 300 35 L 300 80 Q 315 80 330 95 L 330 100 Q 315 85 300 85 L 270 85 Q 255 85 255 100 L 255 95 Q 270 80 285 80 L 285 35 L 275 35 Q 260 35 260 50 Z"
-                    fill="white" stroke="#D8FF36" stroke-width="3" />
-                <ellipse cx="300" cy="20" rx="15" ry="8" fill="#D8FF36" />
-
-                <text x="420" y="80" font-family="Arial Black" font-size="60" fill="white" font-weight="bold">DOS</text>
-                <text x="420" y="140" font-family="Arial Black" font-size="60" fill="white"
-                    font-weight="bold">AMIGOS</text>
-            </svg>
-
-            <h2>🔐 Accesso Riservato</h2>
-
+            <div class="login-logo">
+                <span class="logo-dos">DOS</span>
+                <span class="logo-amigos">AMIGOS</span>
+            </div>
+            <h2>Accesso Riservato</h2>
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <input type="text" id="username" placeholder="Username" autocomplete="off" required>
                 <input type="password" id="password" placeholder="Password" autocomplete="off" required>
                 <button type="submit">Accedi</button>
             </form>
-
-            <div class="login-error" id="loginError">
-                ❌ Credenziali errate! Riprova.
-            </div>
+            <div class="login-error" id="loginError">Credenziali errate! Riprova.</div>
         </div>
     </div>
 
-    <div class="loading" id="loading">
-        <div style="color: #D8FF36; font-size: 20px;">⏳ Caricamento...</div>
-    </div>
+    <div class="loading" id="loading">Caricamento...</div>
 
+    <!-- Header -->
     <div class="header">
-        <svg width="200" height="70" viewBox="0 0 800 200">
-            <rect width="800" height="200" fill="black" />
-            <circle cx="80" cy="60" r="35" fill="none" stroke="#D8FF36" stroke-width="6" />
-            <circle cx="95" cy="45" r="28" fill="none" stroke="#D8FF36" stroke-width="5" />
-            <path d="M 50 100 L 50 150 L 110 150 L 110 100" fill="white" />
-            <circle cx="65" cy="120" r="6" fill="black" />
-            <circle cx="95" cy="120" r="6" fill="black" />
-            <rect x="55" y="130" width="50" height="3" fill="black" />
-            <rect x="55" y="136" width="50" height="3" fill="black" />
-            <rect x="55" y="142" width="50" height="3" fill="black" />
-
-            <path
-                d="M 260 30 Q 260 15 275 15 L 325 15 Q 340 15 340 30 L 340 50 Q 340 35 325 35 L 300 35 L 300 80 Q 315 80 330 95 L 330 100 Q 315 85 300 85 L 270 85 Q 255 85 255 100 L 255 95 Q 270 80 285 80 L 285 35 L 275 35 Q 260 35 260 50 Z"
-                fill="white" stroke="#D8FF36" stroke-width="3" />
-            <ellipse cx="300" cy="20" rx="15" ry="8" fill="#D8FF36" />
-
-            <text x="420" y="80" font-family="Arial Black" font-size="60" fill="white" font-weight="bold">DOS</text>
-            <text x="420" y="140" font-family="Arial Black" font-size="60" fill="white" font-weight="bold">AMIGOS</text>
-        </svg>
-
-        <div class="sync-status" id="syncStatus">
-            ☁️ Sincronizzato con server
+        <div class="logo">
+            <span class="logo-dos">DOS</span>
+            <span class="logo-amigos">AMIGOS</span>
+        </div>
+        <div class="header-right">
+            <button class="btn-header" onclick="toggleTheme()" id="themeToggle">Light Mode</button>
+            <div class="sync-status" id="syncStatus">Sincronizzato</div>
         </div>
     </div>
 
+    <!-- Main Content -->
     <div class="container">
-        <div class="controls">
-            <div class="btn-group">
-                <button class="btn" onclick="addRow()">➕ Aggiungi Riga</button>
-                <button class="btn" onclick="exportToExcel()">📥 Esporta Excel</button>
-                <button class="btn" onclick="manualSave()">💾 Salva Ora</button>
-                <button class="btn" onclick="downloadBackup()">📦 Download Backup</button>
-                <button class="btn" onclick="logout()" style="background: #ff4444;">🚪 Logout</button>
+
+        <!-- Controls Bar -->
+        <div class="controls-bar">
+            <button class="btn" onclick="addLavoro()">+ Aggiungi Lavoro</button>
+            <button class="btn" onclick="addMovimento()">+ Aggiungi Movimento</button>
+            <button class="btn" onclick="exportToExcel()">Esporta Excel</button>
+            <button class="btn" onclick="manualSave()">Salva Ora</button>
+            <button class="btn" onclick="downloadBackup()">Download Backup</button>
+            <button class="btn btn-danger" onclick="logout()">Logout</button>
+        </div>
+
+        <!-- ===== LAVORI ===== -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Lavori e Preventivi</h2>
+                <span style="color: var(--text-secondary); font-size: 13px;">Tracker lavori - i conteggi soci si basano sui Movimenti Bancari</span>
             </div>
 
             <div class="filters">
                 <input type="date" id="filterDateFrom" placeholder="Data da" onchange="applyFilters()">
                 <input type="date" id="filterDateTo" placeholder="Data a" onchange="applyFilters()">
-                <input type="text" id="filterCliente" placeholder="🔍 Cerca cliente" onchange="applyFilters()">
-                <input type="number" id="filterMinImporto" placeholder="Min €" onchange="applyFilters()">
-                <input type="number" id="filterMaxImporto" placeholder="Max €" onchange="applyFilters()">
-                <label
-                    style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 6px;">
-                    <input type="checkbox" id="hideDistributed" onchange="applyFilters()" checked
-                        style="width: auto; cursor: pointer;">
-                    <span>Nascondi distribuite</span>
+                <input type="text" id="filterCliente" placeholder="Cerca cliente..." oninput="applyFilters()">
+                <input type="number" id="filterMinImporto" placeholder="Min EUR" onchange="applyFilters()">
+                <input type="number" id="filterMaxImporto" placeholder="Max EUR" onchange="applyFilters()">
+                <label>
+                    <input type="checkbox" id="filterHideIncassati" onchange="applyFilters()">
+                    Nascondi incassati
                 </label>
             </div>
 
-            <!-- Paginazione Lavori -->
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #1a1a1a; border-bottom: 1px solid #333;">
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <span style="color: #D8FF36;">Mostra:</span>
-                    <select id="lavoriPerPagina" onchange="changeLavoriPerPagina()"
-                        style="padding: 8px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px;">
+            <div class="pagination">
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <span class="label">Mostra:</span>
+                    <select id="lavoriPerPagina" onchange="changeLavoriPerPagina()">
                         <option value="10">10</option>
                         <option value="20" selected>20</option>
                         <option value="50">50</option>
                         <option value="100">100</option>
                     </select>
-                    <span style="color: #999;">record per pagina</span>
                 </div>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <button onclick="prevPageLavori()" class="btn" style="padding: 8px 16px;">◀ Prec</button>
-                    <span style="color: #D8FF36;" id="lavoriPaginaInfo">Pagina 1 di 1</span>
-                    <button onclick="nextPageLavori()" class="btn" style="padding: 8px 16px;">Succ ▶</button>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button onclick="prevPageLavori()" class="btn btn-sm">Prec</button>
+                    <span id="lavoriPaginaInfo">Pagina 1 di 1</span>
+                    <button onclick="nextPageLavori()" class="btn btn-sm">Succ</button>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable('data')">Data</th>
+                            <th onclick="sortTable('cliente')">Cliente</th>
+                            <th>Lavoro / Spesa</th>
+                            <th onclick="sortTable('importoPrevisto')">Importo Previsto</th>
+                            <th>Imp. Fisc. (67%)</th>
+                            <th>Tasse Stim. (5%)</th>
+                            <th onclick="sortTable('costi')">Costi</th>
+                            <th>Soggetto</th>
+                            <th>Stato Pagamento</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lavoriBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="color: var(--accent);">TOTALI</td>
+                            <td style="color: var(--accent);" id="totalPrevisto">-</td>
+                            <td></td>
+                            <td style="color: var(--negative);" id="totalTasse">-</td>
+                            <td style="color: var(--negative);" id="totalCosti">-</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== MOVIMENTI BANCARI ===== -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Movimenti Bancari</h2>
+                <span style="color: var(--text-secondary); font-size: 13px;">Fonte dei conteggi soci - registra qui entrate e uscite reali</span>
+            </div>
+
+            <div class="pagination">
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <span class="label">Mostra:</span>
+                    <select id="movimentiPerPagina" onchange="changeMovimentiPerPagina()">
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button onclick="prevPageMovimenti()" class="btn btn-sm">Prec</button>
+                    <span id="movimentiPaginaInfo">Pagina 1 di 1</span>
+                    <button onclick="nextPageMovimenti()" class="btn btn-sm">Succ</button>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Tipo</th>
+                            <th>Importo EUR</th>
+                            <th>Soggetto</th>
+                            <th>Destinatario</th>
+                            <th>Lavoro Collegato</th>
+                            <th>Causale</th>
+                            <th>Note</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody id="movimentiBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" style="color: var(--accent);">TOTALI</td>
+                            <td id="movTotaleEntrate" style="color: var(--positive);">-</td>
+                            <td colspan="6"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== CONTO BANCARIO ===== -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Saldo Conto Bancario</h2>
+            </div>
+            <div class="saldo-box">
+                <div class="saldo-label">Saldo attuale calcolato dai movimenti</div>
+                <div class="saldo-value" id="saldoAttuale">-</div>
+                <div class="saldo-note">Entrate - Uscite - Spese - Tasse (esclusi Anticipi Socio)</div>
+            </div>
+        </div>
+
+        <!-- ===== PORTAFOGLIO SOCI ===== -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Portafoglio Soci (basato sui movimenti bancari)</h2>
+            </div>
+            <div class="total-grid">
+                <div class="total-card">
+                    <h3>FRANK</h3>
+                    <div id="frankTotals"></div>
+                </div>
+                <div class="total-card">
+                    <h3>FOX</h3>
+                    <div id="foxTotals"></div>
                 </div>
             </div>
         </div>
 
-        <div class="table-container">
-            <table id="dataTable">
-                <thead>
-                    <tr>
-                        <th onclick="sortTable('data')">📅 Data ⬍</th>
-                        <th onclick="sortTable('cliente')">Cliente ⬍</th>
-                        <th>Lavoro / Spesa</th>
-                        <th onclick="sortTable('incassato')">Incassato ⬍</th>
-                        <th>Imponibile Fisc. (67%)</th>
-                        <th>Tasse (5%)</th>
-                        <th onclick="sortTable('costi')">Costi ⬍</th>
-                        <th>Netto incassato</th>
-                        <th>Netto per socio</th>
-                        <th>Soggetto</th>
-                        <th>Distribuito</th>
-                        <th>Azioni</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-                <tfoot>
-                    <tr style="background: #1a1a1a; border-top: 1px solid #333;">
-                        <td colspan="3" style="color: #D8FF36; font-weight: bold; font-size: 1.1em; padding: 15px;">
-                            TOTALI</td>
-                        <td style="color: #D8FF36; font-weight: bold; font-size: 1.1em;" id="totalIncassato">€ 0.00</td>
-                        <td></td>
-                        <td style="color: #ff4444; font-weight: bold; font-size: 1.1em;" id="totalTasse">€ 0.00</td>
-                        <td style="color: #ff4444; font-weight: bold; font-size: 1.1em;" id="totalCosti">€ 0.00</td>
-                        <td style="color: #D8FF36; font-weight: bold; font-size: 1.1em;" id="totalNetto">€ 0.00</td>
-                        <td colspan="4"></td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-
-    </div>
-
-    <!-- Sezione Movimenti Bancari -->
-    <div class="totals">
-        <h2>🏦 Movimenti Bancari</h2>
-        <button class="btn" onclick="addMovimento()" style="margin-bottom: 15px;">➕ Aggiungi Movimento</button>
-
-        <!-- Paginazione Movimenti Bancari -->
-        <div
-            style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; margin-bottom: 15px;">
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <span style="color: #D8FF36;">Mostra:</span>
-                <select id="movimentiPerPagina" onchange="changeMovimentiPerPagina()"
-                    style="padding: 8px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 6px;">
-                    <option value="10">10</option>
-                    <option value="20" selected>20</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </select>
-                <span style="color: #999;">movimenti per pagina</span>
+        <!-- ===== SPESE FUTURE ===== -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Spese Future Pianificate</h2>
+                <button class="btn btn-sm" onclick="addSpesaFutura()">+ Aggiungi Spesa</button>
             </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <button onclick="prevPageMovimenti()" class="btn" style="padding: 8px 16px;">◀ Prec</button>
-                <span style="color: #D8FF36;" id="movimentiPaginaInfo">Pagina 1 di 1</span>
-                <button onclick="nextPageMovimenti()" class="btn" style="padding: 8px 16px;">Succ ▶</button>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Descrizione</th>
+                            <th>Importo EUR</th>
+                            <th>Data Prevista</th>
+                            <th>Ricorrente</th>
+                            <th>Frequenza</th>
+                            <th>Note</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody id="speseFutureBody"></tbody>
+                </table>
+            </div>
+            <div class="spese-future-total">
+                <strong style="color: var(--danger);">Totale Spese Future:</strong>
+                <span id="totaleSpeseFuture" style="font-size: 1.3em; color: var(--danger);">-</span>
             </div>
         </div>
 
-        <div class="table-container" style="padding: 0;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Tipo</th>
-                        <th>Importo €</th>
-                        <th>Destinatario/Socio</th>
-                        <th>Cliente</th>
-                        <th>Causale</th>
-                        <th>Note</th>
-                        <th>Azioni</th>
-                    </tr>
-                </thead>
-                <tbody id="movimentiBody"></tbody>
-            </table>
+        <!-- Note -->
+        <div class="note-bar">
+            <strong>Info:</strong> I conteggi del portafoglio soci si basano esclusivamente sui movimenti bancari reali.
+            La tabella lavori serve come tracker dei preventivi. Registra ogni entrata/uscita reale nei Movimenti Bancari.
         </div>
-    </div>
-
-    <!-- Sezione Conto Bancario -->
-    <div class="totals">
-        <h2>💳 Conto Bancario Dos Amigos</h2>
-        <div style="font-size: 2em; font-weight: bold; margin: 20px 0;">
-            Saldo attuale: <span id="saldoAttuale" class="positive">€ 0.00</span>
-        </div>
-        <p style="color: #999; font-size: 0.9em;">Il saldo si aggiorna automaticamente con i movimenti bancari</p>
-    </div>
-
-    <div class="totals">
-        <h2>📊 Portafoglio Soci (Avanzo/Debito)</h2>
-        <div class="total-grid">
-            <div class="total-card">
-                <h3>🦊 FRANK</h3>
-                <div id="frankTotals"></div>
-            </div>
-            <div class="total-card">
-                <h3>🦊 FOX</h3>
-                <div id="foxTotals"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sezione Spese Future -->
-    <div class="totals">
-        <h2>📅 Spese Future Pianificate</h2>
-        <button class="btn" onclick="addSpesaFutura()" style="margin-bottom: 15px;">➕ Aggiungi Spesa</button>
-
-        <div class="table-container" style="padding: 0;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Descrizione</th>
-                        <th>Importo €</th>
-                        <th>Data Prevista</th>
-                        <th>Ricorrente</th>
-                        <th>Frequenza</th>
-                        <th>Note</th>
-                        <th>Azioni</th>
-                    </tr>
-                </thead>
-                <tbody id="speseFutureBody"></tbody>
-            </table>
-        </div>
-
-        <div
-            style="margin-top: 20px; padding: 15px; background: rgba(255, 68, 68, 0.1); border: 2px solid #ff4444; border-radius: 8px;">
-            <strong style="color: #ff4444;">Totale Spese Future:</strong>
-            <span id="totaleSpeseFuture" style="font-size: 1.5em; color: #ff4444; margin-left: 10px;">€ 0.00</span>
-        </div>
-    </div>
-
-    <div class="note">
-        <strong>☁️ Info:</strong> I dati vengono salvati automaticamente sul server ogni volta che modifichi qualcosa.
-        Accessibile da qualsiasi dispositivo. I conteggi "Avanzo/Debito" per ogni socio riflettono quanto spetta loro
-        dai lavori meno i bonifici già ricevuti.
-    </div>
     </div>
 
     <script>
-        // ========== SISTEMA LOGIN SICURO (PHP) ==========
+        // =============== CONFIGURATION ===============
         const API_URL = 'api.php';
+        const TIPI_MOVIMENTO = ['Entrata', 'Prelievo Socio', 'Spesa', 'Anticipo Socio', 'Tasse'];
+        const SOGGETTI = ['Dos Amigos', 'Frank', 'Fox'];
+        const ENTRATA_TYPES = ['Entrata'];
+        const USCITA_BANK_TYPES = ['Prelievo Socio', 'Spesa', 'Tasse'];
 
+        // =============== STATE ===============
+        let data = getDefaultData();
+        let sortField = null;
+        let sortDirection = 'asc';
+        let saveTimeout = null;
+        let lavoriPage = 1, lavoriPerPage = 20;
+        let movimentiPage = 1, movimentiPerPage = 20;
+        let isDarkMode = true;
+
+        function getDefaultData() {
+            return {
+                lavori: [],
+                movimentiBancari: [],
+                contoBancario: { saldoAttuale: 0 },
+                speseFuture: [],
+                nextId: 1
+            };
+        }
+
+        // =============== AUTH ===============
         async function handleLogin(event) {
             event.preventDefault();
-
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'login',
-                        username: username,
-                        password: password
-                    })
+                    body: JSON.stringify({ action: 'login', username, password })
                 });
-
                 const result = await response.json();
-
                 if (result.success) {
-                    // Login riuscito
                     document.getElementById('loginScreen').classList.add('hidden');
                     loadData();
                 } else {
-                    // Login fallito
                     showLoginError();
                 }
             } catch (error) {
@@ -650,21 +894,18 @@
         }
 
         function showLoginError() {
-            document.getElementById('loginError').classList.add('show');
+            const el = document.getElementById('loginError');
+            el.classList.add('show');
             document.getElementById('password').value = '';
-            setTimeout(() => {
-                document.getElementById('loginError').classList.remove('show');
-            }, 3000);
+            setTimeout(() => el.classList.remove('show'), 3000);
         }
 
         async function checkAuth() {
             try {
-                const response = await fetch(API_URL + '?action=check_auth');
-                const result = await response.json();
+                const r = await fetch(API_URL + '?action=check_auth');
+                const result = await r.json();
                 return result.authenticated;
-            } catch (error) {
-                return false;
-            }
+            } catch { return false; }
         }
 
         async function logout() {
@@ -674,91 +915,44 @@
             }
         }
 
-        // ========== SISTEMA CONTABILITÀ ==========
-        let data = {
-            lavori: [],
-            movimentiBancari: [],
-            contoBancario: { saldoAttuale: 0, storico: [] },
-            speseFuture: []
-        };
-        let sortField = null;
-        let sortDirection = 'asc';
-        let saveTimeout = null;
-
-        // Paginazione Lavori
-        let lavoriPaginaCorrente = 1;
-        let lavoriPerPagina = 20;
-
-        // Paginazione Movimenti Bancari
-        let movimentiPaginaCorrente = 1;
-        let movimentiPerPagina = 20;
-
-        // Carica dati all'avvio
+        // =============== DATA I/O ===============
         async function loadData() {
             showLoading(true);
             try {
-                const response = await fetch(API_URL + '?action=load');
-                const result = await response.json();
-
-                if (result.success) {
-                    data = result.data || getDefaultData();
-                } else {
-                    data = getDefaultData();
-                }
-
-                renderTable();
-                updateSyncStatus('success', '☁️ Dati caricati');
+                const r = await fetch(API_URL + '?action=load');
+                const result = await r.json();
+                data = result.success ? migrateData(result.data || getDefaultData()) : getDefaultData();
+                renderAll();
+                updateSyncStatus('success', 'Dati caricati');
             } catch (error) {
                 console.error('Errore caricamento:', error);
                 data = getDefaultData();
-                renderTable();
-                updateSyncStatus('error', '❌ Errore caricamento');
+                renderAll();
+                updateSyncStatus('error', 'Errore caricamento');
             }
             showLoading(false);
         }
 
-        function getDefaultData() {
-            return {
-                lavori: [],
-                movimentiBancari: [],
-                contoBancario: { saldoAttuale: 0, storico: [] },
-                speseFuture: []
-            };
-        }
-
         async function saveData() {
-            updateSyncStatus('saving', '💾 Salvataggio...');
-
+            updateSyncStatus('saving', 'Salvataggio...');
             try {
-                const response = await fetch(API_URL, {
+                const r = await fetch(API_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        action: 'save',
-                        data: data
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'save', data })
                 });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    updateSyncStatus('success', '✅ Salvato sul server');
-                } else {
-                    updateSyncStatus('error', '❌ Errore salvataggio');
-                }
+                const result = await r.json();
+                updateSyncStatus(result.success ? 'success' : 'error',
+                    result.success ? 'Salvato' : 'Errore salvataggio');
             } catch (error) {
                 console.error('Errore salvataggio:', error);
-                updateSyncStatus('error', '❌ Errore connessione');
+                updateSyncStatus('error', 'Errore connessione');
             }
         }
 
         function autoSave() {
             if (saveTimeout) clearTimeout(saveTimeout);
-            saveTimeout = setTimeout(() => {
-                saveData();
-            }, 1000);
+            saveTimeout = setTimeout(() => saveData(), 1000);
         }
 
         function manualSave() {
@@ -766,311 +960,205 @@
             saveData();
         }
 
-        function updateSyncStatus(type, message) {
-            const status = document.getElementById('syncStatus');
-            status.textContent = message;
-            status.className = 'sync-status ' + type;
+        function migrateData(d) {
+            if (!d.nextId) d.nextId = 1;
 
-            if (type === 'success') {
-                setTimeout(() => {
-                    status.textContent = '☁️ Sincronizzato';
-                    status.className = 'sync-status';
-                }, 2000);
+            // Migrate lavori
+            if (d.lavori) {
+                d.lavori.forEach(lav => {
+                    if (!lav.id) lav.id = 'lav_' + d.nextId++;
+                    // Rename incassato -> importoPrevisto
+                    if (lav.incassato !== undefined && lav.importoPrevisto === undefined) {
+                        lav.importoPrevisto = lav.incassato;
+                        delete lav.incassato;
+                    }
+                });
+            } else {
+                d.lavori = [];
             }
+
+            // Migrate movimenti
+            if (d.movimentiBancari) {
+                d.movimentiBancari.forEach(mov => {
+                    if (!mov.id) mov.id = 'mov_' + d.nextId++;
+                    if (!mov.soggetto) mov.soggetto = mov.destinatario || 'Dos Amigos';
+                    if (mov.lavoroCollegato === undefined) mov.lavoroCollegato = '';
+                    // Migrate old tipo names
+                    if (mov.tipo === 'Bonifico in entrata' || mov.tipo === 'Deposito') mov.tipo = 'Entrata';
+                    if (mov.tipo === 'Bonifico in uscita' || mov.tipo === 'Prelievo') mov.tipo = 'Prelievo Socio';
+                });
+            } else {
+                d.movimentiBancari = [];
+            }
+
+            if (!d.speseFuture) d.speseFuture = [];
+            if (!d.contoBancario) d.contoBancario = { saldoAttuale: 0 };
+
+            return d;
         }
 
-        function showLoading(show) {
-            document.getElementById('loading').classList.toggle('active', show);
+        function generateId(prefix) {
+            return prefix + '_' + data.nextId++;
         }
 
-        function calculateRow(row) {
-            const incassato = parseFloat(row.incassato) || 0;
-            const costi = parseFloat(row.costi) || 0;
-            const imponibile = incassato * 0.67;
-            const tasse = imponibile * 0.05;
-            const netto = incassato - tasse - costi;
-            const nettoPerSocio = row.soggetto === "Dos Amigos" ? netto / 2 : netto;
-
-            return {
-                imponibile: imponibile.toFixed(2),
-                tasse: tasse.toFixed(2),
-                netto: netto.toFixed(2),
-                nettoPerSocio: nettoPerSocio.toFixed(2)
-            };
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById('tableBody');
-            tbody.innerHTML = '';
-
-            const filtered = getFilteredData();
-
-            filtered.forEach((row) => {
-                const calc = calculateRow(row);
-                const tr = document.createElement('tr');
-                if (row.distribuito === 'SI') tr.classList.add('distributed');
-
-                const originalIndex = data.lavori.indexOf(row);
-
-                tr.innerHTML = `
-                    <td><input type="date" value="${row.data}" onchange="updateData(${originalIndex}, 'data', this.value)"></td>
-                    <td><input type="text" value="${row.cliente}" onchange="updateData(${originalIndex}, 'cliente', this.value)"></td>
-                    <td><input type="text" value="${row.lavoro}" onchange="updateData(${originalIndex}, 'lavoro', this.value)"></td>
-                    <td><input type="number" step="0.01" value="${row.incassato}" onchange="updateData(${originalIndex}, 'incassato', this.value)"></td>
-                    <td><input type="text" value="${calc.imponibile}" readonly></td>
-                    <td><input type="text" value="${calc.tasse}" readonly></td>
-                    <td><input type="number" step="0.01" value="${row.costi}" onchange="updateData(${originalIndex}, 'costi', this.value)"></td>
-                    <td><input type="text" value="${calc.netto}" readonly></td>
-                    <td><input type="text" value="${calc.nettoPerSocio}" readonly></td>
-                    <td>
-                        <select onchange="updateData(${originalIndex}, 'soggetto', this.value)">
-                            <option value="Dos Amigos" ${row.soggetto === "Dos Amigos" ? "selected" : ""}>Dos Amigos</option>
-                            <option value="Frank" ${row.soggetto === "Frank" ? "selected" : ""}>Frank</option>
-                            <option value="Fox" ${row.soggetto === "Fox" ? "selected" : ""}>Fox</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select onchange="updateData(${originalIndex}, 'distribuito', this.value)">
-                            <option value="NO" ${row.distribuito === "NO" ? "selected" : ""}>NO</option>
-                            <option value="SI" ${row.distribuito === "SI" ? "selected" : ""}>SI</option>
-                        </select>
-                    </td>
-                    <td><button class="delete-btn" onclick="deleteRow(${originalIndex})">🗑️</button></td>
-                `;
-
-                tbody.appendChild(tr);
-            });
-
-            calculateTotals();
+        // =============== RENDER ALL ===============
+        function renderAll() {
+            renderLavori();
             renderMovimenti();
-            renderContoBancario();
+            calculateBankBalance();
+            calculatePortafoglio();
             renderSpeseFuture();
         }
 
-        function updateData(index, field, value) {
-            const oldValue = data.lavori[index][field];
-            data.lavori[index][field] = value;
-
-            // Auto-crea movimento bancario quando aggiungi/modifichi un incasso
-            if (field === 'incassato') {
-                const nuovoIncasso = parseFloat(value) || 0;
-                const vecchioIncasso = parseFloat(oldValue) || 0;
-
-                // Se passa da 0 a un valore > 0, crea movimento bancario
-                if (vecchioIncasso === 0 && nuovoIncasso > 0) {
-                    const lavoro = data.lavori[index];
-                    data.movimentiBancari.push({
-                        data: lavoro.data,
-                        tipo: "Bonifico in entrata",
-                        importo: nuovoIncasso,
-                        destinatario: lavoro.soggetto,
-                        cliente: lavoro.cliente,
-                        causale: `Pagamento - ${lavoro.lavoro}`,
-                        note: "Auto-generato da lavoro"
-                    });
-                    updateContoBancario();
-                }
-            }
-
-            autoSave();
-            renderTable();
-        }
-
-        function addRow() {
-            const today = new Date().toISOString().split('T')[0];
+        // =============== LAVORI ===============
+        function addLavoro() {
             data.lavori.push({
-                data: today,
-                cliente: "",
-                lavoro: "",
-                incassato: 0,
+                id: generateId('lav'),
+                data: new Date().toISOString().split('T')[0],
+                cliente: '',
+                lavoro: '',
+                importoPrevisto: 0,
                 costi: 0,
-                soggetto: "Dos Amigos",
-                distribuito: "NO"
+                soggetto: 'Dos Amigos'
             });
             autoSave();
-            renderTable();
+            renderAll();
         }
 
-        function deleteRow(index) {
-            if (confirm('Sei sicuro di voler eliminare questa riga?')) {
-                data.lavori.splice(index, 1);
+        function updateLavoro(id, field, value) {
+            const lav = data.lavori.find(l => l.id === id);
+            if (lav) {
+                lav[field] = value;
                 autoSave();
-                renderTable();
+                renderAll();
             }
         }
 
-        function calculateTotals() {
-            let frankIncassi = 0, frankRimborsi = 0;
-            let foxIncassi = 0, foxRimborsi = 0;
-            let dosAmigosIncassi = 0;
-            let dosAmigosSpese = 0;
-            let totaleTasse = 0;
-            let totaleIncassato = 0;
-            let totaleCosti = 0;
-            let totaleNetto = 0;
+        function deleteLavoro(id) {
+            if (confirm('Eliminare questo lavoro?')) {
+                data.lavori = data.lavori.filter(l => l.id !== id);
+                autoSave();
+                renderAll();
+            }
+        }
 
-            data.lavori.forEach(row => {
-                if (row.distribuito === "NO") {
-                    const incassato = parseFloat(row.incassato) || 0;
-                    const costi = parseFloat(row.costi) || 0;
-                    const imponibile = incassato * 0.67;
-                    const tasse = imponibile * 0.05;
-                    const netto = incassato - tasse - costi;
+        function calculateRow(row) {
+            const importo = parseFloat(row.importoPrevisto) || 0;
+            const costi = parseFloat(row.costi) || 0;
+            const imponibile = importo * 0.67;
+            const tasse = imponibile * 0.05;
+            return { imponibile, tasse };
+        }
 
-                    // Somma totali per la riga di riepilogo
-                    totaleIncassato += incassato;
-                    totaleTasse += tasse;
-                    totaleCosti += costi;
-                    totaleNetto += netto;
-
-                    if (row.soggetto === "Dos Amigos") {
-                        // Per Dos Amigos: somma incassi al netto tasse, somma spese
-                        if (incassato > 0) {
-                            dosAmigosIncassi += (incassato - tasse);
-                        }
-                        if (costi > 0) {
-                            dosAmigosSpese += costi;
-                        }
-                    } else if (row.soggetto === "Frank") {
-                        // Incassi personali Frank
-                        if (incassato > 0) {
-                            frankIncassi += (incassato - tasse - costi);
-                        }
-                        // Rimborsi Frank (spese anticipate)
-                        if (costi > 0 && incassato === 0) {
-                            frankRimborsi += costi;
-                        }
-                    } else if (row.soggetto === "Fox") {
-                        // Incassi personali Fox
-                        if (incassato > 0) {
-                            foxIncassi += (incassato - tasse - costi);
-                        }
-                        // Rimborsi Fox (spese anticipate)
-                        if (costi > 0 && incassato === 0) {
-                            foxRimborsi += costi;
-                        }
-                    }
-                }
-            });
-
-            // Calcola quanto i soci hanno già PRESO dalla banca
-            let frankGiaRicevuto = 0;
-            let foxGiaRicevuto = 0;
+        function getLavoroStato(lavoro) {
+            const previsto = parseFloat(lavoro.importoPrevisto) || 0;
+            let incassatoReale = 0;
 
             data.movimentiBancari.forEach(mov => {
-                const importo = Math.abs(parseFloat(mov.importo) || 0);
-                if (mov.tipo === "Bonifico in uscita" || mov.tipo === "Prelievo") {
-                    if (mov.destinatario === "Frank") frankGiaRicevuto += importo;
-                    if (mov.destinatario === "Fox") foxGiaRicevuto += importo;
+                if (mov.lavoroCollegato === lavoro.id && ENTRATA_TYPES.includes(mov.tipo)) {
+                    incassatoReale += Math.abs(parseFloat(mov.importo) || 0);
                 }
             });
 
-            // Calcola netto Dos Amigos: sottrai spese comuni E rimborsi prima di dividere
-            const dosAmigosNetto = dosAmigosIncassi - dosAmigosSpese - frankRimborsi - foxRimborsi;
-            const frankQuota = dosAmigosNetto / 2;
-            const foxQuota = dosAmigosNetto / 2;
-
-            const frankSpettante = frankIncassi + frankRimborsi + frankQuota;
-            const foxSpettante = foxIncassi + foxRimborsi + foxQuota;
-
-            const frankBilancio = frankSpettante - frankGiaRicevuto;
-            const foxBilancio = foxSpettante - foxGiaRicevuto;
-
-            document.getElementById('frankTotals').innerHTML = `
-                <div class="total-line"><span>Netto dai Lavori:</span><span class="positive">€ ${frankIncassi.toFixed(2)}</span></div>
-                <div class="total-line"><span>Rimborsi Spese:</span><span class="positive">€ ${frankRimborsi.toFixed(2)}</span></div>
-                <div class="total-line"><span>Quota Dos Amigos:</span><span class="${frankQuota >= 0 ? 'positive' : 'negative'}">€ ${frankQuota.toFixed(2)}</span></div>
-                <div class="total-line" style="border-top: 1px dashed #444; margin-top: 5px;"><span>Totale Spettante:</span><span style="color: #fff">€ ${frankSpettante.toFixed(2)}</span></div>
-                <div class="total-line"><span>Già Ricevuto (Banca):</span><span class="negative">€ ${frankGiaRicevuto.toFixed(2)}</span></div>
-                <div class="total-line"><span>AVANZO / DEBITO:</span><span class="${frankBilancio >= 0 ? 'positive' : 'negative'}">€ ${frankBilancio.toFixed(2)}</span></div>
-            `;
-
-            document.getElementById('foxTotals').innerHTML = `
-                <div class="total-line"><span>Netto dai Lavori:</span><span class="positive">€ ${foxIncassi.toFixed(2)}</span></div>
-                <div class="total-line"><span>Rimborsi Spese:</span><span class="positive">€ ${foxRimborsi.toFixed(2)}</span></div>
-                <div class="total-line"><span>Quota Dos Amigos:</span><span class="${foxQuota >= 0 ? 'positive' : 'negative'}">€ ${foxQuota.toFixed(2)}</span></div>
-                <div class="total-line" style="border-top: 1px dashed #444; margin-top: 5px;"><span>Totale Spettante:</span><span style="color: #fff">€ ${foxSpettante.toFixed(2)}</span></div>
-                <div class="total-line"><span>Già Ricevuto (Banca):</span><span class="negative">€ ${foxGiaRicevuto.toFixed(2)}</span></div>
-                <div class="total-line"><span>AVANZO / DEBITO:</span><span class="${foxBilancio >= 0 ? 'positive' : 'negative'}">€ ${foxBilancio.toFixed(2)}</span></div>
-            `;
-
-            // Aggiorna riga totali in fondo alla tabella
-            document.getElementById('totalIncassato').textContent = `€ ${totaleIncassato.toFixed(2)}`;
-            document.getElementById('totalTasse').textContent = `€ ${totaleTasse.toFixed(2)}`;
-            document.getElementById('totalCosti').textContent = `€ ${totaleCosti.toFixed(2)}`;
-            document.getElementById('totalNetto').textContent = `€ ${totaleNetto.toFixed(2)}`;
+            if (previsto === 0 && (parseFloat(lavoro.costi) || 0) > 0) {
+                return { stato: 'Solo costi', classe: 'badge-gray', reale: incassatoReale };
+            }
+            if (previsto === 0) {
+                return { stato: '-', classe: 'badge-gray', reale: 0 };
+            }
+            if (incassatoReale === 0) {
+                return { stato: 'Da incassare', classe: 'badge-red', reale: 0 };
+            }
+            if (incassatoReale < previsto) {
+                return { stato: 'Parziale', classe: 'badge-yellow', reale: incassatoReale };
+            }
+            return { stato: 'Incassato', classe: 'badge-green', reale: incassatoReale };
         }
 
-        function getFilteredData() {
-            const dateFrom = document.getElementById('filterDateFrom').value;
-            const dateTo = document.getElementById('filterDateTo').value;
-            const cliente = document.getElementById('filterCliente').value.toLowerCase();
-            const minImporto = parseFloat(document.getElementById('filterMinImporto').value) || -Infinity;
-            const maxImporto = parseFloat(document.getElementById('filterMaxImporto').value) || Infinity;
-            const hideDistributed = document.getElementById('hideDistributed').checked;
+        function renderLavori() {
+            const tbody = document.getElementById('lavoriBody');
+            tbody.innerHTML = '';
 
-            const filtered = data.lavori.filter(row => {
-                if (dateFrom && row.data < dateFrom) return false;
-                if (dateTo && row.data > dateTo) return false;
-                if (cliente && !row.cliente.toLowerCase().includes(cliente)) return false;
-                const inc = parseFloat(row.incassato) || 0;
-                if (inc < minImporto || inc > maxImporto) return false;
-                if (hideDistributed && row.distribuito === "SI") return false;
-                return true;
+            const filtered = getFilteredLavori();
+            let totalPrevisto = 0, totalTasse = 0, totalCosti = 0;
+
+            // Totali su TUTTI i lavori (non paginati)
+            data.lavori.forEach(row => {
+                totalPrevisto += parseFloat(row.importoPrevisto) || 0;
+                totalCosti += parseFloat(row.costi) || 0;
+                const calc = calculateRow(row);
+                totalTasse += calc.tasse;
             });
 
             // Paginazione
-            const totalPages = Math.ceil(filtered.length / lavoriPerPagina);
-            const start = (lavoriPaginaCorrente - 1) * lavoriPerPagina;
-            const end = start + lavoriPerPagina;
+            const totalPages = Math.max(1, Math.ceil(filtered.length / lavoriPerPage));
+            if (lavoriPage > totalPages) lavoriPage = totalPages;
+            const start = (lavoriPage - 1) * lavoriPerPage;
+            const paginated = filtered.slice(start, start + lavoriPerPage);
+            document.getElementById('lavoriPaginaInfo').textContent =
+                `Pagina ${lavoriPage} di ${totalPages} (${filtered.length} record)`;
 
-            // Aggiorna info paginazione
-            document.getElementById('lavoriPaginaInfo').textContent = `Pagina ${lavoriPaginaCorrente} di ${totalPages || 1} (${filtered.length} record)`;
+            paginated.forEach(row => {
+                const calc = calculateRow(row);
+                const stato = getLavoroStato(row);
+                const tr = document.createElement('tr');
 
-            return filtered.slice(start, end);
+                let statoHtml = `<span class="badge ${stato.classe}">${stato.stato}</span>`;
+                if (stato.reale > 0) {
+                    const prev = parseFloat(row.importoPrevisto) || 0;
+                    statoHtml += `<br><small style="color: var(--text-secondary);">${formatEuro(stato.reale)} / ${formatEuro(prev)}</small>`;
+                }
+
+                tr.innerHTML = `
+                    <td><input type="date" value="${row.data}" onchange="updateLavoro('${row.id}', 'data', this.value)"></td>
+                    <td><input type="text" value="${row.cliente}" onchange="updateLavoro('${row.id}', 'cliente', this.value)"></td>
+                    <td><input type="text" value="${row.lavoro}" onchange="updateLavoro('${row.id}', 'lavoro', this.value)"></td>
+                    <td><input type="number" step="0.01" value="${row.importoPrevisto}" onchange="updateLavoro('${row.id}', 'importoPrevisto', this.value)"></td>
+                    <td><input type="text" value="${calc.imponibile.toFixed(2)}" readonly></td>
+                    <td><input type="text" value="${calc.tasse.toFixed(2)}" readonly></td>
+                    <td><input type="number" step="0.01" value="${row.costi}" onchange="updateLavoro('${row.id}', 'costi', this.value)"></td>
+                    <td>
+                        <select onchange="updateLavoro('${row.id}', 'soggetto', this.value)">
+                            ${SOGGETTI.map(s => `<option value="${s}" ${row.soggetto === s ? 'selected' : ''}>${s}</option>`).join('')}
+                        </select>
+                    </td>
+                    <td style="text-align: center;">${statoHtml}</td>
+                    <td><button class="delete-btn" onclick="deleteLavoro('${row.id}')">Elimina</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('totalPrevisto').textContent = formatEuro(totalPrevisto);
+            document.getElementById('totalTasse').textContent = formatEuro(totalTasse);
+            document.getElementById('totalCosti').textContent = formatEuro(totalCosti);
+        }
+
+        function getFilteredLavori() {
+            const dateFrom = document.getElementById('filterDateFrom').value;
+            const dateTo = document.getElementById('filterDateTo').value;
+            const cliente = document.getElementById('filterCliente').value.toLowerCase();
+            const minImp = parseFloat(document.getElementById('filterMinImporto').value);
+            const maxImp = parseFloat(document.getElementById('filterMaxImporto').value);
+            const hideIncassati = document.getElementById('filterHideIncassati').checked;
+
+            return data.lavori.filter(row => {
+                if (dateFrom && row.data < dateFrom) return false;
+                if (dateTo && row.data > dateTo) return false;
+                if (cliente && !(row.cliente || '').toLowerCase().includes(cliente)) return false;
+                const imp = parseFloat(row.importoPrevisto) || 0;
+                if (!isNaN(minImp) && imp < minImp) return false;
+                if (!isNaN(maxImp) && imp > maxImp) return false;
+                if (hideIncassati) {
+                    const stato = getLavoroStato(row);
+                    if (stato.stato === 'Incassato') return false;
+                }
+                return true;
+            });
         }
 
         function applyFilters() {
-            lavoriPaginaCorrente = 1; // Reset alla prima pagina quando si applicano filtri
-            renderTable();
-        }
-
-        function changeLavoriPerPagina() {
-            lavoriPerPagina = parseInt(document.getElementById('lavoriPerPagina').value);
-            lavoriPaginaCorrente = 1;
-            renderTable();
-        }
-
-        function prevPageLavori() {
-            if (lavoriPaginaCorrente > 1) {
-                lavoriPaginaCorrente--;
-                renderTable();
-            }
-        }
-
-        function nextPageLavori() {
-            const filtered = data.lavori.filter(row => {
-                const dateFrom = document.getElementById('filterDateFrom').value;
-                const dateTo = document.getElementById('filterDateTo').value;
-                const cliente = document.getElementById('filterCliente').value.toLowerCase();
-                const minImporto = parseFloat(document.getElementById('filterMinImporto').value) || -Infinity;
-                const maxImporto = parseFloat(document.getElementById('filterMaxImporto').value) || Infinity;
-                const hideDistributed = document.getElementById('hideDistributed').checked;
-
-                if (dateFrom && row.data < dateFrom) return false;
-                if (dateTo && row.data > dateTo) return false;
-                if (cliente && !row.cliente.toLowerCase().includes(cliente)) return false;
-                const inc = parseFloat(row.incassato) || 0;
-                if (inc < minImporto || inc > maxImporto) return false;
-                if (hideDistributed && row.distribuito === "SI") return false;
-                return true;
-            });
-
-            const totalPages = Math.ceil(filtered.length / lavoriPerPagina);
-            if (lavoriPaginaCorrente < totalPages) {
-                lavoriPaginaCorrente++;
-                renderTable();
-            }
+            lavoriPage = 1;
+            renderLavori();
         }
 
         function sortTable(field) {
@@ -1080,242 +1168,238 @@
                 sortField = field;
                 sortDirection = 'asc';
             }
-
             data.lavori.sort((a, b) => {
-                let aVal = a[field];
-                let bVal = b[field];
-
-                if (field === 'incassato' || field === 'costi') {
+                let aVal = a[field], bVal = b[field];
+                if (field === 'importoPrevisto' || field === 'costi') {
                     aVal = parseFloat(aVal) || 0;
                     bVal = parseFloat(bVal) || 0;
                 }
-
                 if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
                 if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
                 return 0;
             });
-
             autoSave();
-            renderTable();
+            renderLavori();
         }
 
-        function exportToExcel() {
-            const ws_data = [
-                ["Data", "Cliente", "Lavoro / Spesa", "Incassato", "Imponibile Fisc. (67%)", "Tasse (5%)", "Costi", "Netto incassato", "Netto per socio", "Soggetto", "Distribuito"]
-            ];
+        // Pagination - Lavori
+        function changeLavoriPerPagina() {
+            lavoriPerPage = parseInt(document.getElementById('lavoriPerPagina').value);
+            lavoriPage = 1;
+            renderLavori();
+        }
+        function prevPageLavori() { if (lavoriPage > 1) { lavoriPage--; renderLavori(); } }
+        function nextPageLavori() {
+            const total = Math.ceil(getFilteredLavori().length / lavoriPerPage);
+            if (lavoriPage < total) { lavoriPage++; renderLavori(); }
+        }
 
-            data.lavori.forEach(row => {
-                const calc = calculateRow(row);
-                ws_data.push([
-                    row.data, row.cliente, row.lavoro, row.incassato, calc.imponibile, calc.tasse,
-                    row.costi, calc.netto, calc.nettoPerSocio, row.soggetto, row.distribuito
-                ]);
+        // =============== MOVIMENTI BANCARI ===============
+        function addMovimento() {
+            data.movimentiBancari.push({
+                id: generateId('mov'),
+                data: new Date().toISOString().split('T')[0],
+                tipo: 'Entrata',
+                importo: 0,
+                soggetto: 'Dos Amigos',
+                destinatario: 'Frank',
+                lavoroCollegato: '',
+                causale: '',
+                note: ''
             });
-
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet(ws_data);
-            XLSX.utils.book_append_sheet(wb, ws, "Contabilità");
-            XLSX.writeFile(wb, "DosAmigos_Contabilita.xlsx");
+            autoSave();
+            renderAll();
         }
 
-        function downloadBackup() {
-            const backup = {
-                data: data,
-                exportDate: new Date().toISOString(),
-                version: '1.0'
-            };
-
-            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `DosAmigos_Backup_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
+        function updateMovimento(id, field, value) {
+            const mov = data.movimentiBancari.find(m => m.id === id);
+            if (mov) {
+                mov[field] = value;
+                // When linking to a lavoro, auto-fill soggetto
+                if (field === 'lavoroCollegato' && value) {
+                    const lav = data.lavori.find(l => l.id === value);
+                    if (lav) mov.soggetto = lav.soggetto;
+                }
+                autoSave();
+                renderAll();
+            }
         }
 
-        // ========== MOVIMENTI BANCARI ==========
+        function deleteMovimento(id) {
+            if (confirm('Eliminare questo movimento?')) {
+                data.movimentiBancari = data.movimentiBancari.filter(m => m.id !== id);
+                autoSave();
+                renderAll();
+            }
+        }
+
         function renderMovimenti() {
             const tbody = document.getElementById('movimentiBody');
             tbody.innerHTML = '';
 
-            // Paginazione
-            const totalMovimenti = data.movimentiBancari.length;
-            const totalPages = Math.ceil(totalMovimenti / movimentiPerPagina);
-            const start = (movimentiPaginaCorrente - 1) * movimentiPerPagina;
-            const end = start + movimentiPerPagina;
-            const movimentiPaginati = data.movimentiBancari.slice(start, end);
+            const total = data.movimentiBancari.length;
+            const totalPages = Math.max(1, Math.ceil(total / movimentiPerPage));
+            if (movimentiPage > totalPages) movimentiPage = totalPages;
+            const start = (movimentiPage - 1) * movimentiPerPage;
+            const paginated = data.movimentiBancari.slice(start, start + movimentiPerPage);
 
-            // Aggiorna info paginazione
-            document.getElementById('movimentiPaginaInfo').textContent = `Pagina ${movimentiPaginaCorrente} di ${totalPages || 1} (${totalMovimenti} record)`;
+            document.getElementById('movimentiPaginaInfo').textContent =
+                `Pagina ${movimentiPage} di ${totalPages} (${total} record)`;
 
-            movimentiPaginati.forEach((mov, paginaIndex) => {
-                const index = start + paginaIndex; // Indice reale nell'array completo
+            // Lavori options for dropdown
+            const lavoriOpts = '<option value="">-- Nessuno --</option>' +
+                data.lavori.map(l => {
+                    const label = `${l.cliente || 'N/D'} - ${l.lavoro || 'N/D'}`;
+                    return `<option value="${l.id}">${label}</option>`;
+                }).join('');
+
+            let totEntrate = 0, totUscite = 0;
+            data.movimentiBancari.forEach(mov => {
+                const imp = Math.abs(parseFloat(mov.importo) || 0);
+                if (ENTRATA_TYPES.includes(mov.tipo)) totEntrate += imp;
+                if (USCITA_BANK_TYPES.includes(mov.tipo)) totUscite += imp;
+            });
+
+            paginated.forEach(mov => {
                 const tr = document.createElement('tr');
+                const needsDest = mov.tipo === 'Prelievo Socio' || mov.tipo === 'Anticipo Socio';
+                const needsSogg = mov.tipo !== 'Prelievo Socio';
+
+                // Build lavori select with correct selected option
+                let lavSelect = '<option value="">-- Nessuno --</option>';
+                data.lavori.forEach(l => {
+                    const label = `${l.cliente || 'N/D'} - ${l.lavoro || 'N/D'}`;
+                    const sel = l.id === mov.lavoroCollegato ? 'selected' : '';
+                    lavSelect += `<option value="${l.id}" ${sel}>${label}</option>`;
+                });
+
                 tr.innerHTML = `
-                    <td><input type="date" value="${mov.data}" onchange="updateMovimento(${index}, 'data', this.value)"></td>
+                    <td><input type="date" value="${mov.data}" onchange="updateMovimento('${mov.id}', 'data', this.value)"></td>
                     <td>
-                        <select onchange="updateMovimento(${index}, 'tipo', this.value)">
-                            <option value="Bonifico in entrata" ${mov.tipo === "Bonifico in entrata" ? "selected" : ""}>Bonifico in entrata</option>
-                            <option value="Bonifico in uscita" ${mov.tipo === "Bonifico in uscita" ? "selected" : ""}>Bonifico in uscita</option>
-                            <option value="Prelievo" ${mov.tipo === "Prelievo" ? "selected" : ""}>Prelievo</option>
-                            <option value="Deposito" ${mov.tipo === "Deposito" ? "selected" : ""}>Deposito</option>
-                            <option value="Tasse" ${mov.tipo === "Tasse" ? "selected" : ""}>Tasse</option>
+                        <select onchange="updateMovimento('${mov.id}', 'tipo', this.value)">
+                            ${TIPI_MOVIMENTO.map(t => `<option value="${t}" ${mov.tipo === t ? 'selected' : ''}>${t}</option>`).join('')}
                         </select>
                     </td>
-                    <td><input type="number" step="0.01" value="${mov.importo}" onchange="updateMovimento(${index}, 'importo', this.value)"></td>
+                    <td><input type="number" step="0.01" value="${mov.importo}" onchange="updateMovimento('${mov.id}', 'importo', this.value)"></td>
                     <td>
-                        <select onchange="updateMovimento(${index}, 'destinatario', this.value)">
-                            <option value="Frank" ${mov.destinatario === "Frank" ? "selected" : ""}>Frank</option>
-                            <option value="Fox" ${mov.destinatario === "Fox" ? "selected" : ""}>Fox</option>
-                            <option value="Dos Amigos" ${mov.destinatario === "Dos Amigos" ? "selected" : ""}>Dos Amigos</option>
-                            <option value="Altro" ${mov.destinatario === "Altro" ? "selected" : ""}>Altro</option>
+                        <select onchange="updateMovimento('${mov.id}', 'soggetto', this.value)" ${!needsSogg ? 'disabled style="opacity:0.4"' : ''}>
+                            ${SOGGETTI.map(s => `<option value="${s}" ${mov.soggetto === s ? 'selected' : ''}>${s}</option>`).join('')}
                         </select>
                     </td>
-                    <td><input type="text" value="${mov.cliente || ''}" onchange="updateMovimento(${index}, 'cliente', this.value)"></td>
-                    <td><input type="text" value="${mov.causale}" onchange="updateMovimento(${index}, 'causale', this.value)"></td>
-                    <td><input type="text" value="${mov.note}" onchange="updateMovimento(${index}, 'note', this.value)"></td>
-                    <td><button class="delete-btn" onclick="deleteMovimento(${index})">🗑️</button></td>
+                    <td>
+                        <select onchange="updateMovimento('${mov.id}', 'destinatario', this.value)" ${!needsDest ? 'disabled style="opacity:0.4"' : ''}>
+                            <option value="Frank" ${mov.destinatario === 'Frank' ? 'selected' : ''}>Frank</option>
+                            <option value="Fox" ${mov.destinatario === 'Fox' ? 'selected' : ''}>Fox</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select onchange="updateMovimento('${mov.id}', 'lavoroCollegato', this.value)">
+                            ${lavSelect}
+                        </select>
+                    </td>
+                    <td><input type="text" value="${mov.causale || ''}" onchange="updateMovimento('${mov.id}', 'causale', this.value)"></td>
+                    <td><input type="text" value="${mov.note || ''}" onchange="updateMovimento('${mov.id}', 'note', this.value)"></td>
+                    <td><button class="delete-btn" onclick="deleteMovimento('${mov.id}')">Elimina</button></td>
                 `;
                 tbody.appendChild(tr);
             });
+
+            document.getElementById('movTotaleEntrate').innerHTML =
+                `<span class="positive">Entrate: ${formatEuro(totEntrate)}</span> &nbsp; <span class="negative">Uscite: ${formatEuro(totUscite)}</span>`;
         }
 
-        function addMovimento() {
-            const today = new Date().toISOString().split('T')[0];
-            data.movimentiBancari.push({
-                data: today,
-                tipo: "Bonifico in uscita",
-                importo: 0,
-                destinatario: "Frank",
-                cliente: "",
-                causale: "",
-                note: ""
-            });
-            autoSave();
-            renderMovimenti();
-            updateContoBancario();
-        }
-
-        function updateMovimento(index, field, value) {
-            const oldImporto = parseFloat(data.movimentiBancari[index].importo) || 0;
-            data.movimentiBancari[index][field] = value;
-
-            // Se cambia l'importo, aggiorna il conto bancario
-            if (field === 'importo' || field === 'tipo') {
-                updateContoBancario();
-            }
-
-            autoSave();
-            renderMovimenti();
-        }
-
-        function deleteMovimento(index) {
-            if (confirm('Sei sicuro di voler eliminare questo movimento?')) {
-                data.movimentiBancari.splice(index, 1);
-                autoSave();
-                renderMovimenti();
-                updateContoBancario();
-            }
-        }
-
+        // Pagination - Movimenti
         function changeMovimentiPerPagina() {
-            movimentiPerPagina = parseInt(document.getElementById('movimentiPerPagina').value);
-            movimentiPaginaCorrente = 1;
+            movimentiPerPage = parseInt(document.getElementById('movimentiPerPagina').value);
+            movimentiPage = 1;
             renderMovimenti();
         }
-
-        function prevPageMovimenti() {
-            if (movimentiPaginaCorrente > 1) {
-                movimentiPaginaCorrente--;
-                renderMovimenti();
-            }
-        }
-
+        function prevPageMovimenti() { if (movimentiPage > 1) { movimentiPage--; renderMovimenti(); } }
         function nextPageMovimenti() {
-            const totalPages = Math.ceil(data.movimentiBancari.length / movimentiPerPagina);
-            if (movimentiPaginaCorrente < totalPages) {
-                movimentiPaginaCorrente++;
-                renderMovimenti();
-            }
+            const total = Math.ceil(data.movimentiBancari.length / movimentiPerPage);
+            if (movimentiPage < total) { movimentiPage++; renderMovimenti(); }
         }
 
-        // ========== CONTO BANCARIO ==========
-        function updateContoBancario() {
-            // Calcola saldo dai movimenti
+        // =============== CONTO BANCARIO ===============
+        function calculateBankBalance() {
             let saldo = 0;
             data.movimentiBancari.forEach(mov => {
-                const importo = parseFloat(mov.importo) || 0;
-                // Bonifici in entrata e depositi sono positivi
-                if (mov.tipo === "Bonifico in entrata" || mov.tipo === "Deposito") {
-                    saldo += Math.abs(importo);
-                } else {
-                    // Bonifici in uscita, prelievi e tasse sono negativi
-                    saldo -= Math.abs(importo);
+                const importo = Math.abs(parseFloat(mov.importo) || 0);
+                if (ENTRATA_TYPES.includes(mov.tipo)) {
+                    saldo += importo;
+                } else if (USCITA_BANK_TYPES.includes(mov.tipo)) {
+                    saldo -= importo;
+                }
+                // "Anticipo Socio" does NOT affect bank balance
+            });
+            data.contoBancario.saldoAttuale = saldo;
+
+            const el = document.getElementById('saldoAttuale');
+            el.textContent = formatEuro(saldo);
+            el.className = 'saldo-value ' + (saldo >= 0 ? 'positive' : 'negative');
+        }
+
+        // =============== PORTAFOGLIO SOCI ===============
+        function calculatePortafoglio() {
+            const frank = { entrate: 0, spese: 0, anticipi: 0, prelievi: 0 };
+            const fox = { entrate: 0, spese: 0, anticipi: 0, prelievi: 0 };
+
+            data.movimentiBancari.forEach(mov => {
+                const importo = Math.abs(parseFloat(mov.importo) || 0);
+                const sogg = mov.soggetto || 'Dos Amigos';
+                const dest = mov.destinatario || '';
+
+                if (mov.tipo === 'Entrata') {
+                    if (sogg === 'Frank') frank.entrate += importo;
+                    else if (sogg === 'Fox') fox.entrate += importo;
+                    else { frank.entrate += importo / 2; fox.entrate += importo / 2; }
+                }
+                else if (mov.tipo === 'Prelievo Socio') {
+                    if (dest === 'Frank') frank.prelievi += importo;
+                    else if (dest === 'Fox') fox.prelievi += importo;
+                }
+                else if (mov.tipo === 'Spesa' || mov.tipo === 'Tasse') {
+                    if (sogg === 'Frank') frank.spese += importo;
+                    else if (sogg === 'Fox') fox.spese += importo;
+                    else { frank.spese += importo / 2; fox.spese += importo / 2; }
+                }
+                else if (mov.tipo === 'Anticipo Socio') {
+                    // Expense split by soggetto
+                    if (sogg === 'Frank') frank.spese += importo;
+                    else if (sogg === 'Fox') fox.spese += importo;
+                    else { frank.spese += importo / 2; fox.spese += importo / 2; }
+                    // Credit to the advancing partner
+                    if (dest === 'Frank') frank.anticipi += importo;
+                    else if (dest === 'Fox') fox.anticipi += importo;
                 }
             });
 
-            data.contoBancario.saldoAttuale = saldo;
-            renderContoBancario();
+            const frankSaldo = frank.entrate - frank.spese + frank.anticipi - frank.prelievi;
+            const foxSaldo = fox.entrate - fox.spese + fox.anticipi - fox.prelievi;
+
+            document.getElementById('frankTotals').innerHTML = renderPartnerCard(frank, frankSaldo);
+            document.getElementById('foxTotals').innerHTML = renderPartnerCard(fox, foxSaldo);
         }
 
-        function renderContoBancario() {
-            const saldo = data.contoBancario.saldoAttuale;
-            const saldoEl = document.getElementById('saldoAttuale');
-            if (saldoEl) {
-                saldoEl.textContent = `€ ${saldo.toFixed(2)}`;
-                saldoEl.className = saldo >= 0 ? 'positive' : 'negative';
-            }
+        function renderPartnerCard(p, saldo) {
+            return `
+                <div class="total-line"><span>Quota Entrate:</span><span class="positive">${formatEuro(p.entrate)}</span></div>
+                <div class="total-line"><span>Quota Spese:</span><span class="negative">- ${formatEuro(p.spese)}</span></div>
+                <div class="total-line"><span>Anticipi (da rimborsare):</span><span class="positive">${formatEuro(p.anticipi)}</span></div>
+                <div class="total-line"><span>Gia Prelevato:</span><span class="negative">- ${formatEuro(p.prelievi)}</span></div>
+                <div class="total-line"><span>SALDO:</span><span class="${saldo >= 0 ? 'positive' : 'negative'}">${formatEuro(saldo)}</span></div>
+            `;
         }
 
-        // ========== SPESE FUTURE ==========
-        function renderSpeseFuture() {
-            const tbody = document.getElementById('speseFutureBody');
-            tbody.innerHTML = '';
-
-            let totale = 0;
-
-            data.speseFuture.forEach((spesa, index) => {
-                const tr = document.createElement('tr');
-                const importo = parseFloat(spesa.importo) || 0;
-                totale += importo;
-
-                tr.innerHTML = `
-                    <td><input type="text" value="${spesa.descrizione}" onchange="updateSpesaFutura(${index}, 'descrizione', this.value)"></td>
-                    <td><input type="number" step="0.01" value="${spesa.importo}" onchange="updateSpesaFutura(${index}, 'importo', this.value)"></td>
-                    <td><input type="date" value="${spesa.dataPrevista}" onchange="updateSpesaFutura(${index}, 'dataPrevista', this.value)"></td>
-                    <td>
-                        <select onchange="updateSpesaFutura(${index}, 'ricorrente', this.value)">
-                            <option value="NO" ${spesa.ricorrente === "NO" ? "selected" : ""}>NO</option>
-                            <option value="SI" ${spesa.ricorrente === "SI" ? "selected" : ""}>SI</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select onchange="updateSpesaFutura(${index}, 'frequenza', this.value)" ${spesa.ricorrente === "NO" ? "disabled" : ""}>
-                            <option value="-" ${spesa.frequenza === "-" ? "selected" : ""}>-</option>
-                            <option value="Mensile" ${spesa.frequenza === "Mensile" ? "selected" : ""}>Mensile</option>
-                            <option value="Trimestrale" ${spesa.frequenza === "Trimestrale" ? "selected" : ""}>Trimestrale</option>
-                            <option value="Semestrale" ${spesa.frequenza === "Semestrale" ? "selected" : ""}>Semestrale</option>
-                            <option value="Annuale" ${spesa.frequenza === "Annuale" ? "selected" : ""}>Annuale</option>
-                        </select>
-                    </td>
-                    <td><input type="text" value="${spesa.note}" onchange="updateSpesaFutura(${index}, 'note', this.value)"></td>
-                    <td><button class="delete-btn" onclick="deleteSpesaFutura(${index})">🗑️</button></td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            document.getElementById('totaleSpeseFuture').textContent = `€ ${totale.toFixed(2)}`;
-        }
-
+        // =============== SPESE FUTURE ===============
         function addSpesaFutura() {
-            const today = new Date().toISOString().split('T')[0];
             data.speseFuture.push({
-                descrizione: "",
+                descrizione: '',
                 importo: 0,
-                dataPrevista: today,
-                ricorrente: "NO",
-                frequenza: "-",
-                note: ""
+                dataPrevista: new Date().toISOString().split('T')[0],
+                ricorrente: 'NO',
+                frequenza: '-',
+                note: ''
             });
             autoSave();
             renderSpeseFuture();
@@ -1323,27 +1407,142 @@
 
         function updateSpesaFutura(index, field, value) {
             data.speseFuture[index][field] = value;
-
-            // Se cambia ricorrente da SI a NO, resetta la frequenza
-            if (field === 'ricorrente' && value === 'NO') {
-                data.speseFuture[index].frequenza = '-';
-            }
-
+            if (field === 'ricorrente' && value === 'NO') data.speseFuture[index].frequenza = '-';
             autoSave();
             renderSpeseFuture();
         }
 
         function deleteSpesaFutura(index) {
-            if (confirm('Sei sicuro di voler eliminare questa spesa futura?')) {
+            if (confirm('Eliminare questa spesa futura?')) {
                 data.speseFuture.splice(index, 1);
                 autoSave();
                 renderSpeseFuture();
             }
         }
 
-        // Inizializzazione
+        function renderSpeseFuture() {
+            const tbody = document.getElementById('speseFutureBody');
+            tbody.innerHTML = '';
+            let totale = 0;
+
+            data.speseFuture.forEach((spesa, index) => {
+                const importo = parseFloat(spesa.importo) || 0;
+                totale += importo;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" value="${spesa.descrizione}" onchange="updateSpesaFutura(${index}, 'descrizione', this.value)"></td>
+                    <td><input type="number" step="0.01" value="${spesa.importo}" onchange="updateSpesaFutura(${index}, 'importo', this.value)"></td>
+                    <td><input type="date" value="${spesa.dataPrevista}" onchange="updateSpesaFutura(${index}, 'dataPrevista', this.value)"></td>
+                    <td>
+                        <select onchange="updateSpesaFutura(${index}, 'ricorrente', this.value)">
+                            <option value="NO" ${spesa.ricorrente === 'NO' ? 'selected' : ''}>NO</option>
+                            <option value="SI" ${spesa.ricorrente === 'SI' ? 'selected' : ''}>SI</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select onchange="updateSpesaFutura(${index}, 'frequenza', this.value)" ${spesa.ricorrente === 'NO' ? 'disabled' : ''}>
+                            <option value="-" ${spesa.frequenza === '-' ? 'selected' : ''}>-</option>
+                            <option value="Mensile" ${spesa.frequenza === 'Mensile' ? 'selected' : ''}>Mensile</option>
+                            <option value="Trimestrale" ${spesa.frequenza === 'Trimestrale' ? 'selected' : ''}>Trimestrale</option>
+                            <option value="Semestrale" ${spesa.frequenza === 'Semestrale' ? 'selected' : ''}>Semestrale</option>
+                            <option value="Annuale" ${spesa.frequenza === 'Annuale' ? 'selected' : ''}>Annuale</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${spesa.note}" onchange="updateSpesaFutura(${index}, 'note', this.value)"></td>
+                    <td><button class="delete-btn" onclick="deleteSpesaFutura(${index})">Elimina</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('totaleSpeseFuture').textContent = formatEuro(totale);
+        }
+
+        // =============== THEME ===============
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('light-mode', !isDarkMode);
+            localStorage.setItem('dosAmigosTheme', isDarkMode ? 'dark' : 'light');
+            document.getElementById('themeToggle').textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+        }
+
+        // =============== EXPORT ===============
+        function exportToExcel() {
+            // Sheet 1: Lavori
+            const lavoriData = [['Data', 'Cliente', 'Lavoro', 'Importo Previsto', 'Imp. Fisc. (67%)', 'Tasse Stim. (5%)', 'Costi', 'Soggetto', 'Stato']];
+            data.lavori.forEach(row => {
+                const calc = calculateRow(row);
+                const stato = getLavoroStato(row);
+                lavoriData.push([
+                    row.data, row.cliente, row.lavoro, row.importoPrevisto,
+                    calc.imponibile.toFixed(2), calc.tasse.toFixed(2),
+                    row.costi, row.soggetto, stato.stato
+                ]);
+            });
+
+            // Sheet 2: Movimenti
+            const movData = [['Data', 'Tipo', 'Importo', 'Soggetto', 'Destinatario', 'Lavoro Collegato', 'Causale', 'Note']];
+            data.movimentiBancari.forEach(mov => {
+                const lavLabel = data.lavori.find(l => l.id === mov.lavoroCollegato);
+                movData.push([
+                    mov.data, mov.tipo, mov.importo, mov.soggetto, mov.destinatario,
+                    lavLabel ? `${lavLabel.cliente} - ${lavLabel.lavoro}` : '',
+                    mov.causale, mov.note
+                ]);
+            });
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(lavoriData), 'Lavori');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(movData), 'Movimenti Bancari');
+            XLSX.writeFile(wb, 'DosAmigos_Contabilita.xlsx');
+        }
+
+        function downloadBackup() {
+            const backup = {
+                data: data,
+                exportDate: new Date().toISOString(),
+                version: '2.0'
+            };
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `DosAmigos_Backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // =============== UTILITIES ===============
+        function formatEuro(n) {
+            return '\u20AC ' + (parseFloat(n) || 0).toFixed(2);
+        }
+
+        function updateSyncStatus(type, message) {
+            const el = document.getElementById('syncStatus');
+            el.textContent = message;
+            el.className = 'sync-status ' + type;
+            if (type === 'success') {
+                setTimeout(() => {
+                    el.textContent = 'Sincronizzato';
+                    el.className = 'sync-status';
+                }, 2000);
+            }
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('active', show);
+        }
+
+        // =============== INIT ===============
         window.onload = async function () {
-            // Controlla autenticazione
+            // Apply saved theme
+            const savedTheme = localStorage.getItem('dosAmigosTheme');
+            if (savedTheme === 'light') {
+                isDarkMode = false;
+                document.body.classList.add('light-mode');
+                document.getElementById('themeToggle').textContent = 'Dark Mode';
+            }
+
+            // Check auth
             const isAuth = await checkAuth();
             if (isAuth) {
                 document.getElementById('loginScreen').classList.add('hidden');
