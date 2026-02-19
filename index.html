@@ -794,7 +794,8 @@
         <!-- ===== PORTAFOGLIO SOCI ===== -->
         <div class="section">
             <div class="section-header">
-                <h2>Portafoglio Soci (basato sui movimenti bancari)</h2>
+                <h2>Situazione Soci</h2>
+                <span style="color: var(--text-secondary); font-size: 13px;">Spettanza + Anticipi conteggiati - Prelevato = Puo' prelevare</span>
             </div>
             <div class="total-grid">
                 <div class="total-card">
@@ -838,8 +839,8 @@
 
         <!-- Note -->
         <div class="note-bar">
-            <strong>Info:</strong> I conteggi del portafoglio soci si basano esclusivamente sui movimenti bancari reali.
-            La tabella lavori serve come tracker dei preventivi. Registra ogni entrata/uscita reale nei Movimenti Bancari.
+            <strong>Info:</strong> I conteggi soci si basano sui movimenti bancari. La % Frank determina la divisione di ogni movimento.
+            Gli Anticipi Socio non conteggiati (\u23F3) non incidono sul calcolo finche' non vengono attivati.
         </div>
     </div>
 
@@ -985,6 +986,7 @@
                     if (!mov.soggetto) mov.soggetto = mov.destinatario || 'Dos Amigos';
                     if (mov.lavoroCollegato === undefined) mov.lavoroCollegato = '';
                     if (mov.percentualeFrank === undefined) mov.percentualeFrank = 50;
+                    if (mov.tipo === 'Anticipo Socio' && mov.conteggiato === undefined) mov.conteggiato = true;
                     // Migrate old tipo names
                     if (mov.tipo === 'Bonifico in entrata' || mov.tipo === 'Deposito') mov.tipo = 'Entrata';
                     if (mov.tipo === 'Bonifico in uscita' || mov.tipo === 'Prelievo') mov.tipo = 'Prelievo Socio';
@@ -1282,6 +1284,7 @@
                         <select onchange="updateMovimento('${mov.id}', 'tipo', this.value)">
                             ${TIPI_MOVIMENTO.map(t => `<option value="${t}" ${mov.tipo === t ? 'selected' : ''}>${t}</option>`).join('')}
                         </select>
+                        ${mov.tipo === 'Anticipo Socio' ? `<label style="display:flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;color:var(--text-secondary);cursor:pointer;"><input type="checkbox" ${mov.conteggiato !== false ? 'checked' : ''} onchange="updateMovimento('${mov.id}', 'conteggiato', this.checked)"> Conteggiato</label>` : ''}
                     </td>
                     <td><input type="number" step="0.01" value="${mov.importo}" onchange="updateMovimento('${mov.id}', 'importo', this.value)"></td>
                     <td>
@@ -1289,7 +1292,7 @@
                             ${SOGGETTI.map(s => `<option value="${s}" ${mov.soggetto === s ? 'selected' : ''}>${s}</option>`).join('')}
                         </select>
                     </td>
-                    <td><input type="number" min="0" max="100" value="${mov.percentualeFrank ?? 50}" onchange="updateMovimento('${mov.id}', 'percentualeFrank', parseInt(this.value) || 50)" style="width:60px;text-align:center;${mov.soggetto !== 'Dos Amigos' ? 'opacity:0.4' : ''}" ${mov.soggetto !== 'Dos Amigos' ? 'disabled' : ''}></td>
+                    <td><input type="number" min="0" max="100" step="0.01" value="${mov.percentualeFrank ?? 50}" onchange="updateMovimento('${mov.id}', 'percentualeFrank', parseFloat(this.value) || 50)" style="width:60px;text-align:center;"></td>
                     <td>
                         <select onchange="updateMovimento('${mov.id}', 'destinatario', this.value)" ${!needsDest ? 'disabled style="opacity:0.4"' : ''}>
                             <option value="Frank" ${mov.destinatario === 'Frank' ? 'selected' : ''}>Frank</option>
@@ -1343,58 +1346,78 @@
             el.className = 'saldo-value ' + (saldo >= 0 ? 'positive' : 'negative');
         }
 
-        // =============== PORTAFOGLIO SOCI ===============
+        // =============== SITUAZIONE SOCI ===============
         function calculatePortafoglio() {
-            const frank = { entrate: 0, spese: 0, anticipi: 0, prelievi: 0 };
-            const fox = { entrate: 0, spese: 0, anticipi: 0, prelievi: 0 };
+            const frank = { entrate: 0, spese: 0, anticipi: 0, anticipiSospesi: 0, prelievi: 0 };
+            const fox = { entrate: 0, spese: 0, anticipi: 0, anticipiSospesi: 0, prelievi: 0 };
 
             data.movimentiBancari.forEach(mov => {
                 const importo = Math.abs(parseFloat(mov.importo) || 0);
-                const sogg = mov.soggetto || 'Dos Amigos';
                 const dest = mov.destinatario || '';
-                const pctFrank = (parseInt(mov.percentualeFrank) || 50) / 100;
+                const pctFrank = (parseFloat(mov.percentualeFrank) || 50) / 100;
                 const pctFox = 1 - pctFrank;
 
                 if (mov.tipo === 'Entrata') {
-                    if (sogg === 'Frank') frank.entrate += importo;
-                    else if (sogg === 'Fox') fox.entrate += importo;
-                    else { frank.entrate += importo * pctFrank; fox.entrate += importo * pctFox; }
+                    // Sempre split per percentuale
+                    frank.entrate += importo * pctFrank;
+                    fox.entrate += importo * pctFox;
                 }
                 else if (mov.tipo === 'Prelievo Socio') {
                     if (dest === 'Frank') frank.prelievi += importo;
                     else if (dest === 'Fox') fox.prelievi += importo;
                 }
                 else if (mov.tipo === 'Spesa' || mov.tipo === 'Tasse') {
-                    if (sogg === 'Frank') frank.spese += importo;
-                    else if (sogg === 'Fox') fox.spese += importo;
-                    else { frank.spese += importo * pctFrank; fox.spese += importo * pctFox; }
+                    // Sempre split per percentuale
+                    frank.spese += importo * pctFrank;
+                    fox.spese += importo * pctFox;
                 }
                 else if (mov.tipo === 'Anticipo Socio') {
-                    // Expense split by soggetto
-                    if (sogg === 'Frank') frank.spese += importo;
-                    else if (sogg === 'Fox') fox.spese += importo;
-                    else { frank.spese += importo * pctFrank; fox.spese += importo * pctFox; }
-                    // Credit to the advancing partner
-                    if (dest === 'Frank') frank.anticipi += importo;
-                    else if (dest === 'Fox') fox.anticipi += importo;
+                    const conteggiato = mov.conteggiato !== false;
+                    if (conteggiato) {
+                        // Spesa split per percentuale
+                        frank.spese += importo * pctFrank;
+                        fox.spese += importo * pctFox;
+                        // Credito al socio che ha anticipato
+                        if (dest === 'Frank') frank.anticipi += importo;
+                        else if (dest === 'Fox') fox.anticipi += importo;
+                    } else {
+                        // In sospeso: non incide sui calcoli attuali
+                        if (dest === 'Frank') frank.anticipiSospesi += importo;
+                        else if (dest === 'Fox') fox.anticipiSospesi += importo;
+                    }
                 }
             });
 
-            const frankSaldo = frank.entrate - frank.spese + frank.anticipi - frank.prelievi;
-            const foxSaldo = fox.entrate - fox.spese + fox.anticipi - fox.prelievi;
+            const frankSpettanza = frank.entrate - frank.spese;
+            const foxSpettanza = fox.entrate - fox.spese;
+            const frankPuoPrelevare = frankSpettanza + frank.anticipi - frank.prelievi;
+            const foxPuoPrelevare = foxSpettanza + fox.anticipi - fox.prelievi;
 
-            document.getElementById('frankTotals').innerHTML = renderPartnerCard(frank, frankSaldo);
-            document.getElementById('foxTotals').innerHTML = renderPartnerCard(fox, foxSaldo);
+            document.getElementById('frankTotals').innerHTML = renderPartnerCard(frank, frankSpettanza, frankPuoPrelevare);
+            document.getElementById('foxTotals').innerHTML = renderPartnerCard(fox, foxSpettanza, foxPuoPrelevare);
         }
 
-        function renderPartnerCard(p, saldo) {
-            return `
+        function renderPartnerCard(p, spettanza, puoPrelevare) {
+            let html = `
                 <div class="total-line"><span>Quota Entrate:</span><span class="positive">${formatEuro(p.entrate)}</span></div>
                 <div class="total-line"><span>Quota Spese:</span><span class="negative">- ${formatEuro(p.spese)}</span></div>
-                <div class="total-line"><span>Anticipi (da rimborsare):</span><span class="positive">${formatEuro(p.anticipi)}</span></div>
-                <div class="total-line"><span>Gia Prelevato:</span><span class="negative">- ${formatEuro(p.prelievi)}</span></div>
-                <div class="total-line"><span>SALDO:</span><span class="${saldo >= 0 ? 'positive' : 'negative'}">${formatEuro(saldo)}</span></div>
+                <div class="total-line" style="font-weight:bold; border-top:1px solid var(--border); padding-top:8px; margin-top:4px;">
+                    <span>= Quota Spettante:</span><span>${formatEuro(spettanza)}</span></div>
+                <div class="total-line" style="margin-top:8px;"><span>Gia Prelevato:</span><span class="negative">- ${formatEuro(p.prelievi)}</span></div>
+                <div class="total-line"><span>Anticipi conteggiati:</span><span class="positive">+ ${formatEuro(p.anticipi)}</span></div>
             `;
+
+            if (p.anticipiSospesi > 0) {
+                html += `<div class="total-line"><span>Anticipi in sospeso:</span><span style="color: #ffc107;">\u23F3 ${formatEuro(p.anticipiSospesi)}</span></div>`;
+            }
+
+            if (puoPrelevare >= 0) {
+                html += `<div class="total-line"><span>PUO' ANCORA PRELEVARE:</span><span class="positive">${formatEuro(puoPrelevare)}</span></div>`;
+            } else {
+                html += `<div class="total-line"><span>HA PRELEVATO IN ECCESSO:</span><span class="negative">${formatEuro(Math.abs(puoPrelevare))}</span></div>`;
+            }
+
+            return html;
         }
 
         // =============== SPESE FUTURE ===============

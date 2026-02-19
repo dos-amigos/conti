@@ -100,8 +100,8 @@
             "data": "2026-02-12",
             "tipo": "Entrata",
             "importo": "4200",
-            "soggetto": "Frank",
-            "percentualeFrank": 30,
+            "soggetto": "Dos Amigos",
+            "percentualeFrank": 35.56,
             "destinatario": "Frank",
             "lavoroCollegato": "lav_3",
             "causale": "Pagamento Ligo",
@@ -160,7 +160,7 @@
             "data": "2026-02-16",
             "tipo": "Entrata",
             "importo": "1770",
-            "soggetto": "Frank",
+            "soggetto": "Dos Amigos",
             "percentualeFrank": 50,
             "destinatario": "Frank",
             "lavoroCollegato": "lav_2",
@@ -172,7 +172,7 @@
             "data": "2026-02-17",
             "tipo": "Spesa",
             "importo": "21",
-            "soggetto": "Frank",
+            "soggetto": "Dos Amigos",
             "percentualeFrank": 50,
             "destinatario": "Frank",
             "lavoroCollegato": "lav_7",
@@ -201,7 +201,8 @@
             "destinatario": "Frank",
             "lavoroCollegato": "lav_5",
             "causale": "Spese varie Frank (di tasca propria)",
-            "note": "Anticipo: Frank ha pagato di tasca, spesa condivisa"
+            "note": "Anticipo: Frank ha pagato di tasca, spesa condivisa",
+            "conteggiato": true
         },
         {
             "id": "mov_11",
@@ -213,7 +214,8 @@
             "destinatario": "Frank",
             "lavoroCollegato": "lav_6",
             "causale": "Claude Max 20x (di tasca propria)",
-            "note": "Anticipo: Frank ha pagato di tasca, spesa condivisa"
+            "note": "Anticipo: Frank ha pagato di tasca, spesa condivisa",
+            "conteggiato": false
         },
         {
             "id": "mov_12",
@@ -221,7 +223,7 @@
             "tipo": "Prelievo Socio",
             "importo": "3520",
             "soggetto": "Dos Amigos",
-            "percentualeFrank": 30,
+            "percentualeFrank": 35.56,
             "destinatario": "Fox",
             "lavoroCollegato": "lav_3",
             "causale": "Compensazione debito personale Ligo-Fox",
@@ -237,7 +239,8 @@
             "destinatario": "Fox",
             "lavoroCollegato": "lav_9",
             "causale": "Spese varie Fox (di tasca propria)",
-            "note": "Anticipo: Fox ha pagato di tasca, spesa condivisa"
+            "note": "Anticipo: Fox ha pagato di tasca, spesa condivisa",
+            "conteggiato": true
         }
     ],
     "contoBancario": {
