@@ -706,6 +706,7 @@
                             <th>Tasse Stim. (5%)</th>
                             <th onclick="sortTable('costi')">Costi</th>
                             <th>Soggetto</th>
+                            <th>Pagato Da</th>
                             <th>Stato Pagamento</th>
                             <th>Azioni</th>
                         </tr>
@@ -721,6 +722,7 @@
                             <td></td>
                             <td></td>
                             <td></td>
+                            <td></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -731,7 +733,7 @@
         <div class="section">
             <div class="section-header">
                 <h2>Movimenti Bancari</h2>
-                <span style="color: var(--text-secondary); font-size: 13px;">Fonte dei conteggi soci - registra qui entrate e uscite reali</span>
+                <span style="color: var(--text-secondary); font-size: 13px;">Solo movimenti reali del conto bancario</span>
             </div>
 
             <div class="pagination">
@@ -787,7 +789,7 @@
             <div class="saldo-box">
                 <div class="saldo-label">Saldo attuale calcolato dai movimenti</div>
                 <div class="saldo-value" id="saldoAttuale">-</div>
-                <div class="saldo-note">Entrate - Uscite - Spese - Tasse (esclusi Anticipi Socio)</div>
+                <div class="saldo-note">Entrate - Prelievi - Spese - Tasse</div>
             </div>
         </div>
 
@@ -839,15 +841,15 @@
 
         <!-- Note -->
         <div class="note-bar">
-            <strong>Info:</strong> I conteggi soci si basano sui movimenti bancari. La % Frank determina la divisione di ogni movimento.
-            Gli Anticipi Socio non conteggiati (\u23F3) non incidono sul calcolo finche' non vengono attivati.
+            <strong>Info:</strong> I conteggi soci si basano sui movimenti bancari e sulle spese di tasca (nella tabella Lavori).
+            Le spese di tasca non conteggiate (\u23F3) non incidono sul calcolo finche' non vengono attivate.
         </div>
     </div>
 
     <script>
         // =============== CONFIGURATION ===============
         const API_URL = 'api.php';
-        const TIPI_MOVIMENTO = ['Entrata', 'Prelievo Socio', 'Spesa', 'Anticipo Socio', 'Tasse'];
+        const TIPI_MOVIMENTO = ['Entrata', 'Prelievo Socio', 'Spesa', 'Tasse'];
         const SOGGETTI = ['Dos Amigos', 'Frank', 'Fox'];
         const ENTRATA_TYPES = ['Entrata'];
         const USCITA_BANK_TYPES = ['Prelievo Socio', 'Spesa', 'Tasse'];
@@ -974,6 +976,7 @@
                         lav.importoPrevisto = lav.incassato;
                         delete lav.incassato;
                     }
+                    if (lav.pagatoDa === undefined) lav.pagatoDa = '';
                 });
             } else {
                 d.lavori = [];
@@ -986,7 +989,6 @@
                     if (!mov.soggetto) mov.soggetto = mov.destinatario || 'Dos Amigos';
                     if (mov.lavoroCollegato === undefined) mov.lavoroCollegato = '';
                     if (mov.percentualeFrank === undefined) mov.percentualeFrank = 50;
-                    if (mov.tipo === 'Anticipo Socio' && mov.conteggiato === undefined) mov.conteggiato = true;
                     // Migrate old tipo names
                     if (mov.tipo === 'Bonifico in entrata' || mov.tipo === 'Deposito') mov.tipo = 'Entrata';
                     if (mov.tipo === 'Bonifico in uscita' || mov.tipo === 'Prelievo') mov.tipo = 'Prelievo Socio';
@@ -1023,7 +1025,10 @@
                 lavoro: '',
                 importoPrevisto: 0,
                 costi: 0,
-                soggetto: 'Dos Amigos'
+                soggetto: 'Dos Amigos',
+                pagatoDa: '',
+                percentualeFrank: 50,
+                conteggiato: true
             });
             autoSave();
             renderAll();
@@ -1079,6 +1084,26 @@
             return { stato: 'Incassato', classe: 'badge-green', reale: incassatoReale };
         }
 
+        function buildPagatoDaCell(row) {
+            const costi = parseFloat(row.costi) || 0;
+            if (costi <= 0) return '-';
+            const pagatoDa = row.pagatoDa || '';
+            const pct = row.percentualeFrank ?? 50;
+            const conteggiato = row.conteggiato !== false;
+            const showCheck = pagatoDa === 'Frank' || pagatoDa === 'Fox';
+            let html = `<select onchange="updateLavoro('${row.id}', 'pagatoDa', this.value)" style="width:auto;">
+                <option value="" ${pagatoDa === '' ? 'selected' : ''}>Banca</option>
+                <option value="Frank" ${pagatoDa === 'Frank' ? 'selected' : ''}>Frank</option>
+                <option value="Fox" ${pagatoDa === 'Fox' ? 'selected' : ''}>Fox</option>
+            </select>`;
+            if (showCheck) {
+                html += `<label style="display:flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;color:var(--text-secondary);cursor:pointer;">
+                    <input type="checkbox" ${conteggiato ? 'checked' : ''} onchange="updateLavoro('${row.id}', 'conteggiato', this.checked)"> Conteggiato
+                </label>`;
+            }
+            return html;
+        }
+
         function renderLavori() {
             const tbody = document.getElementById('lavoriBody');
             tbody.innerHTML = '';
@@ -1126,6 +1151,7 @@
                             ${SOGGETTI.map(s => `<option value="${s}" ${row.soggetto === s ? 'selected' : ''}>${s}</option>`).join('')}
                         </select>
                     </td>
+                    <td>${buildPagatoDaCell(row)}</td>
                     <td style="text-align: center;">${statoHtml}</td>
                     <td><button class="delete-btn" onclick="deleteLavoro('${row.id}')">Elimina</button></td>
                 `;
@@ -1267,7 +1293,7 @@
 
             paginated.forEach(mov => {
                 const tr = document.createElement('tr');
-                const needsDest = mov.tipo === 'Prelievo Socio' || mov.tipo === 'Anticipo Socio';
+                const needsDest = mov.tipo === 'Prelievo Socio';
                 const needsSogg = mov.tipo !== 'Prelievo Socio';
 
                 // Build lavori select with correct selected option
@@ -1284,7 +1310,6 @@
                         <select onchange="updateMovimento('${mov.id}', 'tipo', this.value)">
                             ${TIPI_MOVIMENTO.map(t => `<option value="${t}" ${mov.tipo === t ? 'selected' : ''}>${t}</option>`).join('')}
                         </select>
-                        ${mov.tipo === 'Anticipo Socio' ? `<label style="display:flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;color:var(--text-secondary);cursor:pointer;"><input type="checkbox" ${mov.conteggiato !== false ? 'checked' : ''} onchange="updateMovimento('${mov.id}', 'conteggiato', this.checked)"> Conteggiato</label>` : ''}
                     </td>
                     <td><input type="number" step="0.01" value="${mov.importo}" onchange="updateMovimento('${mov.id}', 'importo', this.value)"></td>
                     <td>
@@ -1337,7 +1362,6 @@
                 } else if (USCITA_BANK_TYPES.includes(mov.tipo)) {
                     saldo -= importo;
                 }
-                // "Anticipo Socio" does NOT affect bank balance
             });
             data.contoBancario.saldoAttuale = saldo;
 
@@ -1371,19 +1395,24 @@
                     frank.spese += importo * pctFrank;
                     fox.spese += importo * pctFox;
                 }
-                else if (mov.tipo === 'Anticipo Socio') {
-                    const conteggiato = mov.conteggiato !== false;
+            });
+
+            // Spese di tasca dai lavori
+            data.lavori.forEach(lav => {
+                const costi = parseFloat(lav.costi) || 0;
+                const pagatoDa = lav.pagatoDa || '';
+                if (costi > 0 && pagatoDa !== '') {
+                    const pctF = (parseFloat(lav.percentualeFrank) || 50) / 100;
+                    const pctX = 1 - pctF;
+                    const conteggiato = lav.conteggiato !== false;
                     if (conteggiato) {
-                        // Spesa split per percentuale
-                        frank.spese += importo * pctFrank;
-                        fox.spese += importo * pctFox;
-                        // Credito al socio che ha anticipato
-                        if (dest === 'Frank') frank.anticipi += importo;
-                        else if (dest === 'Fox') fox.anticipi += importo;
+                        frank.spese += costi * pctF;
+                        fox.spese += costi * pctX;
+                        if (pagatoDa === 'Frank') frank.anticipi += costi;
+                        else if (pagatoDa === 'Fox') fox.anticipi += costi;
                     } else {
-                        // In sospeso: non incide sui calcoli attuali
-                        if (dest === 'Frank') frank.anticipiSospesi += importo;
-                        else if (dest === 'Fox') fox.anticipiSospesi += importo;
+                        if (pagatoDa === 'Frank') frank.anticipiSospesi += costi;
+                        else if (pagatoDa === 'Fox') fox.anticipiSospesi += costi;
                     }
                 }
             });
@@ -1497,14 +1526,16 @@
         // =============== EXPORT ===============
         function exportToExcel() {
             // Sheet 1: Lavori
-            const lavoriData = [['Data', 'Cliente', 'Lavoro', 'Importo Previsto', 'Imp. Fisc. (67%)', 'Tasse Stim. (5%)', 'Costi', 'Soggetto', 'Stato']];
+            const lavoriData = [['Data', 'Cliente', 'Lavoro', 'Importo Previsto', 'Imp. Fisc. (67%)', 'Tasse Stim. (5%)', 'Costi', 'Soggetto', 'Pagato Da', 'Conteggiato', 'Stato']];
             data.lavori.forEach(row => {
                 const calc = calculateRow(row);
                 const stato = getLavoroStato(row);
+                const pagatoDa = row.pagatoDa || 'Banca';
+                const conteggiato = row.pagatoDa ? (row.conteggiato !== false ? 'Si' : 'No') : '-';
                 lavoriData.push([
                     row.data, row.cliente, row.lavoro, row.importoPrevisto,
                     calc.imponibile.toFixed(2), calc.tasse.toFixed(2),
-                    row.costi, row.soggetto, stato.stato
+                    row.costi, row.soggetto, pagatoDa, conteggiato, stato.stato
                 ]);
             });
 

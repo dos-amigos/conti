@@ -7,7 +7,8 @@
             "lavoro": "Sito + SEO",
             "importoPrevisto": "1750",
             "costi": "",
-            "soggetto": "Dos Amigos"
+            "soggetto": "Dos Amigos",
+            "pagatoDa": ""
         },
         {
             "id": "lav_2",
@@ -16,7 +17,8 @@
             "lavoro": "Sito + SEO",
             "importoPrevisto": "1770",
             "costi": "",
-            "soggetto": "Frank"
+            "soggetto": "Frank",
+            "pagatoDa": ""
         },
         {
             "id": "lav_3",
@@ -25,7 +27,8 @@
             "lavoro": "Sito + Video",
             "importoPrevisto": "4200",
             "costi": "",
-            "soggetto": "Frank"
+            "soggetto": "Frank",
+            "pagatoDa": ""
         },
         {
             "id": "lav_4",
@@ -34,7 +37,8 @@
             "lavoro": "Elementor Pro",
             "importoPrevisto": 0,
             "costi": "120",
-            "soggetto": "Dos Amigos"
+            "soggetto": "Dos Amigos",
+            "pagatoDa": ""
         },
         {
             "id": "lav_5",
@@ -43,7 +47,10 @@
             "lavoro": "Spese varie Frank",
             "importoPrevisto": 0,
             "costi": "607",
-            "soggetto": "Frank"
+            "soggetto": "Frank",
+            "pagatoDa": "Frank",
+            "percentualeFrank": 50,
+            "conteggiato": true
         },
         {
             "id": "lav_6",
@@ -52,7 +59,10 @@
             "lavoro": "Claude Max 20x",
             "importoPrevisto": 0,
             "costi": "219.60",
-            "soggetto": "Frank"
+            "soggetto": "Frank",
+            "pagatoDa": "Frank",
+            "percentualeFrank": 50,
+            "conteggiato": false
         },
         {
             "id": "lav_7",
@@ -61,7 +71,8 @@
             "lavoro": "Supabase",
             "importoPrevisto": 0,
             "costi": "21",
-            "soggetto": "Frank"
+            "soggetto": "Frank",
+            "pagatoDa": ""
         },
         {
             "id": "lav_8",
@@ -70,7 +81,8 @@
             "lavoro": "GitHub Pro",
             "importoPrevisto": 0,
             "costi": "3",
-            "soggetto": "Dos Amigos"
+            "soggetto": "Dos Amigos",
+            "pagatoDa": ""
         },
         {
             "id": "lav_9",
@@ -79,7 +91,10 @@
             "lavoro": "Spese varie Fox",
             "importoPrevisto": 0,
             "costi": "458",
-            "soggetto": "Fox"
+            "soggetto": "Fox",
+            "pagatoDa": "Fox",
+            "percentualeFrank": 50,
+            "conteggiato": true
         }
     ],
     "movimentiBancari": [
@@ -192,32 +207,6 @@
             "note": ""
         },
         {
-            "id": "mov_10",
-            "data": "2026-02-12",
-            "tipo": "Anticipo Socio",
-            "importo": "607",
-            "soggetto": "Dos Amigos",
-            "percentualeFrank": 50,
-            "destinatario": "Frank",
-            "lavoroCollegato": "lav_5",
-            "causale": "Spese varie Frank (di tasca propria)",
-            "note": "Anticipo: Frank ha pagato di tasca, spesa condivisa",
-            "conteggiato": true
-        },
-        {
-            "id": "mov_11",
-            "data": "2026-02-14",
-            "tipo": "Anticipo Socio",
-            "importo": "219.60",
-            "soggetto": "Dos Amigos",
-            "percentualeFrank": 50,
-            "destinatario": "Frank",
-            "lavoroCollegato": "lav_6",
-            "causale": "Claude Max 20x (di tasca propria)",
-            "note": "Anticipo: Frank ha pagato di tasca, spesa condivisa",
-            "conteggiato": false
-        },
-        {
             "id": "mov_12",
             "data": "2026-02-12",
             "tipo": "Prelievo Socio",
@@ -228,19 +217,6 @@
             "lavoroCollegato": "lav_3",
             "causale": "Compensazione debito personale Ligo-Fox",
             "note": "Fox ha saldato debito personale con Ligo tramite il pagamento del lavoro"
-        },
-        {
-            "id": "mov_13",
-            "data": "2026-02-12",
-            "tipo": "Anticipo Socio",
-            "importo": "458",
-            "soggetto": "Dos Amigos",
-            "percentualeFrank": 50,
-            "destinatario": "Fox",
-            "lavoroCollegato": "lav_9",
-            "causale": "Spese varie Fox (di tasca propria)",
-            "note": "Anticipo: Fox ha pagato di tasca, spesa condivisa",
-            "conteggiato": true
         }
     ],
     "contoBancario": {
