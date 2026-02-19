@@ -1086,18 +1086,26 @@
         function buildSplitCell(row) {
             const pctF = parseFloat(row.percentualeFrank) || 50;
             const pctX = Math.round((100 - pctF) * 100) / 100;
+            const isLavoro = (parseFloat(row.importoPrevisto) || 0) > 0;
+            const locked = !isLavoro;
             return `<div style="display:flex;align-items:center;gap:2px;white-space:nowrap;">
-                <input type="number" min="0" max="100" step="0.01" value="${pctF}" onchange="updateLavoro('${row.id}', 'percentualeFrank', parseFloat(this.value) || 50)" style="width:50px;text-align:center;">
+                <input type="number" min="0" max="100" step="0.01" value="${pctF}" ${locked ? 'readonly' : `onchange="updateLavoro('${row.id}', 'percentualeFrank', parseFloat(this.value) || 50)"`} style="width:50px;text-align:center;">
                 <span style="color:var(--text-secondary);">/</span>
-                <input type="number" value="${pctX}" onchange="updateLavoro('${row.id}', 'percentualeFrank', Math.round((100 - (parseFloat(this.value) || 50)) * 100) / 100)" style="width:50px;text-align:center;">
+                <input type="number" value="${pctX}" ${locked ? 'readonly' : `onchange="updateLavoro('${row.id}', 'percentualeFrank', Math.round((100 - (parseFloat(this.value) || 50)) * 100) / 100)"`} style="width:50px;text-align:center;">
             </div>`;
         }
 
         function buildSoggettoCell(row) {
             const costi = parseFloat(row.costi) || 0;
+            const isLavoro = (parseFloat(row.importoPrevisto) || 0) > 0;
             const sogg = row.soggetto || 'Dos Amigos';
             const isDiTasca = costi > 0 && (sogg === 'Frank' || sogg === 'Fox');
             const conteggiato = row.conteggiato !== false;
+            if (isLavoro) {
+                return `<select disabled style="opacity:0.4;">
+                    <option selected>Dos Amigos</option>
+                </select>`;
+            }
             let html = `<select onchange="updateLavoro('${row.id}', 'soggetto', this.value)">
                 ${SOGGETTI.map(s => `<option value="${s}" ${sogg === s ? 'selected' : ''}>${s}</option>`).join('')}
             </select>`;
