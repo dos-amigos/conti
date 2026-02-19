@@ -1110,8 +1110,8 @@
                 ${SOGGETTI.map(s => `<option value="${s}" ${sogg === s ? 'selected' : ''}>${s}</option>`).join('')}
             </select>`;
             if (isDiTasca) {
-                html += `<label style="display:flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;color:var(--text-secondary);cursor:pointer;">
-                    <input type="checkbox" ${conteggiato ? 'checked' : ''} onchange="updateLavoro('${row.id}', 'conteggiato', this.checked)"> Conteggiato
+                html += `<label style="display:flex;align-items:center;gap:2px;margin-top:3px;font-size:11px;color:var(--text-secondary);cursor:pointer;">
+                    <input type="checkbox" ${conteggiato ? 'checked' : ''} onchange="updateLavoro('${row.id}', 'conteggiato', this.checked)" style="width:auto;padding:0;margin:0;"> Conteggiato
                 </label>`;
             }
             return html;
