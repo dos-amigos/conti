@@ -7,8 +7,8 @@
             "lavoro": "Sito + SEO",
             "importoPrevisto": "1750",
             "costi": "",
-            "soggetto": "Dos Amigos",
-            "pagatoDa": ""
+            "percentualeFrank": 50,
+            "soggetto": "Dos Amigos"
         },
         {
             "id": "lav_2",
@@ -17,8 +17,8 @@
             "lavoro": "Sito + SEO",
             "importoPrevisto": "1770",
             "costi": "",
-            "soggetto": "Frank",
-            "pagatoDa": ""
+            "percentualeFrank": 50,
+            "soggetto": "Frank"
         },
         {
             "id": "lav_3",
@@ -27,8 +27,8 @@
             "lavoro": "Sito + Video",
             "importoPrevisto": "4200",
             "costi": "",
-            "soggetto": "Frank",
-            "pagatoDa": ""
+            "percentualeFrank": 35.56,
+            "soggetto": "Frank"
         },
         {
             "id": "lav_4",
@@ -37,8 +37,8 @@
             "lavoro": "Elementor Pro",
             "importoPrevisto": 0,
             "costi": "120",
-            "soggetto": "Dos Amigos",
-            "pagatoDa": ""
+            "percentualeFrank": 50,
+            "soggetto": "Dos Amigos"
         },
         {
             "id": "lav_5",
@@ -47,9 +47,8 @@
             "lavoro": "Spese varie Frank",
             "importoPrevisto": 0,
             "costi": "607",
-            "soggetto": "Frank",
-            "pagatoDa": "Frank",
             "percentualeFrank": 50,
+            "soggetto": "Frank",
             "conteggiato": true
         },
         {
@@ -59,9 +58,8 @@
             "lavoro": "Claude Max 20x",
             "importoPrevisto": 0,
             "costi": "219.60",
-            "soggetto": "Frank",
-            "pagatoDa": "Frank",
             "percentualeFrank": 50,
+            "soggetto": "Frank",
             "conteggiato": false
         },
         {
@@ -71,8 +69,8 @@
             "lavoro": "Supabase",
             "importoPrevisto": 0,
             "costi": "21",
-            "soggetto": "Frank",
-            "pagatoDa": ""
+            "percentualeFrank": 50,
+            "soggetto": "Dos Amigos"
         },
         {
             "id": "lav_8",
@@ -81,8 +79,8 @@
             "lavoro": "GitHub Pro",
             "importoPrevisto": 0,
             "costi": "3",
-            "soggetto": "Dos Amigos",
-            "pagatoDa": ""
+            "percentualeFrank": 50,
+            "soggetto": "Dos Amigos"
         },
         {
             "id": "lav_9",
@@ -91,9 +89,8 @@
             "lavoro": "Spese varie Fox",
             "importoPrevisto": 0,
             "costi": "458",
-            "soggetto": "Fox",
-            "pagatoDa": "Fox",
             "percentualeFrank": 50,
+            "soggetto": "Fox",
             "conteggiato": true
         }
     ],

@@ -662,7 +662,7 @@
         <div class="section">
             <div class="section-header">
                 <h2>Lavori e Preventivi</h2>
-                <span style="color: var(--text-secondary); font-size: 13px;">Tracker lavori - i conteggi soci si basano sui Movimenti Bancari</span>
+                <span style="color: var(--text-secondary); font-size: 13px;">Tracker lavori - lo split Frank/Fox definisce la divisione per ogni voce</span>
             </div>
 
             <div class="filters">
@@ -705,8 +705,8 @@
                             <th>Imp. Fisc. (67%)</th>
                             <th>Tasse Stim. (5%)</th>
                             <th onclick="sortTable('costi')">Costi</th>
+                            <th>Frank / Fox</th>
                             <th>Soggetto</th>
-                            <th>Pagato Da</th>
                             <th>Stato Pagamento</th>
                             <th>Azioni</th>
                         </tr>
@@ -761,7 +761,6 @@
                             <th>Tipo</th>
                             <th>Importo EUR</th>
                             <th>Soggetto</th>
-                            <th>% Frank</th>
                             <th>Destinatario</th>
                             <th>Lavoro Collegato</th>
                             <th>Causale</th>
@@ -774,7 +773,7 @@
                         <tr>
                             <td colspan="2" style="color: var(--accent);">TOTALI</td>
                             <td id="movTotaleEntrate" style="color: var(--positive);">-</td>
-                            <td colspan="7"></td>
+                            <td colspan="6"></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -841,8 +840,8 @@
 
         <!-- Note -->
         <div class="note-bar">
-            <strong>Info:</strong> I conteggi soci si basano sui movimenti bancari e sulle spese di tasca (nella tabella Lavori).
-            Le spese di tasca non conteggiate (\u23F3) non incidono sul calcolo finche' non vengono attivate.
+            <strong>Info:</strong> Lo split Frank/Fox e' definito nei Lavori. I movimenti bancari ereditano lo split dal lavoro collegato.
+            Soggetto Frank/Fox su un costo = pagato di tasca. Le spese non conteggiate (\u23F3) non incidono sul calcolo.
         </div>
     </div>
 
@@ -976,7 +975,8 @@
                         lav.importoPrevisto = lav.incassato;
                         delete lav.incassato;
                     }
-                    if (lav.pagatoDa === undefined) lav.pagatoDa = '';
+                    if (lav.percentualeFrank === undefined) lav.percentualeFrank = 50;
+                    if (lav.pagatoDa !== undefined) delete lav.pagatoDa;
                 });
             } else {
                 d.lavori = [];
@@ -1026,7 +1026,6 @@
                 importoPrevisto: 0,
                 costi: 0,
                 soggetto: 'Dos Amigos',
-                pagatoDa: '',
                 percentualeFrank: 50,
                 conteggiato: true
             });
@@ -1084,19 +1083,25 @@
             return { stato: 'Incassato', classe: 'badge-green', reale: incassatoReale };
         }
 
-        function buildPagatoDaCell(row) {
+        function buildSplitCell(row) {
+            const pctF = parseFloat(row.percentualeFrank) || 50;
+            const pctX = Math.round((100 - pctF) * 100) / 100;
+            return `<div style="display:flex;align-items:center;gap:2px;white-space:nowrap;">
+                <input type="number" min="0" max="100" step="0.01" value="${pctF}" onchange="updateLavoro('${row.id}', 'percentualeFrank', parseFloat(this.value) || 50)" style="width:50px;text-align:center;">
+                <span style="color:var(--text-secondary);">/</span>
+                <input type="number" value="${pctX}" onchange="updateLavoro('${row.id}', 'percentualeFrank', Math.round((100 - (parseFloat(this.value) || 50)) * 100) / 100)" style="width:50px;text-align:center;">
+            </div>`;
+        }
+
+        function buildSoggettoCell(row) {
             const costi = parseFloat(row.costi) || 0;
-            if (costi <= 0) return '-';
-            const pagatoDa = row.pagatoDa || '';
-            const pct = row.percentualeFrank ?? 50;
+            const sogg = row.soggetto || 'Dos Amigos';
+            const isDiTasca = costi > 0 && (sogg === 'Frank' || sogg === 'Fox');
             const conteggiato = row.conteggiato !== false;
-            const showCheck = pagatoDa === 'Frank' || pagatoDa === 'Fox';
-            let html = `<select onchange="updateLavoro('${row.id}', 'pagatoDa', this.value)" style="width:auto;">
-                <option value="" ${pagatoDa === '' ? 'selected' : ''}>Banca</option>
-                <option value="Frank" ${pagatoDa === 'Frank' ? 'selected' : ''}>Frank</option>
-                <option value="Fox" ${pagatoDa === 'Fox' ? 'selected' : ''}>Fox</option>
+            let html = `<select onchange="updateLavoro('${row.id}', 'soggetto', this.value)">
+                ${SOGGETTI.map(s => `<option value="${s}" ${sogg === s ? 'selected' : ''}>${s}</option>`).join('')}
             </select>`;
-            if (showCheck) {
+            if (isDiTasca) {
                 html += `<label style="display:flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;color:var(--text-secondary);cursor:pointer;">
                     <input type="checkbox" ${conteggiato ? 'checked' : ''} onchange="updateLavoro('${row.id}', 'conteggiato', this.checked)"> Conteggiato
                 </label>`;
@@ -1146,12 +1151,8 @@
                     <td><input type="text" value="${calc.imponibile.toFixed(2)}" readonly></td>
                     <td><input type="text" value="${calc.tasse.toFixed(2)}" readonly></td>
                     <td><input type="number" step="0.01" value="${row.costi}" onchange="updateLavoro('${row.id}', 'costi', this.value)"></td>
-                    <td>
-                        <select onchange="updateLavoro('${row.id}', 'soggetto', this.value)">
-                            ${SOGGETTI.map(s => `<option value="${s}" ${row.soggetto === s ? 'selected' : ''}>${s}</option>`).join('')}
-                        </select>
-                    </td>
-                    <td>${buildPagatoDaCell(row)}</td>
+                    <td>${buildSplitCell(row)}</td>
+                    <td>${buildSoggettoCell(row)}</td>
                     <td style="text-align: center;">${statoHtml}</td>
                     <td><button class="delete-btn" onclick="deleteLavoro('${row.id}')">Elimina</button></td>
                 `;
@@ -1232,7 +1233,6 @@
                 tipo: 'Entrata',
                 importo: 0,
                 soggetto: 'Dos Amigos',
-                percentualeFrank: 50,
                 destinatario: 'Frank',
                 lavoroCollegato: '',
                 causale: '',
@@ -1317,7 +1317,6 @@
                             ${SOGGETTI.map(s => `<option value="${s}" ${mov.soggetto === s ? 'selected' : ''}>${s}</option>`).join('')}
                         </select>
                     </td>
-                    <td><input type="number" min="0" max="100" step="0.01" value="${mov.percentualeFrank ?? 50}" onchange="updateMovimento('${mov.id}', 'percentualeFrank', parseFloat(this.value) || 50)" style="width:60px;text-align:center;"></td>
                     <td>
                         <select onchange="updateMovimento('${mov.id}', 'destinatario', this.value)" ${!needsDest ? 'disabled style="opacity:0.4"' : ''}>
                             <option value="Frank" ${mov.destinatario === 'Frank' ? 'selected' : ''}>Frank</option>
@@ -1375,14 +1374,22 @@
             const frank = { entrate: 0, spese: 0, anticipi: 0, anticipiSospesi: 0, prelievi: 0 };
             const fox = { entrate: 0, spese: 0, anticipi: 0, anticipiSospesi: 0, prelievi: 0 };
 
+            // Helper: get split from lavoro collegato, fallback 50/50
+            function getMovSplit(mov) {
+                if (mov.lavoroCollegato) {
+                    const lav = data.lavori.find(l => l.id === mov.lavoroCollegato);
+                    if (lav) return (parseFloat(lav.percentualeFrank) || 50) / 100;
+                }
+                return (parseFloat(mov.percentualeFrank) || 50) / 100;
+            }
+
             data.movimentiBancari.forEach(mov => {
                 const importo = Math.abs(parseFloat(mov.importo) || 0);
                 const dest = mov.destinatario || '';
-                const pctFrank = (parseFloat(mov.percentualeFrank) || 50) / 100;
+                const pctFrank = getMovSplit(mov);
                 const pctFox = 1 - pctFrank;
 
                 if (mov.tipo === 'Entrata') {
-                    // Sempre split per percentuale
                     frank.entrate += importo * pctFrank;
                     fox.entrate += importo * pctFox;
                 }
@@ -1391,28 +1398,27 @@
                     else if (dest === 'Fox') fox.prelievi += importo;
                 }
                 else if (mov.tipo === 'Spesa' || mov.tipo === 'Tasse') {
-                    // Sempre split per percentuale
                     frank.spese += importo * pctFrank;
                     fox.spese += importo * pctFox;
                 }
             });
 
-            // Spese di tasca dai lavori
+            // Spese di tasca dai lavori (soggetto Frank/Fox = pagato di tasca)
             data.lavori.forEach(lav => {
                 const costi = parseFloat(lav.costi) || 0;
-                const pagatoDa = lav.pagatoDa || '';
-                if (costi > 0 && pagatoDa !== '') {
+                const sogg = lav.soggetto || '';
+                if (costi > 0 && (sogg === 'Frank' || sogg === 'Fox')) {
                     const pctF = (parseFloat(lav.percentualeFrank) || 50) / 100;
                     const pctX = 1 - pctF;
                     const conteggiato = lav.conteggiato !== false;
                     if (conteggiato) {
                         frank.spese += costi * pctF;
                         fox.spese += costi * pctX;
-                        if (pagatoDa === 'Frank') frank.anticipi += costi;
-                        else if (pagatoDa === 'Fox') fox.anticipi += costi;
+                        if (sogg === 'Frank') frank.anticipi += costi;
+                        else fox.anticipi += costi;
                     } else {
-                        if (pagatoDa === 'Frank') frank.anticipiSospesi += costi;
-                        else if (pagatoDa === 'Fox') fox.anticipiSospesi += costi;
+                        if (sogg === 'Frank') frank.anticipiSospesi += costi;
+                        else fox.anticipiSospesi += costi;
                     }
                 }
             });
@@ -1526,16 +1532,19 @@
         // =============== EXPORT ===============
         function exportToExcel() {
             // Sheet 1: Lavori
-            const lavoriData = [['Data', 'Cliente', 'Lavoro', 'Importo Previsto', 'Imp. Fisc. (67%)', 'Tasse Stim. (5%)', 'Costi', 'Soggetto', 'Pagato Da', 'Conteggiato', 'Stato']];
+            const lavoriData = [['Data', 'Cliente', 'Lavoro', 'Importo Previsto', 'Imp. Fisc. (67%)', 'Tasse Stim. (5%)', 'Costi', '% Frank', '% Fox', 'Soggetto', 'Conteggiato', 'Stato']];
             data.lavori.forEach(row => {
                 const calc = calculateRow(row);
                 const stato = getLavoroStato(row);
-                const pagatoDa = row.pagatoDa || 'Banca';
-                const conteggiato = row.pagatoDa ? (row.conteggiato !== false ? 'Si' : 'No') : '-';
+                const pctF = parseFloat(row.percentualeFrank) || 50;
+                const pctX = Math.round((100 - pctF) * 100) / 100;
+                const sogg = row.soggetto || 'Dos Amigos';
+                const isDiTasca = (parseFloat(row.costi) || 0) > 0 && (sogg === 'Frank' || sogg === 'Fox');
+                const conteggiato = isDiTasca ? (row.conteggiato !== false ? 'Si' : 'No') : '-';
                 lavoriData.push([
                     row.data, row.cliente, row.lavoro, row.importoPrevisto,
                     calc.imponibile.toFixed(2), calc.tasse.toFixed(2),
-                    row.costi, row.soggetto, pagatoDa, conteggiato, stato.stato
+                    row.costi, pctF, pctX, row.soggetto, conteggiato, stato.stato
                 ]);
             });
 
