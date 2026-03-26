@@ -967,6 +967,8 @@
         }
 
         // =============== AUTH ===============
+        let localMode = false; // true quando api.php non è raggiungibile
+
         async function handleLogin(event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
@@ -985,8 +987,11 @@
                     showLoginError();
                 }
             } catch (error) {
-                console.error('Errore login:', error);
-                showLoginError();
+                // API non raggiungibile: modalita locale
+                console.warn('API non raggiungibile, avvio in modalita locale');
+                localMode = true;
+                document.getElementById('loginScreen').classList.add('hidden');
+                loadData();
             }
         }
 
@@ -1002,10 +1007,15 @@
                 const r = await fetch(API_URL + '?action=check_auth');
                 const result = await r.json();
                 return result.authenticated;
-            } catch { return false; }
+            } catch {
+                // API non raggiungibile: modalita locale
+                localMode = true;
+                return true;
+            }
         }
 
         async function logout() {
+            if (localMode) { location.reload(); return; }
             if (confirm('Vuoi disconnetterti?')) {
                 await fetch(API_URL + '?action=logout');
                 location.reload();
@@ -1016,11 +1026,20 @@
         async function loadData() {
             showLoading(true);
             try {
-                const r = await fetch(API_URL + '?action=load');
-                const result = await r.json();
-                data = result.success ? migrateData(result.data || getDefaultData()) : getDefaultData();
-                renderAll();
-                updateSyncStatus('success', 'Dati caricati');
+                if (localMode) {
+                    // Carica data.json direttamente
+                    const r = await fetch('data.json');
+                    const raw = await r.json();
+                    data = migrateData(raw || getDefaultData());
+                    renderAll();
+                    updateSyncStatus('success', 'Locale - data.json');
+                } else {
+                    const r = await fetch(API_URL + '?action=load');
+                    const result = await r.json();
+                    data = result.success ? migrateData(result.data || getDefaultData()) : getDefaultData();
+                    renderAll();
+                    updateSyncStatus('success', 'Dati caricati');
+                }
             } catch (error) {
                 console.error('Errore caricamento:', error);
                 data = getDefaultData();
@@ -1031,6 +1050,10 @@
         }
 
         async function saveData() {
+            if (localMode) {
+                updateSyncStatus('success', 'Locale (non salvato)');
+                return;
+            }
             updateSyncStatus('saving', 'Salvataggio...');
             try {
                 const r = await fetch(API_URL, {
@@ -1228,7 +1251,7 @@
             const tbody = document.getElementById('lavoriBody');
             tbody.innerHTML = '';
 
-            const filtered = getFilteredLavori();
+            const filtered = getFilteredLavori().sort((a, b) => (b.data || '').localeCompare(a.data || ''));
             let totalPrevisto = 0, totalTasse = 0, totalCosti = 0;
 
             // Totali su TUTTI i lavori (non paginati)
@@ -1386,7 +1409,7 @@
                 if (filtro === 'pendenti') return !sp.rimborsata;
                 if (filtro === 'rimborsate') return sp.rimborsata;
                 return true;
-            });
+            }).sort((a, b) => (b.data || '').localeCompare(a.data || ''));
 
             spese.forEach(sp => {
                 const importo = parseFloat(sp.importo) || 0;
@@ -1548,11 +1571,12 @@
             const tbody = document.getElementById('movimentiBody');
             tbody.innerHTML = '';
 
-            const total = data.movimentiBancari.length;
+            const sorted = [...data.movimentiBancari].sort((a, b) => (b.data || '').localeCompare(a.data || ''));
+            const total = sorted.length;
             const totalPages = Math.max(1, Math.ceil(total / movimentiPerPage));
             if (movimentiPage > totalPages) movimentiPage = totalPages;
             const start = (movimentiPage - 1) * movimentiPerPage;
-            const paginated = data.movimentiBancari.slice(start, start + movimentiPerPage);
+            const paginated = sorted.slice(start, start + movimentiPerPage);
 
             document.getElementById('movimentiPaginaInfo').textContent =
                 `Pagina ${movimentiPage} di ${totalPages} (${total} record)`;
