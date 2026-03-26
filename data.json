@@ -41,28 +41,6 @@
             "soggetto": "Dos Amigos"
         },
         {
-            "id": "lav_5",
-            "data": "2026-02-12",
-            "cliente": "",
-            "lavoro": "Spese varie Frank",
-            "importoPrevisto": 0,
-            "costi": "607",
-            "percentualeFrank": 50,
-            "soggetto": "Frank",
-            "conteggiato": true
-        },
-        {
-            "id": "lav_6",
-            "data": "2026-02-14",
-            "cliente": "",
-            "lavoro": "Claude Max 20x",
-            "importoPrevisto": 0,
-            "costi": "219.60",
-            "percentualeFrank": 50,
-            "soggetto": "Frank",
-            "conteggiato": true
-        },
-        {
             "id": "lav_7",
             "data": "2026-02-14",
             "cliente": "Karica",
@@ -81,39 +59,53 @@
             "costi": "3",
             "percentualeFrank": 50,
             "soggetto": "Dos Amigos"
-        },
+        }
+    ],
+    "speseDiTasca": [
         {
-            "id": "lav_9",
+            "id": "sp_1",
             "data": "2026-02-12",
-            "cliente": "",
-            "lavoro": "Spese varie Fox",
-            "importoPrevisto": 0,
-            "costi": "458",
-            "percentualeFrank": 50,
-            "soggetto": "Fox",
-            "conteggiato": true
+            "descrizione": "Spese varie Frank",
+            "importo": 607,
+            "pagatoDa": "Frank",
+            "rimborsata": false,
+            "dataRimborso": null
         },
         {
-            "id": "lav_14",
-            "data": "2026-03-26",
-            "cliente": "",
-            "lavoro": "Claude Max 20x",
-            "importoPrevisto": 0,
-            "costi": "220",
-            "percentualeFrank": 50,
-            "soggetto": "Frank",
-            "conteggiato": true
+            "id": "sp_2",
+            "data": "2026-02-14",
+            "descrizione": "Claude Max 20x",
+            "importo": 219.60,
+            "pagatoDa": "Frank",
+            "rimborsata": false,
+            "dataRimborso": null
         },
         {
-            "id": "lav_15",
+            "id": "sp_3",
+            "data": "2026-02-12",
+            "descrizione": "Spese varie Fox",
+            "importo": 458,
+            "pagatoDa": "Fox",
+            "rimborsata": false,
+            "dataRimborso": null
+        },
+        {
+            "id": "sp_4",
             "data": "2026-03-26",
-            "cliente": "",
-            "lavoro": "King AI",
-            "importoPrevisto": 0,
-            "costi": "50",
-            "percentualeFrank": 50,
-            "soggetto": "Fox",
-            "conteggiato": true
+            "descrizione": "Claude Max 20x",
+            "importo": 220,
+            "pagatoDa": "Frank",
+            "rimborsata": false,
+            "dataRimborso": null
+        },
+        {
+            "id": "sp_5",
+            "data": "2026-03-26",
+            "descrizione": "King AI",
+            "importo": 50,
+            "pagatoDa": "Fox",
+            "rimborsata": false,
+            "dataRimborso": null
         }
     ],
     "movimentiBancari": [
@@ -242,5 +234,5 @@
         "saldoAttuale": 0
     },
     "speseFuture": [],
-    "nextId": 16
+    "nextId": 20
 }
