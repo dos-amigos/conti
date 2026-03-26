@@ -651,6 +651,7 @@
         <!-- Controls Bar -->
         <div class="controls-bar">
             <button class="btn" onclick="addLavoro()">+ Aggiungi Lavoro</button>
+            <button class="btn" onclick="addSpesaDiTasca()">+ Spesa di Tasca</button>
             <button class="btn" onclick="addMovimento()">+ Aggiungi Movimento</button>
             <button class="btn" onclick="exportToExcel()">Esporta Excel</button>
             <button class="btn" onclick="manualSave()">Salva Ora</button>
@@ -729,6 +730,36 @@
             </div>
         </div>
 
+        <!-- ===== SPESE DI TASCA ===== -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Spese di Tasca</h2>
+                <span style="color: var(--text-secondary); font-size: 13px;">Spese pagate di tasca dai soci - generano credito da rimborsare</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrizione</th>
+                            <th>Importo EUR</th>
+                            <th>Pagato da</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody id="speseTascaBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" style="color: var(--accent);">TOTALI</td>
+                            <td style="color: var(--negative);" id="totalSpeseTascaFrank">Frank: -</td>
+                            <td style="color: var(--negative);" id="totalSpeseTascaFox">Fox: -</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
         <!-- ===== MOVIMENTI BANCARI ===== -->
         <div class="section">
             <div class="section-header">
@@ -796,7 +827,7 @@
         <div class="section">
             <div class="section-header">
                 <h2>Situazione Soci</h2>
-                <span style="color: var(--text-secondary); font-size: 13px;">Spettanza + Anticipi conteggiati - Prelevato = Puo' prelevare</span>
+                <span style="color: var(--text-secondary); font-size: 13px;">Guadagni - Spese + Anticipi di tasca - Prelievi = Saldo</span>
             </div>
             <div class="total-grid">
                 <div class="total-card">
@@ -841,7 +872,7 @@
         <!-- Note -->
         <div class="note-bar">
             <strong>Info:</strong> Lo split Frank/Fox e' definito nei Lavori. I movimenti bancari ereditano lo split dal lavoro collegato.
-            Soggetto Frank/Fox su un costo = pagato di tasca. Le spese non conteggiate (\u23F3) non incidono sul calcolo.
+            Le spese di tasca generano un credito per il socio che le ha pagate: va rimborsato prima di dividere i guadagni.
         </div>
     </div>
 
@@ -1010,10 +1041,18 @@
         // =============== RENDER ALL ===============
         function renderAll() {
             renderLavori();
+            renderSpeseDiTasca();
             renderMovimenti();
             calculateBankBalance();
             calculatePortafoglio();
             renderSpeseFuture();
+        }
+
+        // =============== HELPERS ===============
+        function isSpesaDiTasca(lav) {
+            return (parseFloat(lav.importoPrevisto) || 0) === 0 &&
+                   (parseFloat(lav.costi) || 0) > 0 &&
+                   (lav.soggetto === 'Frank' || lav.soggetto === 'Fox');
         }
 
         // =============== LAVORI ===============
@@ -1026,8 +1065,7 @@
                 importoPrevisto: 0,
                 costi: 0,
                 soggetto: 'Dos Amigos',
-                percentualeFrank: 50,
-                conteggiato: true
+                percentualeFrank: 50
             });
             autoSave();
             renderAll();
@@ -1096,25 +1134,16 @@
         }
 
         function buildSoggettoCell(row) {
-            const costi = parseFloat(row.costi) || 0;
             const isLavoro = (parseFloat(row.importoPrevisto) || 0) > 0;
             const sogg = row.soggetto || 'Dos Amigos';
-            const isDiTasca = costi > 0 && (sogg === 'Frank' || sogg === 'Fox');
-            const conteggiato = row.conteggiato !== false;
             if (isLavoro) {
                 return `<select disabled style="opacity:0.4;">
                     <option selected>Dos Amigos</option>
                 </select>`;
             }
-            let html = `<select onchange="updateLavoro('${row.id}', 'soggetto', this.value)">
+            return `<select onchange="updateLavoro('${row.id}', 'soggetto', this.value)">
                 ${SOGGETTI.map(s => `<option value="${s}" ${sogg === s ? 'selected' : ''}>${s}</option>`).join('')}
             </select>`;
-            if (isDiTasca) {
-                html += `<label style="display:flex;align-items:center;gap:2px;margin-top:3px;font-size:11px;color:var(--text-secondary);cursor:pointer;">
-                    <input type="checkbox" ${conteggiato ? 'checked' : ''} onchange="updateLavoro('${row.id}', 'conteggiato', this.checked)" style="width:auto;padding:0;margin:0;"> Conteggiato
-                </label>`;
-            }
-            return html;
         }
 
         function renderLavori() {
@@ -1124,8 +1153,8 @@
             const filtered = getFilteredLavori();
             let totalPrevisto = 0, totalTasse = 0, totalCosti = 0;
 
-            // Totali su TUTTI i lavori (non paginati)
-            data.lavori.forEach(row => {
+            // Totali su TUTTI i lavori non di tasca (non paginati)
+            data.lavori.filter(r => !isSpesaDiTasca(r)).forEach(row => {
                 totalPrevisto += parseFloat(row.importoPrevisto) || 0;
                 totalCosti += parseFloat(row.costi) || 0;
                 const calc = calculateRow(row);
@@ -1181,6 +1210,7 @@
             const hideIncassati = document.getElementById('filterHideIncassati').checked;
 
             return data.lavori.filter(row => {
+                if (isSpesaDiTasca(row)) return false;
                 if (dateFrom && row.data < dateFrom) return false;
                 if (dateTo && row.data > dateTo) return false;
                 if (cliente && !(row.cliente || '').toLowerCase().includes(cliente)) return false;
@@ -1231,6 +1261,55 @@
         function nextPageLavori() {
             const total = Math.ceil(getFilteredLavori().length / lavoriPerPage);
             if (lavoriPage < total) { lavoriPage++; renderLavori(); }
+        }
+
+        // =============== SPESE DI TASCA ===============
+        function addSpesaDiTasca() {
+            data.lavori.push({
+                id: generateId('lav'),
+                data: new Date().toISOString().split('T')[0],
+                cliente: '',
+                lavoro: '',
+                importoPrevisto: 0,
+                costi: 0,
+                percentualeFrank: 50,
+                soggetto: 'Frank',
+                conteggiato: true
+            });
+            autoSave();
+            renderAll();
+        }
+
+        function renderSpeseDiTasca() {
+            const tbody = document.getElementById('speseTascaBody');
+            tbody.innerHTML = '';
+            let totFrank = 0, totFox = 0;
+
+            const spese = data.lavori.filter(isSpesaDiTasca);
+
+            spese.forEach(row => {
+                const costi = parseFloat(row.costi) || 0;
+                if (row.soggetto === 'Frank') totFrank += costi;
+                else totFox += costi;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="date" value="${row.data}" onchange="updateLavoro('${row.id}', 'data', this.value)"></td>
+                    <td><input type="text" value="${row.lavoro}" onchange="updateLavoro('${row.id}', 'lavoro', this.value)" placeholder="Descrizione spesa"></td>
+                    <td><input type="number" step="0.01" value="${row.costi}" onchange="updateLavoro('${row.id}', 'costi', this.value)"></td>
+                    <td>
+                        <select onchange="updateLavoro('${row.id}', 'soggetto', this.value)">
+                            <option value="Frank" ${row.soggetto === 'Frank' ? 'selected' : ''}>Frank</option>
+                            <option value="Fox" ${row.soggetto === 'Fox' ? 'selected' : ''}>Fox</option>
+                        </select>
+                    </td>
+                    <td><button class="delete-btn" onclick="deleteLavoro('${row.id}')">Elimina</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('totalSpeseTascaFrank').textContent = 'Frank: ' + formatEuro(totFrank);
+            document.getElementById('totalSpeseTascaFox').textContent = 'Fox: ' + formatEuro(totFox);
         }
 
         // =============== MOVIMENTI BANCARI ===============
@@ -1379,8 +1458,8 @@
 
         // =============== SITUAZIONE SOCI ===============
         function calculatePortafoglio() {
-            const frank = { entrate: 0, spese: 0, anticipi: 0, anticipiSospesi: 0, prelievi: 0 };
-            const fox = { entrate: 0, spese: 0, anticipi: 0, anticipiSospesi: 0, prelievi: 0 };
+            const frank = { entrate: 0, spese: 0, anticipi: 0, prelievi: 0 };
+            const fox = { entrate: 0, spese: 0, anticipi: 0, prelievi: 0 };
 
             // Helper: get split from lavoro collegato, fallback 50/50
             function getMovSplit(mov) {
@@ -1418,16 +1497,10 @@
                 if (costi > 0 && (sogg === 'Frank' || sogg === 'Fox')) {
                     const pctF = (parseFloat(lav.percentualeFrank) || 50) / 100;
                     const pctX = 1 - pctF;
-                    const conteggiato = lav.conteggiato !== false;
-                    if (conteggiato) {
-                        frank.spese += costi * pctF;
-                        fox.spese += costi * pctX;
-                        if (sogg === 'Frank') frank.anticipi += costi;
-                        else fox.anticipi += costi;
-                    } else {
-                        if (sogg === 'Frank') frank.anticipiSospesi += costi;
-                        else fox.anticipiSospesi += costi;
-                    }
+                    frank.spese += costi * pctF;
+                    fox.spese += costi * pctX;
+                    if (sogg === 'Frank') frank.anticipi += costi;
+                    else fox.anticipi += costi;
                 }
             });
 
@@ -1446,12 +1519,14 @@
                 <div class="total-line"><span>Quota Spese:</span><span class="negative">- ${formatEuro(p.spese)}</span></div>
                 <div class="total-line" style="font-weight:bold; border-top:1px solid var(--border); padding-top:8px; margin-top:4px;">
                     <span>= Quota Spettante:</span><span>${formatEuro(spettanza)}</span></div>
-                <div class="total-line" style="margin-top:8px;"><span>Gia Prelevato:</span><span class="negative">- ${formatEuro(p.prelievi)}</span></div>
-                <div class="total-line"><span>Anticipi conteggiati:</span><span class="positive">+ ${formatEuro(p.anticipi)}</span></div>
             `;
 
-            if (p.anticipiSospesi > 0) {
-                html += `<div class="total-line"><span>Anticipi in sospeso:</span><span style="color: #ffc107;">\u23F3 ${formatEuro(p.anticipiSospesi)}</span></div>`;
+            if (p.anticipi > 0) {
+                html += `<div class="total-line" style="margin-top:8px;"><span>Anticipi di tasca:</span><span class="positive">+ ${formatEuro(p.anticipi)}</span></div>`;
+            }
+
+            if (p.prelievi > 0) {
+                html += `<div class="total-line"><span>Gia Prelevato:</span><span class="negative">- ${formatEuro(p.prelievi)}</span></div>`;
             }
 
             if (puoPrelevare >= 0) {
@@ -1567,8 +1642,15 @@
                 ]);
             });
 
+            // Sheet 3: Spese di Tasca
+            const speseTascaData = [['Data', 'Descrizione', 'Importo', 'Pagato da']];
+            data.lavori.filter(isSpesaDiTasca).forEach(row => {
+                speseTascaData.push([row.data, row.lavoro, row.costi, row.soggetto]);
+            });
+
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(lavoriData), 'Lavori');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(speseTascaData), 'Spese di Tasca');
             XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(movData), 'Movimenti Bancari');
             XLSX.writeFile(wb, 'DosAmigos_Contabilita.xlsx');
         }

@@ -60,7 +60,7 @@
             "costi": "219.60",
             "percentualeFrank": 50,
             "soggetto": "Frank",
-            "conteggiato": false
+            "conteggiato": true
         },
         {
             "id": "lav_7",
@@ -89,6 +89,28 @@
             "lavoro": "Spese varie Fox",
             "importoPrevisto": 0,
             "costi": "458",
+            "percentualeFrank": 50,
+            "soggetto": "Fox",
+            "conteggiato": true
+        },
+        {
+            "id": "lav_14",
+            "data": "2026-03-26",
+            "cliente": "",
+            "lavoro": "Claude Max 20x",
+            "importoPrevisto": 0,
+            "costi": "220",
+            "percentualeFrank": 50,
+            "soggetto": "Frank",
+            "conteggiato": true
+        },
+        {
+            "id": "lav_15",
+            "data": "2026-03-26",
+            "cliente": "",
+            "lavoro": "King AI",
+            "importoPrevisto": 0,
+            "costi": "50",
             "percentualeFrank": 50,
             "soggetto": "Fox",
             "conteggiato": true
@@ -220,5 +242,5 @@
         "saldoAttuale": 0
     },
     "speseFuture": [],
-    "nextId": 14
+    "nextId": 16
 }
