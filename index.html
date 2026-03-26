@@ -1414,7 +1414,10 @@
                         </select>
                     </td>
                     <td style="text-align:center">${badge}</td>
-                    <td>${sp.rimborsata ? '' : `<button class="delete-btn" onclick="deleteSpesa('${sp.id}')">Elimina</button>`}</td>
+                    <td style="white-space:nowrap">${sp.rimborsata
+                        ? ''
+                        : `<button class="btn btn-sm" onclick="rimborsaSingola('${sp.id}')" style="margin-right:4px;">Rimborsa</button><button class="delete-btn" onclick="deleteSpesa('${sp.id}')">Elimina</button>`
+                    }</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -1433,6 +1436,34 @@
         }
 
         // =============== REGOLAMENTO (SETTLEMENT) ===============
+        function rimborsaSingola(id) {
+            const sp = data.speseDiTasca.find(s => s.id === id);
+            if (!sp || sp.rimborsata) return;
+            const importo = parseFloat(sp.importo) || 0;
+
+            if (!confirm(`Rimborsare "${sp.descrizione}" di ${formatEuro(importo)} a ${sp.pagatoDa}?`)) return;
+
+            const oggi = new Date().toISOString().split('T')[0];
+            sp.rimborsata = true;
+            sp.dataRimborso = oggi;
+
+            data.movimentiBancari.push({
+                id: generateId('mov'),
+                data: oggi,
+                tipo: 'Rimborso Socio',
+                importo: importo,
+                soggetto: 'Dos Amigos',
+                percentualeFrank: 50,
+                destinatario: sp.pagatoDa,
+                lavoroCollegato: '',
+                causale: `Rimborso: ${sp.descrizione}`,
+                note: ''
+            });
+
+            autoSave();
+            renderAll();
+        }
+
         function regolaSpese(socio) {
             const pending = data.speseDiTasca.filter(sp => sp.pagatoDa === socio && !sp.rimborsata);
             const totale = pending.reduce((sum, sp) => sum + (parseFloat(sp.importo) || 0), 0);
