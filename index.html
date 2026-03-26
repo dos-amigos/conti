@@ -699,7 +699,7 @@
         <!-- Controls Bar -->
         <div class="controls-bar">
             <button class="btn" onclick="addLavoro()">+ Aggiungi Lavoro</button>
-            <button class="btn" onclick="addSpesaDiTasca()">+ Spesa di Tasca</button>
+            <button class="btn" onclick="addSpesaDiTasca()">+ Spesa Socio</button>
             <button class="btn" onclick="addMovimento()">+ Aggiungi Movimento</button>
             <button class="btn" onclick="exportToExcel()">Esporta Excel</button>
             <button class="btn" onclick="manualSave()">Salva Ora</button>
@@ -710,7 +710,7 @@
         <!-- ===== LAVORI ===== -->
         <div class="section">
             <div class="section-header">
-                <h2>Lavori e Preventivi</h2>
+                <h2>Lavori e Spese</h2>
                 <span style="color: var(--text-secondary); font-size: 13px;">Tracker lavori - lo split Frank/Fox definisce la divisione per ogni voce</span>
             </div>
 
@@ -781,7 +781,7 @@
         <!-- ===== SPESE DI TASCA ===== -->
         <div class="section">
             <div class="section-header">
-                <h2>Spese di Tasca</h2>
+                <h2>Spese Soci</h2>
                 <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                     <select id="filterSpesaStato" onchange="renderSpeseDiTasca()" style="padding:6px 10px; background:var(--bg-tertiary); color:var(--text-primary); border:1px solid var(--border-light); border-radius:6px; font-size:13px;">
                         <option value="tutte">Tutte</option>
@@ -933,8 +933,8 @@
         <!-- Note -->
         <div class="note-bar">
             <strong>Info:</strong> Lo split Frank/Fox e' definito nei Lavori. I movimenti bancari ereditano lo split dal lavoro collegato.
-            Le spese di tasca sono divise 50/50 come costo aziendale. Il socio che le anticipa riceve un credito da rimborsare.
-            Usa "Regola" per segnare le spese come rimborsate e creare il movimento bancario corrispondente.
+            Le spese soci sono divise 50/50 come costo aziendale. Il socio che le anticipa riceve un credito da rimborsare.
+            Usa "Regola" o "Rimborsa" per segnare le spese come rimborsate e creare il movimento bancario corrispondente.
         </div>
     </div>
 
@@ -1757,7 +1757,7 @@
                 <div class="waterfall-label">UTILE</div>`;
             html += line('Quota Entrate', formatEuro(p.entrate), 'positive');
             html += line('Quota Spese Aziendali', '- ' + formatEuro(p.speseAziendali), 'negative');
-            html += line('Quota Spese di Tasca (50/50)', '- ' + formatEuro(p.speseTascaTotali), 'negative');
+            html += line('Quota Spese Soci (50/50)', '- ' + formatEuro(p.speseTascaTotali), 'negative');
             html += line('Utile Netto', formatEuro(p.utileNetto), p.utileNetto >= 0 ? 'positive' : 'negative',
                 'font-weight:bold; border-top:2px solid var(--border); padding-top:8px; margin-top:4px;');
             html += '</div>';
@@ -1879,7 +1879,7 @@
                 ]);
             });
 
-            // Sheet 2: Spese di Tasca
+            // Sheet 2: Spese Soci
             const speseTascaData = [['Data', 'Descrizione', 'Importo', 'Pagato da', 'Rimborsata', 'Data Rimborso']];
             data.speseDiTasca.forEach(sp => {
                 speseTascaData.push([
@@ -1901,7 +1901,7 @@
 
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(lavoriData), 'Lavori');
-            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(speseTascaData), 'Spese di Tasca');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(speseTascaData), 'Spese Soci');
             XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(movData), 'Movimenti Bancari');
             XLSX.writeFile(wb, 'DosAmigos_Contabilita.xlsx');
         }
