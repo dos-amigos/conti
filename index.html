@@ -1624,17 +1624,27 @@
 
             // === PATCH v2: fix split + rimuovi 800 errato ===
             if (!d._patch_split_v2) {
-                // Solandata e Medisinus: 100% Frank
                 d.lavori.forEach(lav => {
                     if ((lav.cliente === 'Solandata' || lav.cliente === 'Medisinus')) {
                         lav.percentualeFrank = 100;
                     }
                 });
-                // Rimuovi il movimento 800 errato (era cash personale, non bancario)
                 d.movimentiBancari = d.movimentiBancari.filter(m =>
                     m.causale !== '800 cash Frank a Fox per lavoro extra Ligo'
                 );
                 d._patch_split_v2 = true;
+            }
+            // === PATCH v3: Solandata/Medisinus torna 50/50, Ligo 40/60 ===
+            if (!d._patch_split_v3) {
+                d.lavori.forEach(lav => {
+                    if (lav.cliente === 'Solandata' || lav.cliente === 'Medisinus') {
+                        lav.percentualeFrank = 50;
+                    }
+                    if (lav.cliente === 'Ligo') {
+                        lav.percentualeFrank = 40;
+                    }
+                });
+                d._patch_split_v3 = true;
             }
 
             return d;
