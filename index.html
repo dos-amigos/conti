@@ -801,10 +801,22 @@
 
         <!-- Controls Bar -->
         <div class="controls-bar">
+            <button class="btn" onclick="chiudiPeriodo()">Chiudi Periodo</button>
             <button class="btn" onclick="exportToExcel()">Esporta Excel</button>
             <button class="btn" onclick="manualSave()">Salva Ora</button>
             <button class="btn" onclick="downloadBackup()">Download Backup</button>
             <button class="btn btn-danger" onclick="logout()">Logout</button>
+        </div>
+
+        <!-- ===== CHIUSURA PERIODO ===== -->
+        <div class="global-filter-bar" id="chiusuraBar" style="display:none;">
+            <label style="color:var(--text-primary);font-weight:bold;">Periodo chiuso al:</label>
+            <span id="chiusuraData" style="color:var(--accent);font-weight:bold;"></span>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text-secondary);">
+                <input type="checkbox" id="mostraTutto" onchange="toggleMostraTutto()">
+                Mostra periodo chiuso
+            </label>
+            <button class="btn btn-sm btn-danger" onclick="rimuoviChiusura()">Rimuovi chiusura</button>
         </div>
 
         <!-- ===== FILTRO PERIODO GLOBALE ===== -->
@@ -1137,6 +1149,54 @@
         let movimentiPage = 1, movimentiPerPage = 20;
         let isDarkMode = true;
         let globalDateFrom = '', globalDateTo = '';
+        let mostraTutto = false;
+
+        function isAfterChiusura(dateStr) {
+            if (!data.dataChiusura || mostraTutto) return true;
+            if (!dateStr) return true;
+            return dateStr > data.dataChiusura;
+        }
+
+        function chiudiPeriodo() {
+            const oggi = new Date().toISOString().split('T')[0];
+            const dataInput = prompt(
+                'Chiudi periodo fino a questa data.\n' +
+                'Tutti i dati fino a questa data verranno nascosti e non conteggiati.\n' +
+                'Potrai sempre rivederli con il toggle "Mostra periodo chiuso".\n\n' +
+                'Data chiusura:',
+                oggi
+            );
+            if (!dataInput) return;
+            if (!confirm(`Confermi chiusura al ${dataInput}?\nTutti i conteggi partiranno da zero dopo questa data.`)) return;
+
+            data.dataChiusura = dataInput;
+            autoSave();
+            updateChiusuraUI();
+            renderAll();
+        }
+
+        function rimuoviChiusura() {
+            if (!confirm('Rimuovere la chiusura? Tutti i dati storici torneranno visibili e conteggiati.')) return;
+            data.dataChiusura = null;
+            autoSave();
+            updateChiusuraUI();
+            renderAll();
+        }
+
+        function toggleMostraTutto() {
+            mostraTutto = document.getElementById('mostraTutto').checked;
+            renderAll();
+        }
+
+        function updateChiusuraUI() {
+            const bar = document.getElementById('chiusuraBar');
+            if (data.dataChiusura) {
+                bar.style.display = 'flex';
+                document.getElementById('chiusuraData').textContent = data.dataChiusura;
+            } else {
+                bar.style.display = 'none';
+            }
+        }
 
         function applyGlobalFilter() {
             globalDateFrom = document.getElementById('globalDateFrom').value;
@@ -1163,6 +1223,8 @@
         }
 
         function isInGlobalDateRange(dateStr) {
+            // Chiusura periodo: nascondi tutto prima della data chiusura
+            if (!isAfterChiusura(dateStr)) return false;
             if (!globalDateFrom && !globalDateTo) return true;
             if (!dateStr) return false;
             if (globalDateFrom && dateStr < globalDateFrom) return false;
@@ -1178,6 +1240,7 @@
                 movimentiBancari: [],
                 contoBancario: { saldoAttuale: 0 },
                 speseFuture: [],
+                dataChiusura: null,
                 nextId: 1
             };
         }
@@ -1404,6 +1467,7 @@
 
             if (!d.speseFuture) d.speseFuture = [];
             if (!d.contoBancario) d.contoBancario = { saldoAttuale: 0 };
+            if (d.dataChiusura === undefined) d.dataChiusura = null;
 
             return d;
         }
@@ -1414,6 +1478,7 @@
 
         // =============== RENDER ALL ===============
         function renderAll() {
+            updateChiusuraUI();
             renderLavori();
             renderSpeseAziendali();
             renderSpeseDiTasca();
