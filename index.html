@@ -10,7 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --bg-primary: #0F172A;
+            --bg-primary: #47526b;
             --bg-secondary: #1E293B;
             --bg-tertiary: #334155;
             --text-primary: #F1F5F9;
@@ -91,7 +91,7 @@
             font-family: 'Arial Black', 'Impact', sans-serif;
             font-size: 32px;
             font-weight: 900;
-            color: #38BDF8;
+            color: #D8FF36;
             letter-spacing: 3px;
         }
 
@@ -110,11 +110,11 @@
         }
 
         .sync-status {
-            background: rgba(56, 189, 248, 0.15);
+            background: rgba(216, 255, 54, 0.15);
             padding: 8px 14px;
             border-radius: 6px;
             border: 1px solid var(--border);
-            color: #38BDF8;
+            color: #D8FF36;
             font-size: 13px;
             white-space: nowrap;
         }
@@ -169,8 +169,8 @@
         }
 
         .btn-header {
-            background: rgba(56, 189, 248, 0.15);
-            color: #38BDF8;
+            background: rgba(216, 255, 54, 0.15);
+            color: #D8FF36;
             border: 1px solid var(--border);
             padding: 8px 14px;
             border-radius: 6px;
@@ -181,7 +181,7 @@
         }
 
         .btn-header:hover {
-            background: rgba(56, 189, 248, 0.3);
+            background: rgba(216, 255, 54, 0.3);
         }
 
         .delete-btn {
@@ -231,8 +231,8 @@
 
         .section-header {
             padding: 14px 20px;
-            background: var(--section-header-bg);
-            border-bottom: 1px solid var(--border);
+            background: #D8FF36;
+            border-bottom: none;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -241,14 +241,31 @@
         }
 
         .section-header h2 {
-            color: var(--text-primary);
+            color: #1E293B;
             font-size: 1.2em;
             margin: 0;
             font-weight: 700;
         }
 
         .section-header span {
-            color: var(--text-secondary) !important;
+            color: #475569 !important;
+        }
+
+        .section-header .btn,
+        .section-header .btn-sm {
+            background: #1E293B;
+            color: #F1F5F9;
+        }
+
+        .section-header .btn:hover,
+        .section-header .btn-sm:hover {
+            background: #334155;
+        }
+
+        .section-header select {
+            background: rgba(30, 41, 59, 0.15);
+            color: #1E293B;
+            border: 1px solid rgba(30, 41, 59, 0.3);
         }
 
         .section-body {
