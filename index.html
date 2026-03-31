@@ -1046,7 +1046,7 @@
         <div class="section">
             <div class="section-header">
                 <h2>Situazione Soci</h2>
-                <span style="color: var(--text-secondary); font-size: 13px;">Entrate - Spese = Utile + Anticipi - Rimborsi - Prelievi = Da bonificare</span>
+                <span style="color: var(--text-secondary); font-size: 13px;">Entrate - Spese = Utile + Anticipi pendenti - Prelievi = Da bonificare</span>
             </div>
             <div class="total-grid">
                 <div class="total-card">
@@ -2142,7 +2142,7 @@
                 const speseTotal = p.speseAziendali + p.speseTascaTotali;
                 const utileNetto = p.entrate - speseTotal;
                 const creditoPending = p.anticipiPending;
-                const daBonificare = utileNetto + creditoPending - p.rimborsiRicevuti - p.prelievi;
+                const daBonificare = utileNetto + creditoPending - p.prelievi;
                 return { ...p, speseTotal, utileNetto, creditoPending, daBonificare };
             }
 
@@ -2178,9 +2178,6 @@
 
             if (p.creditoPending > 0) {
                 html += line('Spese anticipate (da rimborsare)', '+ ' + formatEuro(p.creditoPending), 'positive');
-            }
-            if (p.rimborsiRicevuti > 0) {
-                html += line('Rimborsi gia ricevuti', '- ' + formatEuro(p.rimborsiRicevuti), 'negative');
             }
             if (p.prelievi > 0) {
                 html += line('Prelievi effettuati', '- ' + formatEuro(p.prelievi), 'negative');
