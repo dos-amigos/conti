@@ -1084,6 +1084,40 @@
             Le spese aziendali e le spese soci sono divise 50/50. Il socio che anticipa riceve un credito da rimborsare.
             Usa "Regola" o "Rimborsa" per segnare le spese come rimborsate e creare il movimento bancario corrispondente.
         </div>
+
+        <!-- ===== DEBUG SOCI ===== -->
+        <div class="section">
+            <div class="section-header" style="cursor:pointer;" onclick="document.getElementById('debugContent').style.display = document.getElementById('debugContent').style.display === 'none' ? 'block' : 'none';">
+                <h2>Debug Conteggi Soci</h2>
+                <span style="font-size:13px;">Clicca per espandere/chiudere</span>
+            </div>
+            <div id="debugContent" style="display:none;">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fonte</th>
+                                <th>Data</th>
+                                <th>Descrizione</th>
+                                <th>Tipo</th>
+                                <th>Importo</th>
+                                <th>Split %</th>
+                                <th>Frank</th>
+                                <th>Fox</th>
+                            </tr>
+                        </thead>
+                        <tbody id="debugBody"></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="6">TOTALI NETTI (positivo = spetta, negativo = ha preso)</td>
+                                <td id="debugTotFrank">-</td>
+                                <td id="debugTotFox">-</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1387,6 +1421,7 @@
             calculateBankBalance();
             calculatePortafoglio();
             renderSpeseFuture();
+            renderDebug();
         }
 
         // =============== HELPERS ===============
@@ -2282,6 +2317,90 @@
             });
 
             document.getElementById('totaleSpeseFuture').textContent = formatEuro(totale);
+        }
+
+        // =============== DEBUG ===============
+        function renderDebug() {
+            const tbody = document.getElementById('debugBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            let totFrank = 0, totFox = 0;
+
+            function addRow(fonte, data, desc, tipo, importo, splitPct, frank, fox) {
+                totFrank += frank;
+                totFox += fox;
+                const tr = document.createElement('tr');
+                const fCls = frank > 0 ? 'positive' : frank < 0 ? 'negative' : '';
+                const xCls = fox > 0 ? 'positive' : fox < 0 ? 'negative' : '';
+                tr.innerHTML = `
+                    <td>${fonte}</td><td>${data}</td><td>${desc}</td><td>${tipo}</td>
+                    <td>${formatEuro(importo)}</td><td>${splitPct}</td>
+                    <td class="${fCls}">${formatEuro(frank)}</td>
+                    <td class="${xCls}">${formatEuro(fox)}</td>`;
+                tbody.appendChild(tr);
+            }
+
+            function getMovSplit(mov) {
+                if (mov.lavoroCollegato) {
+                    const lav = data.lavori.find(l => l.id === mov.lavoroCollegato);
+                    if (lav) return (parseFloat(lav.percentualeFrank) || 50) / 100;
+                }
+                return (parseFloat(mov.percentualeFrank) || 50) / 100;
+            }
+
+            // Movimenti bancari
+            data.movimentiBancari.forEach(mov => {
+                if (mov.ignorato) return;
+                if (!isInGlobalDateRange(mov.data)) return;
+                const importo = Math.abs(parseFloat(mov.importo) || 0);
+                const pF = getMovSplit(mov);
+                const dest = mov.destinatario || '';
+                let frank = 0, fox = 0;
+                let splitLabel = `${(pF*100).toFixed(0)}/${((1-pF)*100).toFixed(0)}`;
+
+                if (mov.tipo === 'Entrata') {
+                    frank = importo * pF; fox = importo * (1-pF);
+                } else if (mov.tipo === 'Prelievo Socio') {
+                    splitLabel = dest;
+                    if (dest === 'Frank') frank = -importo;
+                    else if (dest === 'Fox') fox = -importo;
+                } else if (mov.tipo === 'Rimborso Socio') {
+                    splitLabel = dest;
+                    // Rimborsi non impattano il saldo soci (anticipo e rimborso si annullano)
+                    frank = 0; fox = 0;
+                } else if (mov.tipo === 'Spesa' || mov.tipo === 'Tasse') {
+                    frank = -(importo * pF); fox = -(importo * (1-pF));
+                }
+
+                const lavRef = mov.lavoroCollegato ? data.lavori.find(l => l.id === mov.lavoroCollegato) : null;
+                const desc = mov.causale || (lavRef ? `${lavRef.cliente} - ${lavRef.lavoro}` : mov.note || '-');
+                addRow('Movimento', mov.data, desc, mov.tipo, importo, splitLabel, frank, fox);
+            });
+
+            // Spese aziendali non registrate
+            data.speseAziendali.forEach(sa => {
+                if (sa.ignorato || sa.registrata) return;
+                if (!isInGlobalDateRange(sa.data)) return;
+                const importo = parseFloat(sa.importo) || 0;
+                addRow('Spesa Az.', sa.data, sa.descrizione, 'Costo 50/50', importo, '50/50', -(importo*0.5), -(importo*0.5));
+            });
+
+            // Spese di tasca
+            data.speseDiTasca.forEach(sp => {
+                if (sp.ignorato) return;
+                if (!isInGlobalDateRange(sp.data)) return;
+                const importo = parseFloat(sp.importo) || 0;
+                // Costo 50/50
+                addRow('Spesa Socio', sp.data, sp.descrizione, `Costo 50/50 (pag. ${sp.pagatoDa})`, importo, '50/50', -(importo*0.5), -(importo*0.5));
+                // Anticipo pendente
+                if (!sp.rimborsata) {
+                    if (sp.pagatoDa === 'Frank') addRow('Spesa Socio', sp.data, sp.descrizione, 'Anticipo pendente', importo, sp.pagatoDa, importo, 0);
+                    else addRow('Spesa Socio', sp.data, sp.descrizione, 'Anticipo pendente', importo, sp.pagatoDa, 0, importo);
+                }
+            });
+
+            document.getElementById('debugTotFrank').innerHTML = `<span class="${totFrank >= 0 ? 'positive' : 'negative'}">${formatEuro(totFrank)}</span>`;
+            document.getElementById('debugTotFox').innerHTML = `<span class="${totFox >= 0 ? 'positive' : 'negative'}">${formatEuro(totFox)}</span>`;
         }
 
         // =============== THEME ===============
