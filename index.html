@@ -1369,8 +1369,8 @@
             d.speseAziendali.forEach(sa => {
                 if (!sa.id) sa.id = 'sa_' + d.nextId++;
                 if (sa.ignorato === undefined) sa.ignorato = false;
-                if (sa.registrata === undefined) {
-                    // Auto-detect: se esiste gia un movimento Spesa con causale corrispondente, segna come registrata
+                if (!sa.registrata && sa.descrizione) {
+                    // Auto-detect: se esiste gia un movimento Spesa con causale corrispondente
                     const hasMovimento = d.movimentiBancari.some(mov =>
                         mov.tipo === 'Spesa' && mov.causale && mov.causale.includes(sa.descrizione)
                     );
