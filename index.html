@@ -1622,32 +1622,19 @@
             }
             if (!d.chiusure) d.chiusure = [];
 
-            // === ONE-TIME PATCH: fix split Solandata/Medisinus + 800 cash Fox ===
-            if (!d._patch_split_v1) {
+            // === PATCH v2: fix split + rimuovi 800 errato ===
+            if (!d._patch_split_v2) {
                 // Solandata e Medisinus: 100% Frank
                 d.lavori.forEach(lav => {
-                    if ((lav.cliente === 'Solandata' || lav.cliente === 'Medisinus') && (parseFloat(lav.percentualeFrank) || 50) === 50) {
+                    if ((lav.cliente === 'Solandata' || lav.cliente === 'Medisinus')) {
                         lav.percentualeFrank = 100;
                     }
                 });
-                // Registra 800 cash Frank -> Fox (prelievo Fox)
-                const has800 = d.movimentiBancari.some(m => m.causale === '800 cash Frank a Fox per lavoro extra Ligo');
-                if (!has800) {
-                    d.movimentiBancari.push({
-                        id: 'mov_' + d.nextId++,
-                        data: '2026-02-12',
-                        tipo: 'Prelievo Socio',
-                        importo: 800,
-                        soggetto: 'Dos Amigos',
-                        percentualeFrank: 50,
-                        destinatario: 'Fox',
-                        lavoroCollegato: '',
-                        causale: '800 cash Frank a Fox per lavoro extra Ligo',
-                        note: 'Compenso extra Fox per lavoro Ligo',
-                        ignorato: false
-                    });
-                }
-                d._patch_split_v1 = true;
+                // Rimuovi il movimento 800 errato (era cash personale, non bancario)
+                d.movimentiBancari = d.movimentiBancari.filter(m =>
+                    m.causale !== '800 cash Frank a Fox per lavoro extra Ligo'
+                );
+                d._patch_split_v2 = true;
             }
 
             return d;
