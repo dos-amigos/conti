@@ -10,53 +10,51 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --bg-primary: #444649;
-            --bg-secondary: #161b22;
-            --bg-tertiary: #21262d;
-            --bg-header: #1c2129;
-            --text-primary: #e5e5e5;
-            --text-secondary: #8b949e;
-            --accent: #D8FF36;
-            --accent-hover: #c4e830;
-            --accent-text: #000000;
-            --th-color: #ffffff;
-            --th-bg: #252b33;
-            --section-header-bg: #1c2129;
-            --border: #30363d;
-            --border-light: #404040;
-            --danger: #f85149;
-            --danger-hover: #da3633;
-            --positive: #D8FF36;
-            --negative: #f85149;
-            --row-hover: #2a3140;
-            --row-alt: #1a2029;
-            --tfoot-bg: #0d1117;
-            --tfoot-text: #58a6ff;
+            --bg-primary: #0F172A;
+            --bg-secondary: #1E293B;
+            --bg-tertiary: #334155;
+            --text-primary: #F1F5F9;
+            --text-secondary: #94A3B8;
+            --accent: #38BDF8;
+            --accent-hover: #7DD3FC;
+            --accent-text: #0F172A;
+            --th-color: #CBD5E1;
+            --th-bg: #162032;
+            --section-header-bg: #1E293B;
+            --border: #334155;
+            --border-light: #475569;
+            --danger: #EF4444;
+            --danger-hover: #DC2626;
+            --positive: #10B981;
+            --negative: #EF4444;
+            --row-hover: #293548;
+            --row-alt: #172033;
+            --tfoot-bg: #0F172A;
+            --tfoot-text: #38BDF8;
         }
 
         body.light-mode {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f5f5f5;
-            --bg-tertiary: #ebebeb;
-            --bg-header: #e8e8e8;
-            --text-primary: #1a1a1a;
-            --text-secondary: #666666;
-            --accent: #4a7a00;
-            --accent-hover: #3d6600;
-            --accent-text: #ffffff;
-            --th-color: #333333;
-            --th-bg: #e0e0e0;
-            --section-header-bg: #4a7a00;
-            --border: #d5d5d5;
-            --border-light: #c0c0c0;
-            --danger: #d93025;
-            --danger-hover: #b3261e;
-            --positive: #1e8e3e;
-            --negative: #d93025;
-            --row-hover: #eaeaea;
-            --row-alt: #f0f0f0;
-            --tfoot-bg: #d8d8d8;
-            --tfoot-text: #1a6fb5;
+            --bg-primary: #F8FAFC;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F1F5F9;
+            --text-primary: #0F172A;
+            --text-secondary: #64748B;
+            --accent: #0284C7;
+            --accent-hover: #0369A1;
+            --accent-text: #FFFFFF;
+            --th-color: #475569;
+            --th-bg: #F1F5F9;
+            --section-header-bg: #F1F5F9;
+            --border: #E2E8F0;
+            --border-light: #CBD5E1;
+            --danger: #DC2626;
+            --danger-hover: #B91C1C;
+            --positive: #059669;
+            --negative: #DC2626;
+            --row-hover: #F1F5F9;
+            --row-alt: #F8FAFC;
+            --tfoot-bg: #F1F5F9;
+            --tfoot-text: #0284C7;
         }
 
         * {
@@ -75,8 +73,8 @@
 
         /* ===== HEADER (always dark) ===== */
         .header {
-            background: #010409;
-            border-bottom: 1px solid #30363d;
+            background: #020617;
+            border-bottom: 1px solid #1E293B;
             padding: 15px 20px;
             display: flex;
             align-items: center;
@@ -93,7 +91,7 @@
             font-family: 'Arial Black', 'Impact', sans-serif;
             font-size: 32px;
             font-weight: 900;
-            color: #D8FF36;
+            color: #38BDF8;
             letter-spacing: 3px;
         }
 
@@ -112,11 +110,11 @@
         }
 
         .sync-status {
-            background: rgba(121, 192, 255, 0.15);
+            background: rgba(56, 189, 248, 0.15);
             padding: 8px 14px;
             border-radius: 6px;
-            border: 1px solid #30363d;
-            color: #79c0ff;
+            border: 1px solid var(--border);
+            color: #38BDF8;
             font-size: 13px;
             white-space: nowrap;
         }
@@ -138,8 +136,8 @@
 
         /* ===== BUTTONS ===== */
         .btn {
-            background: #79c0ff;
-            color: #0d1117;
+            background: var(--accent);
+            color: var(--accent-text);
             border: none;
             padding: 10px 20px;
             border-radius: 8px;
@@ -151,7 +149,7 @@
         }
 
         .btn:hover {
-            background: #a5d6ff;
+            background: var(--accent-hover);
             transform: translateY(-1px);
         }
 
@@ -171,9 +169,9 @@
         }
 
         .btn-header {
-            background: rgba(121, 192, 255, 0.15);
-            color: #79c0ff;
-            border: 1px solid #30363d;
+            background: rgba(56, 189, 248, 0.15);
+            color: #38BDF8;
+            border: 1px solid var(--border);
             padding: 8px 14px;
             border-radius: 6px;
             font-size: 12px;
@@ -183,7 +181,7 @@
         }
 
         .btn-header:hover {
-            background: rgba(121, 192, 255, 0.3);
+            background: rgba(56, 189, 248, 0.3);
         }
 
         .delete-btn {
@@ -233,8 +231,8 @@
 
         .section-header {
             padding: 14px 20px;
-            background: var(--accent);
-            border-bottom: none;
+            background: var(--section-header-bg);
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -243,37 +241,14 @@
         }
 
         .section-header h2 {
-            color: var(--accent-text);
-            font-size: 1.3em;
+            color: var(--text-primary);
+            font-size: 1.2em;
             margin: 0;
-            font-weight: 900;
+            font-weight: 700;
         }
 
         .section-header span {
-            color: var(--accent-text) !important;
-            opacity: 0.6;
-        }
-
-        .section-header .btn,
-        .section-header .btn-sm {
-            background: rgba(0, 0, 0, 0.25);
-            color: var(--accent-text);
-            border: 1px solid rgba(0, 0, 0, 0.2);
-        }
-
-        .section-header .btn:hover,
-        .section-header .btn-sm:hover {
-            background: rgba(0, 0, 0, 0.4);
-        }
-
-        .section-header select {
-            background: rgba(0, 0, 0, 0.15);
-            color: var(--accent-text);
-            border: 1px solid rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-size: 13px;
-            font-weight: bold;
+            color: var(--text-secondary) !important;
         }
 
         .section-body {
@@ -460,8 +435,8 @@
         }
 
         .global-filter-badge {
-            background: rgba(121, 192, 255, 0.15);
-            color: #79c0ff;
+            background: rgba(56, 189, 248, 0.15);
+            color: #38BDF8;
             padding: 6px 12px;
             border-radius: 6px;
             font-size: 12px;
@@ -548,7 +523,7 @@
         }
 
         .total-card h3 {
-            color: #79c0ff;
+            color: #38BDF8;
             margin-bottom: 12px;
             font-size: 1.3em;
         }
@@ -677,7 +652,7 @@
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: #010409;
+            background: #020617;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -687,10 +662,10 @@
         .login-screen.hidden { display: none; }
 
         .login-box {
-            background: #161b22;
+            background: #1E293B;
             padding: 40px;
             border-radius: 20px;
-            border: 1px solid #30363d;
+            border: 1px solid #334155;
             text-align: center;
             max-width: 400px;
             width: 90%;
@@ -706,7 +681,7 @@
         }
 
         .login-box h2 {
-            color: #D8FF36;
+            color: #38BDF8;
             margin-bottom: 25px;
             font-size: 1.5em;
         }
@@ -715,23 +690,23 @@
             width: 100%;
             padding: 14px;
             margin-bottom: 12px;
-            background: #21262d;
-            border: 2px solid #30363d;
+            background: #334155;
+            border: 2px solid #475569;
             border-radius: 8px;
             color: white;
             font-size: 15px;
         }
 
         .login-box input:focus {
-            border-color: #D8FF36;
+            border-color: #38BDF8;
             outline: none;
         }
 
         .login-box button {
             width: 100%;
             padding: 14px;
-            background: #D8FF36;
-            color: #000;
+            background: #38BDF8;
+            color: #0F172A;
             border: none;
             border-radius: 8px;
             font-size: 16px;
@@ -741,7 +716,7 @@
         }
 
         .login-box button:hover {
-            background: #c4e830;
+            background: #7DD3FC;
         }
 
         .login-error {
@@ -757,13 +732,13 @@
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(1, 4, 9, 0.95);
+            background: rgba(15, 23, 42, 0.95);
             padding: 30px;
             border-radius: 10px;
-            border: 1px solid #30363d;
+            border: 1px solid #334155;
             display: none;
             z-index: 1000;
-            color: #D8FF36;
+            color: #38BDF8;
             font-size: 18px;
         }
 
@@ -819,10 +794,6 @@
 
         <!-- Controls Bar -->
         <div class="controls-bar">
-            <button class="btn" onclick="addLavoro()">+ Aggiungi Lavoro</button>
-            <button class="btn" onclick="addSpesaAziendale()">+ Spesa Aziendale</button>
-            <button class="btn" onclick="addSpesaDiTasca()">+ Spesa Socio</button>
-            <button class="btn" onclick="addMovimento()">+ Aggiungi Movimento</button>
             <button class="btn" onclick="exportToExcel()">Esporta Excel</button>
             <button class="btn" onclick="manualSave()">Salva Ora</button>
             <button class="btn" onclick="downloadBackup()">Download Backup</button>
@@ -843,7 +814,10 @@
         <div class="section">
             <div class="section-header">
                 <h2>Lavori</h2>
-                <span style="color: var(--text-secondary); font-size: 13px;">Tracker lavori - lo split Frank/Fox definisce la divisione per ogni voce</span>
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <span style="font-size: 13px;">Tracker lavori</span>
+                    <button class="btn btn-sm" onclick="addLavoro()">+ Aggiungi Lavoro</button>
+                </div>
             </div>
 
             <div class="filters">
@@ -915,7 +889,7 @@
         <div class="section">
             <div class="section-header">
                 <h2>Spese Aziendali</h2>
-                <span style="color: var(--text-secondary); font-size: 13px;">Costi ricorrenti e una tantum dell'attivita (Elementor, hosting, ecc.)</span>
+                <button class="btn btn-sm" onclick="addSpesaAziendale()">+ Aggiungi Spesa</button>
             </div>
             <div class="table-wrap">
                 <table>
@@ -948,6 +922,7 @@
             <div class="section-header">
                 <h2>Spese Soci</h2>
                 <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <button class="btn btn-sm" onclick="addSpesaDiTasca()">+ Spesa Socio</button>
                     <select id="filterSpesaStato" onchange="renderSpeseDiTasca()" style="padding:6px 10px; background:var(--bg-tertiary); color:var(--text-primary); border:1px solid var(--border-light); border-radius:6px; font-size:13px;">
                         <option value="tutte">Tutte</option>
                         <option value="pendenti" selected>Da rimborsare</option>
@@ -991,7 +966,7 @@
         <div class="section">
             <div class="section-header">
                 <h2>Movimenti Bancari</h2>
-                <span style="color: var(--text-secondary); font-size: 13px;">Solo movimenti reali del conto bancario</span>
+                <button class="btn btn-sm" onclick="addMovimento()">+ Aggiungi Movimento</button>
             </div>
 
             <div class="pagination">
