@@ -1369,6 +1369,7 @@
             d.speseAziendali.forEach(sa => {
                 if (!sa.id) sa.id = 'sa_' + d.nextId++;
                 if (sa.ignorato === undefined) sa.ignorato = false;
+                if (sa.registrata === undefined) sa.registrata = false;
             });
 
             if (!d.speseFuture) d.speseFuture = [];
@@ -1645,7 +1646,8 @@
                 ricorrente: 'NO',
                 frequenza: '-',
                 note: '',
-                ignorato: false
+                ignorato: false,
+                registrata: false
             });
             autoSave();
             renderAll();
@@ -1659,6 +1661,33 @@
                 autoSave();
                 renderAll();
             }
+        }
+
+        function registraSpesaAziendale(id) {
+            const sa = data.speseAziendali.find(s => s.id === id);
+            if (!sa || sa.registrata) return;
+            const importo = parseFloat(sa.importo) || 0;
+
+            if (!confirm(`Registrare "${sa.descrizione}" di ${formatEuro(importo)} come movimento bancario "Spesa"?`)) return;
+
+            sa.registrata = true;
+
+            data.movimentiBancari.push({
+                id: generateId('mov'),
+                data: sa.data || new Date().toISOString().split('T')[0],
+                tipo: 'Spesa',
+                importo: importo,
+                soggetto: 'Dos Amigos',
+                percentualeFrank: 50,
+                destinatario: '',
+                lavoroCollegato: '',
+                causale: `Spesa aziendale: ${sa.descrizione}`,
+                note: sa.note || '',
+                ignorato: false
+            });
+
+            autoSave();
+            renderAll();
         }
 
         function deleteSpesaAziendale(id) {
@@ -1705,7 +1734,7 @@
                         </select>
                     </td>
                     <td><input type="text" value="${sa.note || ''}" onchange="updateSpesaAziendale('${sa.id}', 'note', this.value)"></td>
-                    <td><button class="delete-btn" onclick="deleteSpesaAziendale('${sa.id}')">Elimina</button></td>
+                    <td style="white-space:nowrap;">${sa.registrata ? `<span class="badge badge-green">Registrata</span>` : `<button class="btn btn-sm" onclick="registraSpesaAziendale('${sa.id}')" style="margin-right:4px;">Registra mov.</button>`}<button class="delete-btn" onclick="deleteSpesaAziendale('${sa.id}')">Elimina</button></td>
                 `;
                 tbody.appendChild(tr);
             });
