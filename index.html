@@ -10,14 +10,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --bg-primary: #1a1d21;
-            --bg-secondary: #23272e;
+            --bg-primary: #252a32;
+            --bg-secondary: #1c2028;
             --bg-tertiary: #2c313a;
             --text-primary: #e0e0e0;
             --text-secondary: #8b929a;
             --accent: #D8FF36;
             --accent-hover: #c4e830;
             --accent-text: #000000;
+            --th-color: #8899AA;
             --border: #2f3640;
             --border-light: #3a4149;
             --danger: #ff4444;
@@ -26,17 +27,19 @@
             --negative: #ff4444;
             --row-hover: rgba(255, 255, 255, 0.04);
             --row-alt: rgba(255, 255, 255, 0.02);
+            --tfoot-bg: #1a1e25;
         }
 
         body.light-mode {
-            --bg-primary: #f0f2f5;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #e8eaed;
+            --bg-primary: #e8eaed;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #eef0f2;
             --text-primary: #1a1a1a;
             --text-secondary: #5f6368;
             --accent: #4a7a00;
             --accent-hover: #3d6600;
             --accent-text: #ffffff;
+            --th-color: #4a5568;
             --border: #dadce0;
             --border-light: #c4c7cc;
             --danger: #d93025;
@@ -45,6 +48,7 @@
             --negative: #d93025;
             --row-hover: rgba(0, 0, 0, 0.03);
             --row-alt: rgba(0, 0, 0, 0.02);
+            --tfoot-bg: #eef0f3;
         }
 
         * {
@@ -306,7 +310,7 @@
         }
 
         .pagination span {
-            color: var(--accent);
+            color: var(--text-primary);
             font-size: 13px;
         }
 
@@ -327,11 +331,13 @@
 
         th {
             background: var(--bg-secondary);
-            color: var(--accent);
+            color: var(--th-color);
             padding: 12px 10px;
             text-align: left;
             font-weight: bold;
             font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             border-bottom: 2px solid var(--border);
             cursor: pointer;
             user-select: none;
@@ -449,6 +455,7 @@
             font-weight: bold;
             font-size: 1em;
             border-top: 2px solid var(--border);
+            background: var(--tfoot-bg);
         }
 
         /* ===== BADGES ===== */
@@ -619,7 +626,7 @@
         }
 
         .note-bar strong {
-            color: var(--accent);
+            color: var(--text-primary);
         }
 
         /* ===== LOGIN (always dark) ===== */
@@ -770,6 +777,7 @@
         <!-- Controls Bar -->
         <div class="controls-bar">
             <button class="btn" onclick="addLavoro()">+ Aggiungi Lavoro</button>
+            <button class="btn" onclick="addSpesaAziendale()">+ Spesa Aziendale</button>
             <button class="btn" onclick="addSpesaDiTasca()">+ Spesa Socio</button>
             <button class="btn" onclick="addMovimento()">+ Aggiungi Movimento</button>
             <button class="btn" onclick="exportToExcel()">Esporta Excel</button>
@@ -791,7 +799,7 @@
         <!-- ===== LAVORI ===== -->
         <div class="section">
             <div class="section-header">
-                <h2>Lavori e Spese</h2>
+                <h2>Lavori</h2>
                 <span style="color: var(--text-secondary); font-size: 13px;">Tracker lavori - lo split Frank/Fox definisce la divisione per ogni voce</span>
             </div>
 
@@ -845,8 +853,8 @@
                     <tbody id="lavoriBody"></tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="4" style="color: var(--accent);">TOTALI</td>
-                            <td style="color: var(--accent);" id="totalPrevisto">-</td>
+                            <td colspan="4" style="color: var(--text-primary); font-weight:bold;">TOTALI</td>
+                            <td style="color: var(--positive);" id="totalPrevisto">-</td>
                             <td></td>
                             <td style="color: var(--negative);" id="totalTasse">-</td>
                             <td style="color: var(--negative);" id="totalCosti">-</td>
@@ -854,6 +862,38 @@
                             <td></td>
                             <td></td>
                             <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== SPESE AZIENDALI ===== -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Spese Aziendali</h2>
+                <span style="color: var(--text-secondary); font-size: 13px;">Costi ricorrenti e una tantum dell'attivita (Elementor, hosting, ecc.)</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:30px;" title="Ignora dal conteggio">Ign.</th>
+                            <th>Data</th>
+                            <th>Descrizione</th>
+                            <th>Importo EUR</th>
+                            <th>Ricorrente</th>
+                            <th>Frequenza</th>
+                            <th>Note</th>
+                            <th>Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody id="speseAziendaliBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="color: var(--accent);">TOTALE</td>
+                            <td style="color: var(--negative);" id="totalSpeseAziendali">-</td>
+                            <td colspan="4"></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -948,8 +988,7 @@
                     <tfoot>
                         <tr>
                             <td colspan="3" style="color: var(--accent);">TOTALI</td>
-                            <td id="movTotaleEntrate" style="color: var(--positive);">-</td>
-                            <td colspan="6"></td>
+                            <td id="movTotaleEntrate" colspan="7" style="line-height:1.8;">-</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -1017,7 +1056,7 @@
         <!-- Note -->
         <div class="note-bar">
             <strong>Info:</strong> Lo split Frank/Fox e' definito nei Lavori. I movimenti bancari ereditano lo split dal lavoro collegato.
-            Le spese soci sono divise 50/50 come costo aziendale. Il socio che le anticipa riceve un credito da rimborsare.
+            Le spese aziendali e le spese soci sono divise 50/50. Il socio che anticipa riceve un credito da rimborsare.
             Usa "Regola" o "Rimborsa" per segnare le spese come rimborsate e creare il movimento bancario corrispondente.
         </div>
     </div>
@@ -1075,6 +1114,7 @@
         function getDefaultData() {
             return {
                 lavori: [],
+                speseAziendali: [],
                 speseDiTasca: [],
                 movimentiBancari: [],
                 contoBancario: { saldoAttuale: 0 },
@@ -1265,6 +1305,37 @@
                 d.movimentiBancari = [];
             }
 
+            // Migrate spese aziendali from lavori
+            if (!d.speseAziendali) {
+                d.speseAziendali = [];
+                const toMigrate = d.lavori.filter(lav =>
+                    (parseFloat(lav.importoPrevisto) || 0) === 0 &&
+                    (parseFloat(lav.costi) || 0) > 0 &&
+                    lav.soggetto === 'Dos Amigos'
+                );
+                toMigrate.forEach(lav => {
+                    d.speseAziendali.push({
+                        id: 'sa_' + d.nextId++,
+                        data: lav.data || new Date().toISOString().split('T')[0],
+                        descrizione: lav.lavoro || lav.cliente || '',
+                        importo: parseFloat(lav.costi) || 0,
+                        ricorrente: 'NO',
+                        frequenza: '-',
+                        note: lav.cliente || '',
+                        ignorato: false
+                    });
+                });
+                d.lavori = d.lavori.filter(lav =>
+                    !((parseFloat(lav.importoPrevisto) || 0) === 0 &&
+                      (parseFloat(lav.costi) || 0) > 0 &&
+                      lav.soggetto === 'Dos Amigos')
+                );
+            }
+            d.speseAziendali.forEach(sa => {
+                if (!sa.id) sa.id = 'sa_' + d.nextId++;
+                if (sa.ignorato === undefined) sa.ignorato = false;
+            });
+
             if (!d.speseFuture) d.speseFuture = [];
             if (!d.contoBancario) d.contoBancario = { saldoAttuale: 0 };
 
@@ -1278,6 +1349,7 @@
         // =============== RENDER ALL ===============
         function renderAll() {
             renderLavori();
+            renderSpeseAziendali();
             renderSpeseDiTasca();
             renderMovimenti();
             calculateBankBalance();
@@ -1488,6 +1560,84 @@
         function nextPageLavori() {
             const total = Math.ceil(getFilteredLavori().length / lavoriPerPage);
             if (lavoriPage < total) { lavoriPage++; renderLavori(); }
+        }
+
+        // =============== SPESE AZIENDALI ===============
+        function addSpesaAziendale() {
+            data.speseAziendali.push({
+                id: generateId('sa'),
+                data: new Date().toISOString().split('T')[0],
+                descrizione: '',
+                importo: 0,
+                ricorrente: 'NO',
+                frequenza: '-',
+                note: '',
+                ignorato: false
+            });
+            autoSave();
+            renderAll();
+        }
+
+        function updateSpesaAziendale(id, field, value) {
+            const sa = data.speseAziendali.find(s => s.id === id);
+            if (sa) {
+                sa[field] = value;
+                if (field === 'ricorrente' && value === 'NO') sa.frequenza = '-';
+                autoSave();
+                renderAll();
+            }
+        }
+
+        function deleteSpesaAziendale(id) {
+            if (confirm('Eliminare questa spesa aziendale?')) {
+                data.speseAziendali = data.speseAziendali.filter(s => s.id !== id);
+                autoSave();
+                renderAll();
+            }
+        }
+
+        function renderSpeseAziendali() {
+            const tbody = document.getElementById('speseAziendaliBody');
+            tbody.innerHTML = '';
+            let totale = 0;
+
+            const filtered = data.speseAziendali
+                .filter(sa => isInGlobalDateRange(sa.data))
+                .sort((a, b) => (b.data || '').localeCompare(a.data || ''));
+
+            filtered.forEach(sa => {
+                const importo = parseFloat(sa.importo) || 0;
+                if (!sa.ignorato) totale += importo;
+
+                const tr = document.createElement('tr');
+                if (sa.ignorato) tr.classList.add('row-ignored');
+                tr.innerHTML = `
+                    <td style="text-align:center;"><input type="checkbox" class="ignore-cb" ${sa.ignorato ? 'checked' : ''} onchange="updateSpesaAziendale('${sa.id}', 'ignorato', this.checked)" title="Ignora dal conteggio"></td>
+                    <td><input type="date" value="${sa.data}" onchange="updateSpesaAziendale('${sa.id}', 'data', this.value)"></td>
+                    <td><input type="text" value="${sa.descrizione}" onchange="updateSpesaAziendale('${sa.id}', 'descrizione', this.value)" placeholder="Es. Elementor Pro"></td>
+                    <td><input type="number" step="0.01" value="${sa.importo}" onchange="updateSpesaAziendale('${sa.id}', 'importo', parseFloat(this.value) || 0)"></td>
+                    <td>
+                        <select onchange="updateSpesaAziendale('${sa.id}', 'ricorrente', this.value)">
+                            <option value="NO" ${sa.ricorrente === 'NO' ? 'selected' : ''}>NO</option>
+                            <option value="SI" ${sa.ricorrente === 'SI' ? 'selected' : ''}>SI</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select onchange="updateSpesaAziendale('${sa.id}', 'frequenza', this.value)" ${sa.ricorrente === 'NO' ? 'disabled' : ''}>
+                            <option value="-" ${sa.frequenza === '-' ? 'selected' : ''}>-</option>
+                            <option value="Mensile" ${sa.frequenza === 'Mensile' ? 'selected' : ''}>Mensile</option>
+                            <option value="Trimestrale" ${sa.frequenza === 'Trimestrale' ? 'selected' : ''}>Trimestrale</option>
+                            <option value="Semestrale" ${sa.frequenza === 'Semestrale' ? 'selected' : ''}>Semestrale</option>
+                            <option value="Annuale" ${sa.frequenza === 'Annuale' ? 'selected' : ''}>Annuale</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${sa.note || ''}" onchange="updateSpesaAziendale('${sa.id}', 'note', this.value)"></td>
+                    <td><button class="delete-btn" onclick="deleteSpesaAziendale('${sa.id}')">Elimina</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('totalSpeseAziendali').textContent = formatEuro(totale);
         }
 
         // =============== SPESE DI TASCA ===============
@@ -1774,7 +1924,7 @@
             });
 
             document.getElementById('movTotaleEntrate').innerHTML =
-                `<span class="positive">Entrate: ${formatEuro(totEntrate)}</span> &nbsp; <span class="negative">Uscite: ${formatEuro(totUscite)}</span>`;
+                `<span class="positive">Entrate: ${formatEuro(totEntrate)}</span><br><span class="negative">Uscite: ${formatEuro(totUscite)}</span>`;
         }
 
         // Pagination - Movimenti
@@ -1847,6 +1997,16 @@
                     frank.speseAziendali += importo * pctFrank;
                     fox.speseAziendali += importo * pctFox;
                 }
+            });
+
+            // Process spese aziendali (from dedicated array)
+            data.speseAziendali.forEach(sa => {
+                if (sa.ignorato) return;
+                if (!isInGlobalDateRange(sa.data)) return;
+                const importo = parseFloat(sa.importo) || 0;
+                // Split 50/50 as business cost
+                frank.speseAziendali += importo * 0.5;
+                fox.speseAziendali += importo * 0.5;
             });
 
             // Process spese di tasca (from dedicated array)
@@ -1958,10 +2118,42 @@
             }
         }
 
+        function calcTasseStimate() {
+            // Calcola tasse stimate: imponibile (67%) * 5% su tutti i lavori non ignorati
+            let totalePrevisto = 0;
+            data.lavori.forEach(lav => {
+                if (lav.ignorato) return;
+                totalePrevisto += parseFloat(lav.importoPrevisto) || 0;
+            });
+            const imponibile = totalePrevisto * 0.67;
+            const tasse = imponibile * 0.05;
+            const annoCorrente = new Date().getFullYear();
+            const annoProssimo = annoCorrente + 1;
+            return { tasse, data: `${annoProssimo}-06-30` };
+        }
+
         function renderSpeseFuture() {
             const tbody = document.getElementById('speseFutureBody');
             tbody.innerHTML = '';
             let totale = 0;
+
+            // Auto-generate tasse stimate row
+            const tasseInfo = calcTasseStimate();
+            if (tasseInfo.tasse > 0) {
+                totale += tasseInfo.tasse;
+                const trTasse = document.createElement('tr');
+                trTasse.style.opacity = '0.85';
+                trTasse.innerHTML = `
+                    <td><input type="text" value="Tasse stimate (5% su imponibile 67%)" readonly style="font-style:italic;"></td>
+                    <td><input type="number" value="${tasseInfo.tasse.toFixed(2)}" readonly></td>
+                    <td><input type="date" value="${tasseInfo.data}" readonly></td>
+                    <td><input type="text" value="SI" readonly></td>
+                    <td><input type="text" value="Annuale" readonly></td>
+                    <td><input type="text" value="Calcolato automaticamente dai lavori" readonly style="font-style:italic;"></td>
+                    <td><span class="badge badge-gray">Auto</span></td>
+                `;
+                tbody.appendChild(trTasse);
+            }
 
             data.speseFuture.forEach((spesa, index) => {
                 const importo = parseFloat(spesa.importo) || 0;
@@ -2020,7 +2212,16 @@
                 ]);
             });
 
-            // Sheet 2: Spese Soci
+            // Sheet 2: Spese Aziendali
+            const speseAzData = [['Data', 'Descrizione', 'Importo', 'Ricorrente', 'Frequenza', 'Note', 'Ignorato']];
+            data.speseAziendali.forEach(sa => {
+                speseAzData.push([
+                    sa.data, sa.descrizione, sa.importo, sa.ricorrente,
+                    sa.frequenza, sa.note, sa.ignorato ? 'Si' : 'No'
+                ]);
+            });
+
+            // Sheet 3: Spese Soci
             const speseTascaData = [['Data', 'Descrizione', 'Importo', 'Pagato da', 'Rimborsata', 'Data Rimborso', 'Ignorato']];
             data.speseDiTasca.forEach(sp => {
                 speseTascaData.push([
@@ -2043,6 +2244,7 @@
 
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(lavoriData), 'Lavori');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(speseAzData), 'Spese Aziendali');
             XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(speseTascaData), 'Spese Soci');
             XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(movData), 'Movimenti Bancari');
             XLSX.writeFile(wb, 'DosAmigos_Contabilita.xlsx');
