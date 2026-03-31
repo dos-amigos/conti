@@ -1369,7 +1369,13 @@
             d.speseAziendali.forEach(sa => {
                 if (!sa.id) sa.id = 'sa_' + d.nextId++;
                 if (sa.ignorato === undefined) sa.ignorato = false;
-                if (sa.registrata === undefined) sa.registrata = false;
+                if (sa.registrata === undefined) {
+                    // Auto-detect: se esiste gia un movimento Spesa con causale corrispondente, segna come registrata
+                    const hasMovimento = d.movimentiBancari.some(mov =>
+                        mov.tipo === 'Spesa' && mov.causale && mov.causale.includes(sa.descrizione)
+                    );
+                    sa.registrata = hasMovimento;
+                }
             });
 
             if (!d.speseFuture) d.speseFuture = [];
@@ -1734,7 +1740,7 @@
                         </select>
                     </td>
                     <td><input type="text" value="${sa.note || ''}" onchange="updateSpesaAziendale('${sa.id}', 'note', this.value)"></td>
-                    <td style="white-space:nowrap;">${sa.registrata ? `<span class="badge badge-green">Registrata</span>` : `<button class="btn btn-sm" onclick="registraSpesaAziendale('${sa.id}')" style="margin-right:4px;">Registra mov.</button>`}<button class="delete-btn" onclick="deleteSpesaAziendale('${sa.id}')">Elimina</button></td>
+                    <td style="white-space:nowrap;">${sa.registrata ? `<span class="btn btn-sm" style="background:#10B981;color:#fff;cursor:default;margin-right:4px;">Registrata</span>` : `<button class="btn btn-sm" onclick="registraSpesaAziendale('${sa.id}')" style="margin-right:4px;">Registra mov.</button>`}<button class="delete-btn" onclick="deleteSpesaAziendale('${sa.id}')">Elimina</button></td>
                 `;
                 tbody.appendChild(tr);
             });
