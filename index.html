@@ -751,6 +751,124 @@
 
         .loading.active { display: block; }
 
+        /* ===== HAMBURGER MENU ===== */
+        .hamburger-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 6px;
+            line-height: 1;
+        }
+
+        .hamburger-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+        }
+
+        .menu-overlay.open { display: block; }
+
+        .side-menu {
+            position: fixed;
+            top: 0; right: -360px;
+            width: 340px;
+            max-width: 90vw;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border);
+            z-index: 999;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-menu.open { right: 0; }
+
+        .menu-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-header h3 {
+            color: var(--text-primary);
+            font-size: 1.1em;
+            margin: 0;
+        }
+
+        .menu-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+
+        .menu-section {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .menu-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .menu-section .btn {
+            width: 100%;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .menu-section .btn:last-child { margin-bottom: 0; }
+
+        .chiusura-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .chiusura-item span {
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .chiusura-item button {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 12px;
+            padding: 4px 8px;
+        }
+
+        .chiusura-item button:hover {
+            text-decoration: underline;
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .header { flex-direction: column; gap: 10px; text-align: center; }
@@ -791,33 +909,41 @@
             <span class="logo-amigos">AMIGOS</span>
         </div>
         <div class="header-right">
-            <button class="btn-header" onclick="toggleTheme()" id="themeToggle">Light Mode</button>
             <div class="sync-status" id="syncStatus">Sincronizzato</div>
+            <button class="hamburger-btn" onclick="toggleMenu()">&#9776;</button>
+        </div>
+    </div>
+
+    <!-- Side Menu -->
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <h3>Menu</h3>
+            <button class="menu-close" onclick="toggleMenu()">&times;</button>
+        </div>
+        <div class="menu-section">
+            <div class="menu-section-title">Azioni</div>
+            <button class="btn" onclick="manualSave(); toggleMenu();">Salva Ora</button>
+            <button class="btn" onclick="exportToExcel(); toggleMenu();">Esporta Excel</button>
+            <button class="btn" onclick="downloadBackup(); toggleMenu();">Download Backup</button>
+            <button class="btn" onclick="toggleTheme(); toggleMenu();" id="themeToggle">Light Mode</button>
+        </div>
+        <div class="menu-section">
+            <div class="menu-section-title">Periodi</div>
+            <button class="btn" onclick="chiudiPeriodo()">Chiudi Periodo</button>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text-secondary);margin-top:10px;">
+                <input type="checkbox" id="mostraTutto" onchange="toggleMostraTutto()">
+                Mostra periodi chiusi
+            </label>
+            <div id="chiusureList" style="margin-top:12px;"></div>
+        </div>
+        <div class="menu-section" style="margin-top:auto;">
+            <button class="btn btn-danger" onclick="logout()">Logout</button>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="container">
-
-        <!-- Controls Bar -->
-        <div class="controls-bar">
-            <button class="btn" onclick="chiudiPeriodo()">Chiudi Periodo</button>
-            <button class="btn" onclick="exportToExcel()">Esporta Excel</button>
-            <button class="btn" onclick="manualSave()">Salva Ora</button>
-            <button class="btn" onclick="downloadBackup()">Download Backup</button>
-            <button class="btn btn-danger" onclick="logout()">Logout</button>
-        </div>
-
-        <!-- ===== CHIUSURA PERIODO ===== -->
-        <div class="global-filter-bar" id="chiusuraBar" style="display:none;">
-            <label style="color:var(--text-primary);font-weight:bold;">Periodo chiuso al:</label>
-            <span id="chiusuraData" style="color:var(--accent);font-weight:bold;"></span>
-            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--text-secondary);">
-                <input type="checkbox" id="mostraTutto" onchange="toggleMostraTutto()">
-                Mostra periodo chiuso
-            </label>
-            <button class="btn btn-sm btn-danger" onclick="rimuoviChiusura()">Rimuovi chiusura</button>
-        </div>
 
         <!-- ===== FILTRO PERIODO GLOBALE ===== -->
         <div class="global-filter-bar" id="globalFilterBar">
@@ -1151,10 +1277,16 @@
         let globalDateFrom = '', globalDateTo = '';
         let mostraTutto = false;
 
+        function getChiusuraAttiva() {
+            if (!data.chiusure || data.chiusure.length === 0) return null;
+            return data.chiusure.sort().reverse()[0]; // la piu recente
+        }
+
         function isAfterChiusura(dateStr) {
-            if (!data.dataChiusura || mostraTutto) return true;
+            const chiusura = getChiusuraAttiva();
+            if (!chiusura || mostraTutto) return true;
             if (!dateStr) return true;
-            return dateStr > data.dataChiusura;
+            return dateStr > chiusura;
         }
 
         function chiudiPeriodo() {
@@ -1162,22 +1294,24 @@
             const dataInput = prompt(
                 'Chiudi periodo fino a questa data.\n' +
                 'Tutti i dati fino a questa data verranno nascosti e non conteggiati.\n' +
-                'Potrai sempre rivederli con il toggle "Mostra periodo chiuso".\n\n' +
+                'Potrai sempre rivederli con "Mostra periodi chiusi" nel menu.\n\n' +
                 'Data chiusura:',
                 oggi
             );
             if (!dataInput) return;
             if (!confirm(`Confermi chiusura al ${dataInput}?\nTutti i conteggi partiranno da zero dopo questa data.`)) return;
 
-            data.dataChiusura = dataInput;
+            if (!data.chiusure) data.chiusure = [];
+            data.chiusure.push(dataInput);
             autoSave();
             updateChiusuraUI();
             renderAll();
         }
 
-        function rimuoviChiusura() {
-            if (!confirm('Rimuovere la chiusura? Tutti i dati storici torneranno visibili e conteggiati.')) return;
-            data.dataChiusura = null;
+        function rimuoviChiusura(index) {
+            const d = data.chiusure[index];
+            if (!confirm(`Rimuovere la chiusura del ${d}?`)) return;
+            data.chiusure.splice(index, 1);
             autoSave();
             updateChiusuraUI();
             renderAll();
@@ -1188,14 +1322,27 @@
             renderAll();
         }
 
+        function toggleMenu() {
+            document.getElementById('sideMenu').classList.toggle('open');
+            document.getElementById('menuOverlay').classList.toggle('open');
+        }
+
         function updateChiusuraUI() {
-            const bar = document.getElementById('chiusuraBar');
-            if (data.dataChiusura) {
-                bar.style.display = 'flex';
-                document.getElementById('chiusuraData').textContent = data.dataChiusura;
-            } else {
-                bar.style.display = 'none';
+            const list = document.getElementById('chiusureList');
+            if (!list) return;
+            if (!data.chiusure || data.chiusure.length === 0) {
+                list.innerHTML = '<div style="color:var(--text-secondary);font-size:12px;">Nessun periodo chiuso</div>';
+                return;
             }
+            const sorted = [...data.chiusure].sort().reverse();
+            list.innerHTML = sorted.map((d, i) => {
+                const origIndex = data.chiusure.indexOf(d);
+                const isActive = i === 0;
+                return `<div class="chiusura-item">
+                    <span>${isActive ? '● ' : ''}${d}</span>
+                    <button onclick="rimuoviChiusura(${origIndex})">Rimuovi</button>
+                </div>`;
+            }).join('');
         }
 
         function applyGlobalFilter() {
@@ -1240,7 +1387,7 @@
                 movimentiBancari: [],
                 contoBancario: { saldoAttuale: 0 },
                 speseFuture: [],
-                dataChiusura: null,
+                chiusure: [],
                 nextId: 1
             };
         }
@@ -1467,7 +1614,13 @@
 
             if (!d.speseFuture) d.speseFuture = [];
             if (!d.contoBancario) d.contoBancario = { saldoAttuale: 0 };
-            if (d.dataChiusura === undefined) d.dataChiusura = null;
+            // Migrate dataChiusura singola a array chiusure
+            if (d.dataChiusura) {
+                if (!d.chiusure) d.chiusure = [];
+                d.chiusure.push(d.dataChiusura);
+                delete d.dataChiusura;
+            }
+            if (!d.chiusure) d.chiusure = [];
 
             return d;
         }
