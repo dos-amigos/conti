@@ -10,21 +10,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --bg-primary: #000000;
-            --bg-secondary: #1a1a1a;
-            --bg-tertiary: #2a2a2a;
-            --text-primary: #ffffff;
-            --text-secondary: #999999;
+            --bg-primary: #1a1d21;
+            --bg-secondary: #23272e;
+            --bg-tertiary: #2c313a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #8b929a;
             --accent: #D8FF36;
             --accent-hover: #c4e830;
             --accent-text: #000000;
-            --border: #333333;
-            --border-light: #444444;
+            --border: #2f3640;
+            --border-light: #3a4149;
             --danger: #ff4444;
             --danger-hover: #cc0000;
             --positive: #D8FF36;
             --negative: #ff4444;
-            --row-hover: rgba(255, 255, 255, 0.05);
+            --row-hover: rgba(255, 255, 255, 0.04);
+            --row-alt: rgba(255, 255, 255, 0.02);
         }
 
         body.light-mode {
@@ -43,6 +44,7 @@
             --positive: #1e8e3e;
             --negative: #d93025;
             --row-hover: rgba(0, 0, 0, 0.03);
+            --row-alt: rgba(0, 0, 0, 0.02);
         }
 
         * {
@@ -61,8 +63,8 @@
 
         /* ===== HEADER (always dark) ===== */
         .header {
-            background: #000000;
-            border-bottom: 1px solid #333;
+            background: #14171a;
+            border-bottom: 1px solid #2f3640;
             padding: 15px 20px;
             display: flex;
             align-items: center;
@@ -101,7 +103,7 @@
             background: rgba(216, 255, 54, 0.15);
             padding: 8px 14px;
             border-radius: 6px;
-            border: 1px solid #333;
+            border: 1px solid #2f3640;
             color: #D8FF36;
             font-size: 13px;
             white-space: nowrap;
@@ -159,7 +161,7 @@
         .btn-header {
             background: rgba(216, 255, 54, 0.15);
             color: #D8FF36;
-            border: 1px solid #555;
+            border: 1px solid #3a4149;
             padding: 8px 14px;
             border-radius: 6px;
             font-size: 12px;
@@ -346,8 +348,76 @@
             font-size: 13px;
         }
 
+        tr:nth-child(even) {
+            background: var(--row-alt);
+        }
+
         tr:hover {
             background: var(--row-hover);
+        }
+
+        tr.row-ignored {
+            opacity: 0.4;
+            text-decoration: line-through;
+        }
+
+        tr.row-ignored td input,
+        tr.row-ignored td select {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .ignore-cb {
+            width: 16px !important;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--danger);
+        }
+
+        /* ===== GLOBAL DATE FILTER ===== */
+        .global-filter-bar {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .global-filter-bar label {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .global-filter-bar input[type="date"] {
+            padding: 8px 10px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .global-filter-bar input[type="date"]:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .global-filter-active {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 1px var(--accent);
+        }
+
+        .global-filter-badge {
+            background: rgba(216, 255, 54, 0.15);
+            color: var(--accent);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         td input,
@@ -557,7 +627,7 @@
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: #000;
+            background: #14171a;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -567,10 +637,10 @@
         .login-screen.hidden { display: none; }
 
         .login-box {
-            background: #1a1a1a;
+            background: #23272e;
             padding: 40px;
             border-radius: 20px;
-            border: 1px solid #333;
+            border: 1px solid #2f3640;
             text-align: center;
             max-width: 400px;
             width: 90%;
@@ -595,8 +665,8 @@
             width: 100%;
             padding: 14px;
             margin-bottom: 12px;
-            background: #2a2a2a;
-            border: 2px solid #444;
+            background: #2c313a;
+            border: 2px solid #3a4149;
             border-radius: 8px;
             color: white;
             font-size: 15px;
@@ -637,10 +707,10 @@
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(20, 23, 26, 0.95);
             padding: 30px;
             border-radius: 10px;
-            border: 1px solid #333;
+            border: 1px solid #2f3640;
             display: none;
             z-index: 1000;
             color: #D8FF36;
@@ -707,6 +777,16 @@
             <button class="btn btn-danger" onclick="logout()">Logout</button>
         </div>
 
+        <!-- ===== FILTRO PERIODO GLOBALE ===== -->
+        <div class="global-filter-bar" id="globalFilterBar">
+            <label>Periodo:</label>
+            <input type="date" id="globalDateFrom" onchange="applyGlobalFilter()">
+            <span style="color: var(--text-secondary);">—</span>
+            <input type="date" id="globalDateTo" onchange="applyGlobalFilter()">
+            <button class="btn btn-sm" onclick="clearGlobalFilter()">Reset</button>
+            <span class="global-filter-badge" id="globalFilterInfo" style="display:none;"></span>
+        </div>
+
         <!-- ===== LAVORI ===== -->
         <div class="section">
             <div class="section-header">
@@ -747,6 +827,7 @@
                 <table>
                     <thead>
                         <tr>
+                            <th style="width:30px;" title="Ignora dal conteggio">Ign.</th>
                             <th onclick="sortTable('data')">Data</th>
                             <th onclick="sortTable('cliente')">Cliente</th>
                             <th>Lavoro / Spesa</th>
@@ -763,7 +844,7 @@
                     <tbody id="lavoriBody"></tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="3" style="color: var(--accent);">TOTALI</td>
+                            <td colspan="4" style="color: var(--accent);">TOTALI</td>
                             <td style="color: var(--accent);" id="totalPrevisto">-</td>
                             <td></td>
                             <td style="color: var(--negative);" id="totalTasse">-</td>
@@ -796,6 +877,7 @@
                 <table>
                     <thead>
                         <tr>
+                            <th style="width:30px;" title="Ignora dal conteggio">Ign.</th>
                             <th>Data</th>
                             <th>Descrizione</th>
                             <th>Importo EUR</th>
@@ -849,6 +931,7 @@
                 <table>
                     <thead>
                         <tr>
+                            <th style="width:30px;" title="Ignora dal conteggio">Ign.</th>
                             <th>Data</th>
                             <th>Tipo</th>
                             <th>Importo EUR</th>
@@ -863,7 +946,7 @@
                     <tbody id="movimentiBody"></tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="2" style="color: var(--accent);">TOTALI</td>
+                            <td colspan="3" style="color: var(--accent);">TOTALI</td>
                             <td id="movTotaleEntrate" style="color: var(--positive);">-</td>
                             <td colspan="6"></td>
                         </tr>
@@ -954,6 +1037,39 @@
         let lavoriPage = 1, lavoriPerPage = 20;
         let movimentiPage = 1, movimentiPerPage = 20;
         let isDarkMode = true;
+        let globalDateFrom = '', globalDateTo = '';
+
+        function applyGlobalFilter() {
+            globalDateFrom = document.getElementById('globalDateFrom').value;
+            globalDateTo = document.getElementById('globalDateTo').value;
+            const info = document.getElementById('globalFilterInfo');
+            const bar = document.getElementById('globalFilterBar');
+            if (globalDateFrom || globalDateTo) {
+                const from = globalDateFrom || 'inizio';
+                const to = globalDateTo || 'oggi';
+                info.textContent = `Filtro attivo: ${from} — ${to}`;
+                info.style.display = 'inline-block';
+                bar.classList.add('global-filter-active');
+            } else {
+                info.style.display = 'none';
+                bar.classList.remove('global-filter-active');
+            }
+            renderAll();
+        }
+
+        function clearGlobalFilter() {
+            document.getElementById('globalDateFrom').value = '';
+            document.getElementById('globalDateTo').value = '';
+            applyGlobalFilter();
+        }
+
+        function isInGlobalDateRange(dateStr) {
+            if (!globalDateFrom && !globalDateTo) return true;
+            if (!dateStr) return false;
+            if (globalDateFrom && dateStr < globalDateFrom) return false;
+            if (globalDateTo && dateStr > globalDateTo) return false;
+            return true;
+        }
 
         function getDefaultData() {
             return {
@@ -1093,6 +1209,7 @@
                     }
                     if (lav.percentualeFrank === undefined) lav.percentualeFrank = 50;
                     if (lav.pagatoDa !== undefined) delete lav.pagatoDa;
+                    if (lav.ignorato === undefined) lav.ignorato = false;
                 });
             } else {
                 d.lavori = [];
@@ -1129,6 +1246,7 @@
                 if (!sp.id) sp.id = 'sp_' + d.nextId++;
                 if (sp.rimborsata === undefined) sp.rimborsata = false;
                 if (sp.dataRimborso === undefined) sp.dataRimborso = null;
+                if (sp.ignorato === undefined) sp.ignorato = false;
             });
 
             // Migrate movimenti
@@ -1140,6 +1258,7 @@
                     if (mov.percentualeFrank === undefined) mov.percentualeFrank = 50;
                     if (mov.tipo === 'Bonifico in entrata' || mov.tipo === 'Deposito') mov.tipo = 'Entrata';
                     if (mov.tipo === 'Bonifico in uscita' || mov.tipo === 'Prelievo') mov.tipo = 'Prelievo Socio';
+                    if (mov.ignorato === undefined) mov.ignorato = false;
                 });
             } else {
                 d.movimentiBancari = [];
@@ -1177,7 +1296,8 @@
                 importoPrevisto: 0,
                 costi: 0,
                 soggetto: 'Dos Amigos',
-                percentualeFrank: 50
+                percentualeFrank: 50,
+                ignorato: false
             });
             autoSave();
             renderAll();
@@ -1213,6 +1333,7 @@
             let incassatoReale = 0;
 
             data.movimentiBancari.forEach(mov => {
+                if (mov.ignorato) return;
                 if (mov.lavoroCollegato === lavoro.id && ENTRATA_TYPES.includes(mov.tipo)) {
                     incassatoReale += Math.abs(parseFloat(mov.importo) || 0);
                 }
@@ -1254,8 +1375,9 @@
             const filtered = getFilteredLavori().sort((a, b) => (b.data || '').localeCompare(a.data || ''));
             let totalPrevisto = 0, totalTasse = 0, totalCosti = 0;
 
-            // Totali su TUTTI i lavori (non paginati)
-            data.lavori.forEach(row => {
+            // Totali su lavori filtrati (non ignorati, nel range date globale)
+            filtered.forEach(row => {
+                if (row.ignorato) return;
                 totalPrevisto += parseFloat(row.importoPrevisto) || 0;
                 totalCosti += parseFloat(row.costi) || 0;
                 const calc = calculateRow(row);
@@ -1274,6 +1396,7 @@
                 const calc = calculateRow(row);
                 const stato = getLavoroStato(row);
                 const tr = document.createElement('tr');
+                if (row.ignorato) tr.classList.add('row-ignored');
 
                 let statoHtml = `<span class="badge ${stato.classe}">${stato.stato}</span>`;
                 if (stato.reale > 0) {
@@ -1282,6 +1405,7 @@
                 }
 
                 tr.innerHTML = `
+                    <td style="text-align:center;"><input type="checkbox" class="ignore-cb" ${row.ignorato ? 'checked' : ''} onchange="updateLavoro('${row.id}', 'ignorato', this.checked)" title="Ignora dal conteggio"></td>
                     <td><input type="date" value="${row.data}" onchange="updateLavoro('${row.id}', 'data', this.value)"></td>
                     <td><input type="text" value="${row.cliente}" onchange="updateLavoro('${row.id}', 'cliente', this.value)"></td>
                     <td><input type="text" value="${row.lavoro}" onchange="updateLavoro('${row.id}', 'lavoro', this.value)"></td>
@@ -1311,6 +1435,8 @@
             const hideIncassati = document.getElementById('filterHideIncassati').checked;
 
             return data.lavori.filter(row => {
+                // Global date filter
+                if (!isInGlobalDateRange(row.data)) return false;
                 if (dateFrom && row.data < dateFrom) return false;
                 if (dateTo && row.data > dateTo) return false;
                 if (cliente && !(row.cliente || '').toLowerCase().includes(cliente)) return false;
@@ -1372,7 +1498,8 @@
                 importo: 0,
                 pagatoDa: 'Frank',
                 rimborsata: false,
-                dataRimborso: null
+                dataRimborso: null,
+                ignorato: false
             });
             autoSave();
             renderAll();
@@ -1406,6 +1533,7 @@
             let totFrankDone = 0, totFoxDone = 0;
 
             const spese = data.speseDiTasca.filter(sp => {
+                if (!isInGlobalDateRange(sp.data)) return false;
                 if (filtro === 'pendenti') return !sp.rimborsata;
                 if (filtro === 'rimborsate') return sp.rimborsata;
                 return true;
@@ -1413,20 +1541,24 @@
 
             spese.forEach(sp => {
                 const importo = parseFloat(sp.importo) || 0;
-                if (sp.rimborsata) {
-                    if (sp.pagatoDa === 'Frank') totFrankDone += importo;
-                    else totFoxDone += importo;
-                } else {
-                    if (sp.pagatoDa === 'Frank') totFrankPending += importo;
-                    else totFoxPending += importo;
+                if (!sp.ignorato) {
+                    if (sp.rimborsata) {
+                        if (sp.pagatoDa === 'Frank') totFrankDone += importo;
+                        else totFoxDone += importo;
+                    } else {
+                        if (sp.pagatoDa === 'Frank') totFrankPending += importo;
+                        else totFoxPending += importo;
+                    }
                 }
 
                 const tr = document.createElement('tr');
+                if (sp.ignorato) tr.classList.add('row-ignored');
                 const badge = sp.rimborsata
                     ? `<span class="badge badge-green">Rimborsata</span>${sp.dataRimborso ? `<br><small style="color:var(--text-secondary)">${sp.dataRimborso}</small>` : ''}`
                     : '<span class="badge badge-red">Da rimborsare</span>';
 
                 tr.innerHTML = `
+                    <td style="text-align:center;"><input type="checkbox" class="ignore-cb" ${sp.ignorato ? 'checked' : ''} onchange="updateSpesa('${sp.id}', 'ignorato', this.checked)" title="Ignora dal conteggio"></td>
                     <td><input type="date" value="${sp.data}" onchange="updateSpesa('${sp.id}', 'data', this.value)" ${sp.rimborsata ? 'readonly' : ''}></td>
                     <td><input type="text" value="${sp.descrizione}" onchange="updateSpesa('${sp.id}', 'descrizione', this.value)" placeholder="Descrizione spesa" ${sp.rimborsata ? 'readonly' : ''}></td>
                     <td><input type="number" step="0.01" value="${sp.importo}" onchange="updateSpesa('${sp.id}', 'importo', parseFloat(this.value) || 0)" ${sp.rimborsata ? 'readonly' : ''}></td>
@@ -1480,7 +1612,8 @@
                 destinatario: sp.pagatoDa,
                 lavoroCollegato: '',
                 causale: `Rimborso: ${sp.descrizione}`,
-                note: ''
+                note: '',
+                ignorato: false
             });
 
             autoSave();
@@ -1521,7 +1654,8 @@
                 destinatario: socio,
                 lavoroCollegato: '',
                 causale: `Rimborso spese di tasca ${socio}`,
-                note: `Regolamento ${pending.length} spese - ${formatEuro(totale)}`
+                note: `Regolamento ${pending.length} spese - ${formatEuro(totale)}`,
+                ignorato: false
             });
 
             autoSave();
@@ -1539,7 +1673,8 @@
                 destinatario: 'Frank',
                 lavoroCollegato: '',
                 causale: '',
-                note: ''
+                note: '',
+                ignorato: false
             });
             autoSave();
             renderAll();
@@ -1571,25 +1706,21 @@
             const tbody = document.getElementById('movimentiBody');
             tbody.innerHTML = '';
 
-            const sorted = [...data.movimentiBancari].sort((a, b) => (b.data || '').localeCompare(a.data || ''));
-            const total = sorted.length;
+            const filtered = data.movimentiBancari
+                .filter(m => isInGlobalDateRange(m.data))
+                .sort((a, b) => (b.data || '').localeCompare(a.data || ''));
+            const total = filtered.length;
             const totalPages = Math.max(1, Math.ceil(total / movimentiPerPage));
             if (movimentiPage > totalPages) movimentiPage = totalPages;
             const start = (movimentiPage - 1) * movimentiPerPage;
-            const paginated = sorted.slice(start, start + movimentiPerPage);
+            const paginated = filtered.slice(start, start + movimentiPerPage);
 
             document.getElementById('movimentiPaginaInfo').textContent =
                 `Pagina ${movimentiPage} di ${totalPages} (${total} record)`;
 
-            // Lavori options for dropdown
-            const lavoriOpts = '<option value="">-- Nessuno --</option>' +
-                data.lavori.map(l => {
-                    const label = `${l.cliente || 'N/D'} - ${l.lavoro || 'N/D'}`;
-                    return `<option value="${l.id}">${label}</option>`;
-                }).join('');
-
             let totEntrate = 0, totUscite = 0;
-            data.movimentiBancari.forEach(mov => {
+            filtered.forEach(mov => {
+                if (mov.ignorato) return;
                 const imp = Math.abs(parseFloat(mov.importo) || 0);
                 if (ENTRATA_TYPES.includes(mov.tipo)) totEntrate += imp;
                 if (USCITA_BANK_TYPES.includes(mov.tipo)) totUscite += imp;
@@ -1597,6 +1728,7 @@
 
             paginated.forEach(mov => {
                 const tr = document.createElement('tr');
+                if (mov.ignorato) tr.classList.add('row-ignored');
                 const needsDest = mov.tipo === 'Prelievo Socio' || mov.tipo === 'Rimborso Socio';
                 const needsSogg = !needsDest;
 
@@ -1609,6 +1741,7 @@
                 });
 
                 tr.innerHTML = `
+                    <td style="text-align:center;"><input type="checkbox" class="ignore-cb" ${mov.ignorato ? 'checked' : ''} onchange="updateMovimento('${mov.id}', 'ignorato', this.checked)" title="Ignora dal conteggio"></td>
                     <td><input type="date" value="${mov.data}" onchange="updateMovimento('${mov.id}', 'data', this.value)"></td>
                     <td>
                         <select onchange="updateMovimento('${mov.id}', 'tipo', this.value)">
@@ -1659,6 +1792,8 @@
         function calculateBankBalance() {
             let saldo = 0;
             data.movimentiBancari.forEach(mov => {
+                if (mov.ignorato) return;
+                if (!isInGlobalDateRange(mov.data)) return;
                 const importo = Math.abs(parseFloat(mov.importo) || 0);
                 if (ENTRATA_TYPES.includes(mov.tipo)) {
                     saldo += importo;
@@ -1688,6 +1823,8 @@
 
             // Process bank movements
             data.movimentiBancari.forEach(mov => {
+                if (mov.ignorato) return;
+                if (!isInGlobalDateRange(mov.data)) return;
                 const importo = Math.abs(parseFloat(mov.importo) || 0);
                 const dest = mov.destinatario || '';
                 const pctFrank = getMovSplit(mov);
@@ -1713,6 +1850,8 @@
 
             // Process spese di tasca (from dedicated array)
             data.speseDiTasca.forEach(sp => {
+                if (sp.ignorato) return;
+                if (!isInGlobalDateRange(sp.data)) return;
                 const importo = parseFloat(sp.importo) || 0;
                 // Split 50/50 as business cost
                 frank.speseTascaTotali += importo * 0.5;
@@ -1866,7 +2005,7 @@
         // =============== EXPORT ===============
         function exportToExcel() {
             // Sheet 1: Lavori
-            const lavoriData = [['Data', 'Cliente', 'Lavoro', 'Importo Previsto', 'Imp. Fisc. (67%)', 'Tasse Stim. (5%)', 'Costi', '% Frank', '% Fox', 'Soggetto', 'Stato']];
+            const lavoriData = [['Data', 'Cliente', 'Lavoro', 'Importo Previsto', 'Imp. Fisc. (67%)', 'Tasse Stim. (5%)', 'Costi', '% Frank', '% Fox', 'Soggetto', 'Stato', 'Ignorato']];
             data.lavori.forEach(row => {
                 const calc = calculateRow(row);
                 const stato = getLavoroStato(row);
@@ -1875,27 +2014,29 @@
                 lavoriData.push([
                     row.data, row.cliente, row.lavoro, row.importoPrevisto,
                     calc.imponibile.toFixed(2), calc.tasse.toFixed(2),
-                    row.costi, pctF, pctX, row.soggetto || 'Dos Amigos', stato.stato
+                    row.costi, pctF, pctX, row.soggetto || 'Dos Amigos', stato.stato,
+                    row.ignorato ? 'Si' : 'No'
                 ]);
             });
 
             // Sheet 2: Spese Soci
-            const speseTascaData = [['Data', 'Descrizione', 'Importo', 'Pagato da', 'Rimborsata', 'Data Rimborso']];
+            const speseTascaData = [['Data', 'Descrizione', 'Importo', 'Pagato da', 'Rimborsata', 'Data Rimborso', 'Ignorato']];
             data.speseDiTasca.forEach(sp => {
                 speseTascaData.push([
                     sp.data, sp.descrizione, sp.importo, sp.pagatoDa,
-                    sp.rimborsata ? 'Si' : 'No', sp.dataRimborso || ''
+                    sp.rimborsata ? 'Si' : 'No', sp.dataRimborso || '',
+                    sp.ignorato ? 'Si' : 'No'
                 ]);
             });
 
             // Sheet 3: Movimenti
-            const movData = [['Data', 'Tipo', 'Importo', 'Soggetto', 'Destinatario', 'Lavoro Collegato', 'Causale', 'Note']];
+            const movData = [['Data', 'Tipo', 'Importo', 'Soggetto', 'Destinatario', 'Lavoro Collegato', 'Causale', 'Note', 'Ignorato']];
             data.movimentiBancari.forEach(mov => {
                 const lavLabel = data.lavori.find(l => l.id === mov.lavoroCollegato);
                 movData.push([
                     mov.data, mov.tipo, mov.importo, mov.soggetto, mov.destinatario,
                     lavLabel ? `${lavLabel.cliente} - ${lavLabel.lavoro}` : '',
-                    mov.causale, mov.note
+                    mov.causale, mov.note, mov.ignorato ? 'Si' : 'No'
                 ]);
             });
 
