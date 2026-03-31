@@ -46,7 +46,7 @@
             --accent-text: #ffffff;
             --th-color: #1a1a1a;
             --th-bg: #eef0f3;
-            --section-header-bg: #f0f2f5;
+            --section-header-bg: #4a7a00;
             --border: #dadce0;
             --border-light: #c4c7cc;
             --danger: #d93025;
@@ -112,11 +112,11 @@
         }
 
         .sync-status {
-            background: rgba(216, 255, 54, 0.15);
+            background: rgba(121, 192, 255, 0.15);
             padding: 8px 14px;
             border-radius: 6px;
             border: 1px solid #30363d;
-            color: #D8FF36;
+            color: #79c0ff;
             font-size: 13px;
             white-space: nowrap;
         }
@@ -138,8 +138,8 @@
 
         /* ===== BUTTONS ===== */
         .btn {
-            background: var(--accent);
-            color: var(--accent-text);
+            background: #79c0ff;
+            color: #0d1117;
             border: none;
             padding: 10px 20px;
             border-radius: 8px;
@@ -151,7 +151,7 @@
         }
 
         .btn:hover {
-            background: var(--accent-hover);
+            background: #a5d6ff;
             transform: translateY(-1px);
         }
 
@@ -171,8 +171,8 @@
         }
 
         .btn-header {
-            background: rgba(216, 255, 54, 0.15);
-            color: #D8FF36;
+            background: rgba(121, 192, 255, 0.15);
+            color: #79c0ff;
             border: 1px solid #30363d;
             padding: 8px 14px;
             border-radius: 6px;
@@ -183,7 +183,7 @@
         }
 
         .btn-header:hover {
-            background: rgba(216, 255, 54, 0.3);
+            background: rgba(121, 192, 255, 0.3);
         }
 
         .delete-btn {
@@ -232,10 +232,9 @@
         }
 
         .section-header {
-            padding: 16px 20px;
-            background: var(--section-header-bg);
-            border-bottom: 2px solid var(--border-light);
-            border-left: 4px solid var(--accent);
+            padding: 14px 20px;
+            background: var(--accent);
+            border-bottom: none;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -244,9 +243,37 @@
         }
 
         .section-header h2 {
-            color: var(--accent);
-            font-size: 1.4em;
+            color: var(--accent-text);
+            font-size: 1.3em;
             margin: 0;
+            font-weight: 900;
+        }
+
+        .section-header span {
+            color: var(--accent-text) !important;
+            opacity: 0.6;
+        }
+
+        .section-header .btn,
+        .section-header .btn-sm {
+            background: rgba(0, 0, 0, 0.25);
+            color: var(--accent-text);
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .section-header .btn:hover,
+        .section-header .btn-sm:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .section-header select {
+            background: rgba(0, 0, 0, 0.15);
+            color: var(--accent-text);
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: bold;
         }
 
         .section-body {
@@ -433,8 +460,8 @@
         }
 
         .global-filter-badge {
-            background: rgba(216, 255, 54, 0.15);
-            color: var(--accent);
+            background: rgba(121, 192, 255, 0.15);
+            color: #79c0ff;
             padding: 6px 12px;
             border-radius: 6px;
             font-size: 12px;
@@ -521,7 +548,7 @@
         }
 
         .total-card h3 {
-            color: var(--accent);
+            color: #79c0ff;
             margin-bottom: 12px;
             font-size: 1.3em;
         }
