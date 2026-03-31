@@ -10,15 +10,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --bg-primary: #252a32;
+            --bg-primary: #2d333b;
             --bg-secondary: #1c2028;
-            --bg-tertiary: #2c313a;
+            --bg-tertiary: #343b44;
             --text-primary: #e0e0e0;
             --text-secondary: #8b929a;
             --accent: #D8FF36;
             --accent-hover: #c4e830;
             --accent-text: #000000;
             --th-color: #8899AA;
+            --section-header-bg: #161a20;
             --border: #2f3640;
             --border-light: #3a4149;
             --danger: #ff4444;
@@ -27,11 +28,12 @@
             --negative: #ff4444;
             --row-hover: rgba(255, 255, 255, 0.04);
             --row-alt: rgba(255, 255, 255, 0.02);
-            --tfoot-bg: #1a1e25;
+            --tfoot-bg: #131720;
+            --tfoot-text: #6cb4ee;
         }
 
         body.light-mode {
-            --bg-primary: #e8eaed;
+            --bg-primary: #dfe1e5;
             --bg-secondary: #f8f9fa;
             --bg-tertiary: #eef0f2;
             --text-primary: #1a1a1a;
@@ -40,6 +42,7 @@
             --accent-hover: #3d6600;
             --accent-text: #ffffff;
             --th-color: #4a5568;
+            --section-header-bg: #eef0f3;
             --border: #dadce0;
             --border-light: #c4c7cc;
             --danger: #d93025;
@@ -48,7 +51,8 @@
             --negative: #d93025;
             --row-hover: rgba(0, 0, 0, 0.03);
             --row-alt: rgba(0, 0, 0, 0.02);
-            --tfoot-bg: #eef0f3;
+            --tfoot-bg: #e4e6ea;
+            --tfoot-text: #1a6fb5;
         }
 
         * {
@@ -224,8 +228,9 @@
         }
 
         .section-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border);
+            padding: 16px 20px;
+            background: var(--section-header-bg);
+            border-bottom: 2px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -451,11 +456,12 @@
         }
 
         tfoot td {
-            padding: 12px 10px;
+            padding: 14px 10px;
             font-weight: bold;
             font-size: 1em;
-            border-top: 2px solid var(--border);
+            border-top: 2px solid var(--border-light);
             background: var(--tfoot-bg);
+            color: var(--tfoot-text);
         }
 
         /* ===== BADGES ===== */
@@ -853,11 +859,11 @@
                     <tbody id="lavoriBody"></tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="4" style="color: var(--text-primary); font-weight:bold;">TOTALI</td>
-                            <td style="color: var(--positive);" id="totalPrevisto">-</td>
+                            <td colspan="4">TOTALI</td>
+                            <td id="totalPrevisto">-</td>
                             <td></td>
-                            <td style="color: var(--negative);" id="totalTasse">-</td>
-                            <td style="color: var(--negative);" id="totalCosti">-</td>
+                            <td id="totalTasse">-</td>
+                            <td id="totalCosti">-</td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -891,8 +897,8 @@
                     <tbody id="speseAziendaliBody"></tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="3" style="color: var(--accent);">TOTALE</td>
-                            <td style="color: var(--negative);" id="totalSpeseAziendali">-</td>
+                            <td colspan="3">TOTALE</td>
+                            <td id="totalSpeseAziendali">-</td>
                             <td colspan="4"></td>
                         </tr>
                     </tfoot>
@@ -987,7 +993,7 @@
                     <tbody id="movimentiBody"></tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="3" style="color: var(--accent);">TOTALI</td>
+                            <td colspan="3">TOTALI</td>
                             <td id="movTotaleEntrate" colspan="7" style="line-height:1.8;">-</td>
                         </tr>
                     </tfoot>
@@ -1393,6 +1399,44 @@
             }
         }
 
+        function incassaLavoro(id) {
+            const lav = data.lavori.find(l => l.id === id);
+            if (!lav) return;
+            const previsto = parseFloat(lav.importoPrevisto) || 0;
+            const stato = getLavoroStato(lav);
+            const restante = previsto - stato.reale;
+
+            const importoStr = prompt(
+                `Incassa "${lav.cliente} - ${lav.lavoro}"\n\n` +
+                `Importo previsto: ${formatEuro(previsto)}\n` +
+                `Gia incassato: ${formatEuro(stato.reale)}\n` +
+                `Restante: ${formatEuro(restante)}\n\n` +
+                `Importo da incassare:`,
+                restante.toFixed(2)
+            );
+            if (importoStr === null) return;
+            const importo = parseFloat(importoStr);
+            if (!importo || importo <= 0) return;
+
+            const oggi = new Date().toISOString().split('T')[0];
+            data.movimentiBancari.push({
+                id: generateId('mov'),
+                data: oggi,
+                tipo: 'Entrata',
+                importo: importo,
+                soggetto: lav.soggetto || 'Dos Amigos',
+                percentualeFrank: parseFloat(lav.percentualeFrank) || 50,
+                destinatario: '',
+                lavoroCollegato: lav.id,
+                causale: `Incasso: ${lav.cliente} - ${lav.lavoro}`,
+                note: '',
+                ignorato: false
+            });
+
+            autoSave();
+            renderAll();
+        }
+
         function calculateRow(row) {
             const importo = parseFloat(row.importoPrevisto) || 0;
             const costi = parseFloat(row.costi) || 0;
@@ -1489,7 +1533,7 @@
                     <td>${buildSplitCell(row)}</td>
                     <td>${buildSoggettoCell(row)}</td>
                     <td style="text-align: center;">${statoHtml}</td>
-                    <td><button class="delete-btn" onclick="deleteLavoro('${row.id}')">Elimina</button></td>
+                    <td style="white-space:nowrap;">${(parseFloat(row.importoPrevisto) || 0) > 0 && stato.stato !== 'Incassato' ? `<button class="btn btn-sm" onclick="incassaLavoro('${row.id}')" style="margin-right:4px;">Incassa</button>` : ''}<button class="delete-btn" onclick="deleteLavoro('${row.id}')">Elimina</button></td>
                 `;
                 tbody.appendChild(tr);
             });
