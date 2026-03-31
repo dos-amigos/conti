@@ -2101,9 +2101,11 @@
                 }
             });
 
-            // Process spese aziendali (from dedicated array)
+            // Process spese aziendali (solo quelle NON registrate come movimento)
+            // Le registrate sono gia conteggiate dai movimentiBancari tipo "Spesa"
             data.speseAziendali.forEach(sa => {
                 if (sa.ignorato) return;
+                if (sa.registrata) return;
                 if (!isInGlobalDateRange(sa.data)) return;
                 const importo = parseFloat(sa.importo) || 0;
                 // Split 50/50 as business cost
