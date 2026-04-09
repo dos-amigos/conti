@@ -351,9 +351,9 @@
         }
 
         .section-header {
-            padding: 14px 20px;
-            background: var(--color-navy);
-            border-bottom: none;
+            padding: 12px 20px;
+            background: var(--color-cream);
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -362,33 +362,33 @@
         }
 
         .section-header h2 {
-            color: #ffffff;
+            color: var(--color-navy);
             font-size: 15px;
             margin: 0;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
         }
 
         .section-header span {
-            color: var(--color-muted) !important;
+            color: var(--text-secondary) !important;
         }
 
         .section-header .btn,
         .section-header .btn-sm {
-            background: var(--color-gold);
-            color: var(--color-navy);
-            font-weight: 700;
+            background: var(--color-navy);
+            color: #ffffff;
+            font-weight: 600;
         }
 
         .section-header .btn:hover,
         .section-header .btn-sm:hover {
-            background: var(--color-gold-light);
+            background: var(--color-navy-mid);
         }
 
         .section-header select {
-            background: rgba(255,255,255,0.1);
-            color: #ffffff;
-            border: 1px solid rgba(255,255,255,0.15);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
             border-radius: 4px;
             padding: 5px 8px;
             font-size: 13px;
@@ -486,15 +486,15 @@
         }
 
         th {
-            background: var(--th-bg);
-            color: var(--th-color);
+            background: var(--color-cream);
+            color: var(--color-navy-light);
             padding: 10px 14px;
             text-align: left;
             font-weight: 600;
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            border-bottom: none;
+            border-bottom: 2px solid var(--border);
             cursor: pointer;
             user-select: none;
             white-space: nowrap;
@@ -504,7 +504,7 @@
         }
 
         th:hover {
-            background: var(--color-navy-mid);
+            background: var(--color-border);
         }
 
         td {
