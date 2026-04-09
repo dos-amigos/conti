@@ -10,51 +10,49 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --bg-primary: #00091c;
-            --bg-secondary: #1E293B;
-            --bg-tertiary: #334155;
-            --text-primary: #F1F5F9;
-            --text-secondary: #94A3B8;
-            --accent: #38BDF8;
-            --accent-hover: #7DD3FC;
-            --accent-text: #0F172A;
-            --th-color: #CBD5E1;
-            --th-bg: #162032;
-            --section-header-bg: #1E293B;
-            --border: #334155;
-            --border-light: #475569;
-            --danger: #EF4444;
-            --danger-hover: #DC2626;
-            --positive: #10B981;
-            --negative: #EF4444;
-            --row-hover: #293548;
-            --row-alt: #172033;
-            --tfoot-bg: #0F172A;
-            --tfoot-text: #38BDF8;
-        }
+            /* Brand palette (storemanager style) */
+            --color-navy: #0f172a;
+            --color-navy-mid: #1e293b;
+            --color-navy-light: #334155;
+            --color-gold: #D8FF36;
+            --color-gold-light: #e2ff6a;
+            --color-gold-pale: #f5ffcc;
+            --color-ivory: #f9f7f4;
+            --color-cream: #f5f0e8;
+            --color-white: #ffffff;
+            --color-muted: #94a3b8;
+            --color-border: #e2d8cc;
+            --color-border-dark: #c4b79c;
 
-        body.light-mode {
-            --bg-primary: #F8FAFC;
-            --bg-secondary: #FFFFFF;
-            --bg-tertiary: #F1F5F9;
-            --text-primary: #0F172A;
-            --text-secondary: #64748B;
-            --accent: #0284C7;
-            --accent-hover: #0369A1;
-            --accent-text: #FFFFFF;
-            --th-color: #475569;
-            --th-bg: #F1F5F9;
-            --section-header-bg: #F1F5F9;
-            --border: #E2E8F0;
-            --border-light: #CBD5E1;
-            --danger: #DC2626;
-            --danger-hover: #B91C1C;
+            /* Semantic */
+            --bg-primary: #f9f7f4;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f5f0e8;
+            --text-primary: #0f172a;
+            --text-secondary: #6b7280;
+            --accent: #0f172a;
+            --accent-hover: #1e293b;
+            --accent-text: #ffffff;
+            --th-bg: #0f172a;
+            --th-color: #ffffff;
+            --border: #e2d8cc;
+            --border-light: #e2d8cc;
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
             --positive: #059669;
-            --negative: #DC2626;
-            --row-hover: #F1F5F9;
-            --row-alt: #F8FAFC;
-            --tfoot-bg: #F1F5F9;
-            --tfoot-text: #0284C7;
+            --negative: #dc2626;
+            --row-hover: #f5f0e8;
+            --row-alt: #f9f7f4;
+            --tfoot-bg: #f5f0e8;
+            --tfoot-text: #0f172a;
+
+            /* Sidebar */
+            --sidebar-width: 240px;
+            --sidebar-bg: var(--color-navy);
+            --sidebar-fg: #cbd5e1;
+            --sidebar-accent: rgba(216, 255, 54, 0.15);
+            --sidebar-accent-fg: var(--color-gold-light);
+            --sidebar-border: rgba(255,255,255,0.08);
         }
 
         * {
@@ -64,69 +62,167 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
-            transition: background 0.3s, color 0.3s;
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* ===== HEADER (always dark) ===== */
-        .header {
-            background: #020617;
-            border-bottom: 1px solid #1E293B;
-            padding: 15px 20px;
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--color-border-dark); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-gold); }
+
+        /* ===== FOCUS RING ===== */
+        :focus-visible {
+            outline: 2px solid var(--color-gold);
+            outline-offset: 2px;
+        }
+
+        /* ===== LAYOUT: SIDEBAR + CONTENT ===== */
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo {
-            display: flex;
-            align-items: baseline;
             gap: 12px;
+            padding: 20px 20px;
+            border-bottom: 1px solid var(--sidebar-border);
         }
 
-        .logo-dos {
-            font-family: 'Arial Black', 'Impact', sans-serif;
-            font-size: 32px;
-            font-weight: 900;
-            color: #D8FF36;
-            letter-spacing: 3px;
-        }
-
-        .logo-amigos {
-            font-family: 'Arial Black', 'Impact', sans-serif;
-            font-size: 32px;
-            font-weight: 900;
-            color: #ffffff;
-            letter-spacing: 3px;
-        }
-
-        .header-right {
+        .sidebar-logo-mark {
             display: flex;
-            gap: 10px;
             align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--color-gold);
+            border-radius: 8px;
         }
 
-        .sync-status {
-            background: rgba(216, 255, 54, 0.15);
-            padding: 8px 14px;
+        .sidebar-logo-mark span {
+            font-size: 14px;
+            font-weight: 900;
+            color: var(--color-navy);
+            letter-spacing: 1px;
+        }
+
+        .sidebar-logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-logo-text .brand-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-logo-text .brand-sub {
+            font-size: 11px;
+            color: var(--color-muted);
+            letter-spacing: 1px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sidebar-nav-title {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--color-muted);
+            padding: 12px 12px 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
             border-radius: 6px;
-            border: 1px solid var(--border);
-            color: #D8FF36;
             font-size: 13px;
-            white-space: nowrap;
+            font-weight: 500;
+            color: var(--sidebar-fg);
+            cursor: pointer;
+            transition: all 150ms ease;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            text-decoration: none;
         }
 
-        .sync-status.saving {
-            animation: pulse 1s infinite;
+        .nav-item:hover {
+            color: #ffffff;
+            background: rgba(255,255,255,0.05);
         }
 
-        .sync-status.error {
-            background: rgba(255, 68, 68, 0.2);
-            border-color: #ff4444;
-            color: #ff4444;
+        .nav-item.active {
+            color: var(--sidebar-accent-fg);
+            background: var(--sidebar-accent);
+        }
+
+        .nav-item .nav-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-bottom {
+            padding: 12px;
+            border-top: 1px solid var(--sidebar-border);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-sync {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--color-gold);
+            background: rgba(216,255,54,0.08);
+        }
+
+        .sidebar-sync.saving { animation: pulse 1s infinite; }
+        .sidebar-sync.error {
+            color: #ff6b6b;
+            background: rgba(255,68,68,0.1);
         }
 
         @keyframes pulse {
@@ -134,17 +230,33 @@
             50% { opacity: 0.5; }
         }
 
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
         /* ===== BUTTONS ===== */
         .btn {
             background: var(--accent);
             color: var(--accent-text);
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 8px 16px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
-            font-weight: bold;
-            transition: all 0.2s;
+            font-weight: 600;
+            transition: all 150ms ease;
             white-space: nowrap;
         }
 
@@ -154,7 +266,7 @@
         }
 
         .btn-sm {
-            padding: 6px 14px;
+            padding: 5px 12px;
             font-size: 12px;
             border-radius: 6px;
         }
@@ -168,10 +280,29 @@
             background: var(--danger-hover);
         }
 
+        .btn-gold {
+            background: var(--color-gold);
+            color: var(--color-navy);
+        }
+
+        .btn-gold:hover {
+            background: var(--color-gold-light);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg-tertiary);
+        }
+
         .btn-header {
             background: rgba(216, 255, 54, 0.15);
             color: #D8FF36;
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255,255,255,0.1);
             padding: 8px 14px;
             border-radius: 6px;
             font-size: 12px;
@@ -188,7 +319,7 @@
             background: var(--danger);
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 12px;
@@ -198,21 +329,11 @@
             background: var(--danger-hover);
         }
 
-        /* ===== CONTAINER ===== */
-        .container {
-            max-width: 1800px;
-            margin: 0 auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
         /* ===== CONTROLS BAR ===== */
         .controls-bar {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 10px;
             padding: 15px 20px;
             display: flex;
             flex-wrap: wrap;
@@ -224,14 +345,14 @@
         .section {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 10px;
             overflow: hidden;
-            transition: background 0.3s, border-color 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
 
         .section-header {
             padding: 14px 20px;
-            background: #D8FF36;
+            background: var(--color-navy);
             border-bottom: none;
             display: flex;
             justify-content: space-between;
@@ -241,31 +362,36 @@
         }
 
         .section-header h2 {
-            color: #1E293B;
-            font-size: 1.2em;
+            color: #ffffff;
+            font-size: 15px;
             margin: 0;
-            font-weight: 700;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         .section-header span {
-            color: #475569 !important;
+            color: var(--color-muted) !important;
         }
 
         .section-header .btn,
         .section-header .btn-sm {
-            background: #1E293B;
-            color: #F1F5F9;
+            background: var(--color-gold);
+            color: var(--color-navy);
+            font-weight: 700;
         }
 
         .section-header .btn:hover,
         .section-header .btn-sm:hover {
-            background: #334155;
+            background: var(--color-gold-light);
         }
 
         .section-header select {
-            background: rgba(30, 41, 59, 0.15);
-            color: #1E293B;
-            border: 1px solid rgba(30, 41, 59, 0.3);
+            background: rgba(255,255,255,0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 4px;
+            padding: 5px 8px;
+            font-size: 13px;
         }
 
         .section-body {
@@ -279,24 +405,24 @@
             gap: 8px;
             padding: 12px 20px;
             border-bottom: 1px solid var(--border);
-            background: var(--bg-primary);
+            background: var(--bg-tertiary);
         }
 
         .filters input,
         .filters select {
-            padding: 8px 10px;
-            background: var(--bg-tertiary);
+            padding: 7px 10px;
+            background: var(--bg-secondary);
             color: var(--text-primary);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--border);
             border-radius: 6px;
             font-size: 13px;
-            transition: background 0.3s, color 0.3s, border-color 0.3s;
         }
 
         .filters input:focus,
         .filters select:focus {
             outline: none;
-            border-color: var(--accent);
+            border-color: var(--color-gold);
+            box-shadow: 0 0 0 1px var(--color-gold);
         }
 
         .filters label {
@@ -304,9 +430,9 @@
             align-items: center;
             gap: 6px;
             cursor: pointer;
-            padding: 8px 10px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-light);
+            padding: 7px 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
             border-radius: 6px;
             font-size: 13px;
             color: var(--text-primary);
@@ -326,14 +452,14 @@
             align-items: center;
             padding: 10px 20px;
             border-bottom: 1px solid var(--border);
-            background: var(--bg-primary);
+            background: var(--bg-tertiary);
         }
 
         .pagination select {
-            padding: 6px 8px;
-            background: var(--bg-tertiary);
+            padding: 5px 8px;
+            background: var(--bg-secondary);
             color: var(--text-primary);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--border);
             border-radius: 6px;
             font-size: 13px;
         }
@@ -356,29 +482,33 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 13px;
         }
 
         th {
             background: var(--th-bg);
             color: var(--th-color);
-            padding: 12px 15px;
+            padding: 10px 14px;
             text-align: left;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--border-light);
+            border-bottom: none;
             cursor: pointer;
             user-select: none;
             white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         th:hover {
-            background: var(--bg-tertiary);
+            background: var(--color-navy-mid);
         }
 
         td {
-            padding: 10px 15px;
+            padding: 8px 14px;
             border-bottom: 1px solid var(--border);
             font-size: 13px;
         }
@@ -418,7 +548,7 @@
         .global-filter-bar {
             background: var(--bg-secondary);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 10px;
             padding: 12px 20px;
             display: flex;
             flex-wrap: wrap;
@@ -433,62 +563,64 @@
         }
 
         .global-filter-bar input[type="date"] {
-            padding: 8px 10px;
-            background: var(--bg-tertiary);
+            padding: 7px 10px;
+            background: var(--bg-secondary);
             color: var(--text-primary);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--border);
             border-radius: 6px;
             font-size: 13px;
         }
 
         .global-filter-bar input[type="date"]:focus {
             outline: none;
-            border-color: var(--accent);
+            border-color: var(--color-gold);
+            box-shadow: 0 0 0 1px var(--color-gold);
         }
 
         .global-filter-active {
-            border-color: var(--accent) !important;
-            box-shadow: 0 0 0 1px var(--accent);
+            border-color: var(--color-gold) !important;
+            box-shadow: 0 0 0 1px var(--color-gold);
         }
 
         .global-filter-badge {
-            background: rgba(56, 189, 248, 0.15);
-            color: #38BDF8;
-            padding: 6px 12px;
+            background: rgba(216, 255, 54, 0.15);
+            color: var(--color-navy);
+            padding: 5px 10px;
             border-radius: 6px;
             font-size: 12px;
             font-weight: bold;
+            border: 1px solid var(--color-gold);
         }
 
         td input,
         td select {
             width: 100%;
-            padding: 6px 8px;
-            background: var(--bg-tertiary);
+            padding: 5px 8px;
+            background: var(--bg-secondary);
             color: var(--text-primary);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--border);
             border-radius: 4px;
             font-size: 13px;
-            transition: background 0.3s, color 0.3s, border-color 0.3s;
         }
 
         td input:focus,
         td select:focus {
             outline: none;
-            border-color: var(--accent);
+            border-color: var(--color-gold);
+            box-shadow: 0 0 0 1px var(--color-gold);
         }
 
         td input:read-only {
-            background: var(--bg-primary);
+            background: var(--bg-tertiary);
             border-color: transparent;
             color: var(--text-secondary);
         }
 
         tfoot td {
-            padding: 14px 15px;
+            padding: 12px 14px;
             font-weight: 600;
             font-size: 13px;
-            border-top: 2px solid var(--border-light);
+            border-top: 2px solid var(--color-gold);
             background: var(--tfoot-bg) !important;
             color: var(--tfoot-text);
         }
@@ -497,30 +629,30 @@
         .badge {
             display: inline-block;
             padding: 3px 8px;
-            border-radius: 4px;
+            border-radius: 999px;
             font-size: 11px;
-            font-weight: bold;
+            font-weight: 600;
             white-space: nowrap;
         }
 
         .badge-green {
-            background: rgba(0, 180, 0, 0.2);
-            color: #4caf50;
+            background: rgba(5, 150, 105, 0.1);
+            color: #059669;
         }
 
         .badge-yellow {
-            background: rgba(255, 193, 7, 0.2);
-            color: #ffc107;
+            background: rgba(217, 119, 6, 0.1);
+            color: #d97706;
         }
 
         .badge-red {
-            background: rgba(255, 68, 68, 0.15);
-            color: #ff6b6b;
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
         }
 
         .badge-gray {
-            background: rgba(150, 150, 150, 0.2);
-            color: #999;
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
         }
 
         /* ===== TOTAL CARDS ===== */
@@ -532,17 +664,17 @@
         }
 
         .total-card {
-            background: var(--bg-primary);
+            background: var(--bg-tertiary);
             padding: 20px;
             border-radius: 10px;
             border: 1px solid var(--border);
-            transition: background 0.3s, border-color 0.3s;
         }
 
         .total-card h3 {
-            color: #38BDF8;
+            color: var(--color-navy);
             margin-bottom: 12px;
-            font-size: 1.3em;
+            font-size: 1.1em;
+            font-weight: 700;
         }
 
         .total-line {
@@ -571,6 +703,7 @@
         .saldo-box .saldo-value {
             font-size: 2.2em;
             font-weight: bold;
+            color: var(--color-navy);
         }
 
         .saldo-box .saldo-note {
@@ -590,7 +723,7 @@
         .spese-tasca-col {
             flex: 1;
             padding: 12px 15px;
-            background: var(--bg-primary);
+            background: var(--bg-tertiary);
             border-radius: 8px;
             border: 1px solid var(--border);
         }
@@ -631,7 +764,7 @@
         .spese-future-total {
             margin: 15px 20px 20px;
             padding: 12px 15px;
-            background: rgba(255, 68, 68, 0.08);
+            background: rgba(220, 38, 38, 0.05);
             border: 2px solid var(--danger);
             border-radius: 8px;
             display: flex;
@@ -647,92 +780,197 @@
             border: 1px solid var(--border);
             color: var(--text-secondary);
             font-size: 13px;
-            transition: background 0.3s, border-color 0.3s;
         }
 
         .note-bar strong {
             color: var(--text-primary);
         }
 
-        /* ===== LOGIN (always dark) ===== */
+        /* ===== GOLD RULE ===== */
+        .gold-rule {
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--color-gold), transparent);
+        }
+
+        /* ===== LOGIN (storemanager style) ===== */
         .login-screen {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: #020617;
+            background: var(--color-ivory);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 9999;
+            padding: 16px;
         }
 
         .login-screen.hidden { display: none; }
 
-        .login-box {
-            background: #1E293B;
-            padding: 40px;
-            border-radius: 20px;
-            border: 1px solid #334155;
+        .login-brand {
+            margin-bottom: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .login-brand-mark {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            background: var(--color-navy);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .login-brand-mark span {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--color-gold);
+            letter-spacing: 2px;
+        }
+
+        .login-brand-text {
             text-align: center;
-            max-width: 400px;
-            width: 90%;
         }
 
-        .login-logo {
-            margin-bottom: 25px;
+        .login-brand-text h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--color-navy);
         }
 
-        .login-logo .logo-dos,
-        .login-logo .logo-amigos {
-            font-size: 36px;
+        .login-brand-text p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        .login-box {
+            background: var(--color-white);
+            padding: 32px;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            text-align: left;
+            max-width: 380px;
+            width: 100%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
 
         .login-box h2 {
-            color: #38BDF8;
-            margin-bottom: 25px;
-            font-size: 1.5em;
+            color: var(--color-navy);
+            margin-bottom: 4px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .login-box .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-bottom: 24px;
+        }
+
+        .login-field {
+            margin-bottom: 16px;
+        }
+
+        .login-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-navy);
+            margin-bottom: 6px;
+        }
+
+        .login-field .input-wrap {
+            position: relative;
+        }
+
+        .login-field .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 15px;
+            pointer-events: none;
         }
 
         .login-box input {
             width: 100%;
-            padding: 14px;
-            margin-bottom: 12px;
-            background: #334155;
-            border: 2px solid #475569;
-            border-radius: 8px;
-            color: white;
-            font-size: 15px;
+            padding: 10px 12px 10px 38px;
+            background: var(--color-white);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            color: var(--color-navy);
+            font-size: 14px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
         }
 
         .login-box input:focus {
-            border-color: #38BDF8;
+            border-color: var(--color-gold);
             outline: none;
+            box-shadow: 0 0 0 1px var(--color-gold);
+        }
+
+        .login-box input::placeholder {
+            color: var(--color-muted);
         }
 
         .login-box button {
             width: 100%;
-            padding: 14px;
-            background: #38BDF8;
-            color: #0F172A;
+            padding: 10px;
+            background: var(--color-navy);
+            color: var(--color-white);
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 150ms ease;
+            margin-top: 4px;
         }
 
         .login-box button:hover {
-            background: #7DD3FC;
+            background: var(--color-navy-mid);
         }
 
         .login-error {
-            color: #ff4444;
+            color: #dc2626;
+            background: rgba(220,38,38,0.06);
+            border: 1px solid rgba(220,38,38,0.2);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 13px;
             margin-top: 12px;
             display: none;
         }
 
         .login-error.show { display: block; }
+
+        .login-footer {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .login-footer .gold-rule {
+            margin-bottom: 16px;
+        }
+
+        .login-footer p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Legacy login logo classes - keep for backwards compat */
+        .login-logo { display: none; }
+        .logo-dos, .logo-amigos { display: none; }
 
         /* ===== LOADING ===== */
         .loading {
@@ -740,43 +978,34 @@
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(15, 23, 42, 0.95);
-            padding: 30px;
+            padding: 24px 32px;
             border-radius: 10px;
-            border: 1px solid #334155;
+            border: 1px solid rgba(255,255,255,0.1);
             display: none;
             z-index: 1000;
-            color: #38BDF8;
-            font-size: 18px;
+            color: var(--color-gold);
+            font-size: 16px;
+            font-weight: 600;
         }
 
         .loading.active { display: block; }
 
-        /* ===== HAMBURGER MENU ===== */
-        .hamburger-btn {
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            font-size: 24px;
-            cursor: pointer;
-            padding: 6px 10px;
-            border-radius: 6px;
-            line-height: 1;
-        }
-
-        .hamburger-btn:hover {
-            background: rgba(255,255,255,0.1);
-        }
+        /* ===== HAMBURGER (hidden - replaced by sidebar) ===== */
+        .hamburger-btn { display: none; }
+        .header { display: none; }
 
         .menu-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(2px);
             z-index: 998;
         }
 
         .menu-overlay.open { display: block; }
 
+        /* Side menu (kept for mobile) */
         .side-menu {
             position: fixed;
             top: 0; right: -360px;
@@ -844,7 +1073,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px 12px;
-            background: var(--bg-primary);
+            background: var(--bg-tertiary);
             border: 1px solid var(--border);
             border-radius: 6px;
             margin-bottom: 8px;
@@ -871,10 +1100,11 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .header { flex-direction: column; gap: 10px; text-align: center; }
-            .header-right { justify-content: center; flex-wrap: wrap; }
-            .logo-dos, .logo-amigos { font-size: 24px; }
-            .container { padding: 10px; gap: 12px; }
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .header { display: flex !important; }
+            .hamburger-btn { display: block !important; }
+            .container { padding: 12px; gap: 12px; }
             .total-grid { grid-template-columns: 1fr; }
             .controls-bar { justify-content: center; }
         }
@@ -882,39 +1112,62 @@
 </head>
 
 <body>
-    <!-- Login Screen -->
+    <!-- Login Screen (storemanager style) -->
     <div class="login-screen" id="loginScreen">
-        <div class="login-box">
-            <div class="login-logo">
-                <span class="logo-dos">DOS</span>
-                <span class="logo-amigos">AMIGOS</span>
+        <div class="login-brand">
+            <div class="login-brand-mark">
+                <span>DA</span>
             </div>
-            <h2>Accesso Riservato</h2>
+            <div class="login-brand-text">
+                <h1>Dos Amigos</h1>
+                <p>Contabilita</p>
+            </div>
+        </div>
+        <div class="login-box">
+            <h2>Accedi</h2>
+            <p class="login-subtitle">Inserisci le credenziali per accedere al gestionale.</p>
             <form id="loginForm" onsubmit="handleLogin(event)">
-                <input type="text" id="username" placeholder="Username" autocomplete="off" required>
-                <input type="password" id="password" placeholder="Password" autocomplete="off" required>
+                <div class="login-field">
+                    <label for="username">Username</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">&#128100;</span>
+                        <input type="text" id="username" placeholder="Il tuo username" autocomplete="off" required autofocus>
+                    </div>
+                </div>
+                <div class="login-field">
+                    <label for="password">Password</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">&#128274;</span>
+                        <input type="password" id="password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="off" required>
+                    </div>
+                </div>
                 <button type="submit">Accedi</button>
             </form>
             <div class="login-error" id="loginError">Credenziali errate! Riprova.</div>
+            <div class="login-footer">
+                <div class="gold-rule"></div>
+                <p>Per assistenza contatta l'amministratore.</p>
+            </div>
         </div>
     </div>
 
     <div class="loading" id="loading">Caricamento...</div>
 
-    <!-- Header -->
-    <div class="header">
-        <div class="logo">
-            <span style="font-size:24px;">💀💀</span>
-            <span class="logo-dos">DOS</span>
-            <span class="logo-amigos">AMIGOS</span>
+    <!-- Header (mobile only) -->
+    <div class="header" style="background:#020617;border-bottom:1px solid #1E293B;padding:15px 20px;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:32px;height:32px;background:#D8FF36;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:12px;font-weight:900;color:#0f172a;letter-spacing:1px;">DA</span>
+            </div>
+            <span style="font-size:14px;font-weight:700;color:#fff;letter-spacing:2px;">DOS AMIGOS</span>
         </div>
-        <div class="header-right">
-            <div class="sync-status" id="syncStatus">Sincronizzato</div>
-            <button class="hamburger-btn" onclick="toggleMenu()">&#9776;</button>
+        <div style="display:flex;gap:10px;align-items:center;">
+            <div class="sync-status" id="syncStatusMobile" style="background:rgba(216,255,54,0.15);padding:6px 12px;border-radius:6px;color:#D8FF36;font-size:12px;">Sincronizzato</div>
+            <button class="hamburger-btn" onclick="toggleMenu()" style="background:none;border:1px solid rgba(255,255,255,0.15);color:#fff;font-size:22px;cursor:pointer;padding:4px 8px;border-radius:6px;">&#9776;</button>
         </div>
     </div>
 
-    <!-- Side Menu -->
+    <!-- Side Menu (mobile) -->
     <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
     <div class="side-menu" id="sideMenu">
         <div class="menu-header">
@@ -926,23 +1179,93 @@
             <button class="btn" onclick="manualSave(); toggleMenu();">Salva Ora</button>
             <button class="btn" onclick="exportToExcel(); toggleMenu();">Esporta Excel</button>
             <button class="btn" onclick="downloadBackup(); toggleMenu();">Download Backup</button>
-            <button class="btn" onclick="toggleTheme(); toggleMenu();" id="themeToggle">Light Mode</button>
         </div>
         <div class="menu-section">
             <div class="menu-section-title">Periodi</div>
             <button class="btn" onclick="chiudiPeriodo()">Chiudi Periodo</button>
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text-secondary);margin-top:10px;">
-                <input type="checkbox" id="mostraTutto" onchange="toggleMostraTutto()">
+                <input type="checkbox" id="mostraTuttoMobile" onchange="document.getElementById('mostraTutto').checked=this.checked;toggleMostraTutto()">
                 Mostra periodi chiusi
             </label>
-            <div id="chiusureList" style="margin-top:12px;"></div>
+            <div id="chiusureListMobile" style="margin-top:12px;"></div>
         </div>
         <div class="menu-section" style="margin-top:auto;">
             <button class="btn btn-danger" onclick="logout()">Logout</button>
         </div>
     </div>
 
-    <!-- Main Content -->
+    <div class="app-layout">
+        <!-- Sidebar (desktop) -->
+        <aside class="sidebar" id="mainSidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-mark"><span>DA</span></div>
+                <div class="sidebar-logo-text">
+                    <span class="brand-name">Dos Amigos</span>
+                    <span class="brand-sub">Contabilita</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="sidebar-nav-title">Sezioni</div>
+                <a class="nav-item active" href="#section-lavori" onclick="scrollToSection('section-lavori', this)">
+                    <span class="nav-icon">&#128188;</span> Lavori
+                </a>
+                <a class="nav-item" href="#section-spese-az" onclick="scrollToSection('section-spese-az', this)">
+                    <span class="nav-icon">&#128179;</span> Spese Aziendali
+                </a>
+                <a class="nav-item" href="#section-spese-soci" onclick="scrollToSection('section-spese-soci', this)">
+                    <span class="nav-icon">&#128176;</span> Spese Soci
+                </a>
+                <a class="nav-item" href="#section-movimenti" onclick="scrollToSection('section-movimenti', this)">
+                    <span class="nav-icon">&#127974;</span> Movimenti Bancari
+                </a>
+                <a class="nav-item" href="#section-saldo" onclick="scrollToSection('section-saldo', this)">
+                    <span class="nav-icon">&#128178;</span> Saldo Conto
+                </a>
+                <a class="nav-item" href="#section-soci" onclick="scrollToSection('section-soci', this)">
+                    <span class="nav-icon">&#128101;</span> Situazione Soci
+                </a>
+                <a class="nav-item" href="#section-future" onclick="scrollToSection('section-future', this)">
+                    <span class="nav-icon">&#128197;</span> Spese Future
+                </a>
+                <a class="nav-item" href="#section-debug" onclick="scrollToSection('section-debug', this)">
+                    <span class="nav-icon">&#128270;</span> Debug Conteggi
+                </a>
+
+                <div class="sidebar-nav-title" style="margin-top:16px;">Azioni</div>
+                <button class="nav-item" onclick="manualSave()">
+                    <span class="nav-icon">&#128190;</span> Salva Ora
+                </button>
+                <button class="nav-item" onclick="exportToExcel()">
+                    <span class="nav-icon">&#128196;</span> Esporta Excel
+                </button>
+                <button class="nav-item" onclick="downloadBackup()">
+                    <span class="nav-icon">&#128229;</span> Download Backup
+                </button>
+
+                <div class="sidebar-nav-title" style="margin-top:16px;">Periodi</div>
+                <button class="nav-item" onclick="chiudiPeriodo()">
+                    <span class="nav-icon">&#128274;</span> Chiudi Periodo
+                </button>
+                <label class="nav-item" style="cursor:pointer;">
+                    <input type="checkbox" id="mostraTutto" onchange="toggleMostraTutto()" style="margin-right:6px;">
+                    Mostra chiusi
+                </label>
+                <div id="chiusureList" style="padding:0 12px;"></div>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-sync" id="syncStatus">
+                    <span>&#9679;</span> Sincronizzato
+                </div>
+                <button class="nav-item" onclick="logout()" style="color:#ff6b6b;">
+                    <span class="nav-icon">&#9211;</span> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
     <div class="container">
 
         <!-- ===== FILTRO PERIODO GLOBALE ===== -->
@@ -956,7 +1279,7 @@
         </div>
 
         <!-- ===== LAVORI ===== -->
-        <div class="section">
+        <div class="section" id="section-lavori">
             <div class="section-header">
                 <h2>Lavori</h2>
                 <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
@@ -1031,7 +1354,7 @@
         </div>
 
         <!-- ===== SPESE AZIENDALI ===== -->
-        <div class="section">
+        <div class="section" id="section-spese-az">
             <div class="section-header">
                 <h2>Spese Aziendali</h2>
                 <button class="btn btn-sm" onclick="addSpesaAziendale()">+ Aggiungi Spesa</button>
@@ -1063,7 +1386,7 @@
         </div>
 
         <!-- ===== SPESE DI TASCA ===== -->
-        <div class="section">
+        <div class="section" id="section-spese-soci">
             <div class="section-header">
                 <h2>Spese Soci</h2>
                 <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
@@ -1108,7 +1431,7 @@
         </div>
 
         <!-- ===== MOVIMENTI BANCARI ===== -->
-        <div class="section">
+        <div class="section" id="section-movimenti">
             <div class="section-header">
                 <h2>Movimenti Bancari</h2>
                 <button class="btn btn-sm" onclick="addMovimento()">+ Aggiungi Movimento</button>
@@ -1159,7 +1482,7 @@
         </div>
 
         <!-- ===== CONTO BANCARIO ===== -->
-        <div class="section">
+        <div class="section" id="section-saldo">
             <div class="section-header">
                 <h2>Saldo Conto Bancario</h2>
             </div>
@@ -1171,7 +1494,7 @@
         </div>
 
         <!-- ===== PORTAFOGLIO SOCI ===== -->
-        <div class="section">
+        <div class="section" id="section-soci">
             <div class="section-header">
                 <h2>Situazione Soci</h2>
                 <span style="color: var(--text-secondary); font-size: 13px;">Entrate - Spese = Utile + Anticipi pendenti - Prelievi = Da bonificare</span>
@@ -1189,7 +1512,7 @@
         </div>
 
         <!-- ===== SPESE FUTURE ===== -->
-        <div class="section">
+        <div class="section" id="section-future">
             <div class="section-header">
                 <h2>Spese Future Pianificate</h2>
                 <button class="btn btn-sm" onclick="addSpesaFutura()">+ Aggiungi Spesa</button>
@@ -1224,7 +1547,7 @@
         </div>
 
         <!-- ===== DEBUG SOCI ===== -->
-        <div class="section">
+        <div class="section" id="section-debug">
             <div class="section-header" style="cursor:pointer;" onclick="document.getElementById('debugContent').style.display = document.getElementById('debugContent').style.display === 'none' ? 'block' : 'none';">
                 <h2>Debug Conteggi Soci</h2>
                 <span style="font-size:13px;">Clicca per espandere/chiudere</span>
@@ -1256,9 +1579,45 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div><!-- /container -->
+    </div><!-- /main-content -->
+    </div><!-- /app-layout -->
 
     <script>
+        // =============== SIDEBAR NAVIGATION ===============
+        function scrollToSection(id, el) {
+            const target = document.getElementById(id);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // Update active state
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
+            if (el) el.classList.add('active');
+        }
+
+        // Track scroll position to highlight active nav item
+        (function() {
+            const sections = ['section-lavori','section-spese-az','section-spese-soci','section-movimenti','section-saldo','section-soci','section-future','section-debug'];
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    requestAnimationFrame(function() {
+                        const scrollY = window.scrollY + 120;
+                        let activeId = sections[0];
+                        for (const id of sections) {
+                            const el = document.getElementById(id);
+                            if (el && el.offsetTop <= scrollY) activeId = id;
+                        }
+                        document.querySelectorAll('.sidebar-nav a.nav-item').forEach(item => {
+                            item.classList.toggle('active', item.getAttribute('href') === '#' + activeId);
+                        });
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        })();
+
         // =============== CONFIGURATION ===============
         const API_URL = 'api.php';
         const TIPI_MOVIMENTO = ['Entrata', 'Prelievo Socio', 'Rimborso Socio', 'Spesa', 'Tasse'];
@@ -2648,10 +3007,7 @@
 
         // =============== THEME ===============
         function toggleTheme() {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('light-mode', !isDarkMode);
-            localStorage.setItem('dosAmigosTheme', isDarkMode ? 'dark' : 'light');
-            document.getElementById('themeToggle').textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+            // Theme toggle removed - app uses light mode only
         }
 
         // =============== EXPORT ===============
@@ -2731,12 +3087,20 @@
 
         function updateSyncStatus(type, message) {
             const el = document.getElementById('syncStatus');
-            el.textContent = message;
-            el.className = 'sync-status ' + type;
+            const elMobile = document.getElementById('syncStatusMobile');
+            const icon = type === 'saving' ? '&#9679;' : type === 'error' ? '&#9888;' : '&#9679;';
+            if (el) {
+                el.innerHTML = icon + ' ' + message;
+                el.className = 'sidebar-sync ' + type;
+            }
+            if (elMobile) {
+                elMobile.textContent = message;
+                elMobile.className = 'sync-status ' + type;
+            }
             if (type === 'success') {
                 setTimeout(() => {
-                    el.textContent = 'Sincronizzato';
-                    el.className = 'sync-status';
+                    if (el) { el.innerHTML = '&#9679; Sincronizzato'; el.className = 'sidebar-sync'; }
+                    if (elMobile) { elMobile.textContent = 'Sincronizzato'; elMobile.className = 'sync-status'; }
                 }, 2000);
             }
         }
@@ -2747,14 +3111,6 @@
 
         // =============== INIT ===============
         window.onload = async function () {
-            // Apply saved theme
-            const savedTheme = localStorage.getItem('dosAmigosTheme');
-            if (savedTheme === 'light') {
-                isDarkMode = false;
-                document.body.classList.add('light-mode');
-                document.getElementById('themeToggle').textContent = 'Dark Mode';
-            }
-
             // Check auth
             const isAuth = await checkAuth();
             if (isAuth) {
